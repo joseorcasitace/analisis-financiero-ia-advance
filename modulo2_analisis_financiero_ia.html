@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Módulo 2 · Prompting Estratégico para Finanzas · ADVANCE UR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
+<style>
+/* ─── DESIGN TOKENS — ADVANCE · UNIVERSIDAD DEL ROSARIO ─────────────────── */
+:root {
+  --ur-rojo:       #C8102E;
+  --ur-rojo-dark:  #A00D25;
+  --ur-rojo-light: #FBEAED;
+  --ur-rojo-mid:   #F2AABA;
+  --ur-navy:       #1A1F36;
+  --ur-navy-mid:   #2D3454;
+  --ur-slate:      #4A5178;
+  --ur-muted:      #6B7280;
+  --ur-border:     #E2E5ED;
+  --ur-surface:    #F8F9FC;
+  --ur-white:      #FFFFFF;
+  --c-azul:  #1B5EBF; --c-azul-bg:   #EBF2FF;
+  --c-dorado:#B45309; --c-dorado-bg: #FEF3C7;
+  --c-verde: #166534; --c-verde-bg:  #DCFCE7;
+  --c-rosa:  #9D174D; --c-rosa-bg:   #FCE7F3;
+  --c-gris:  #374151; --c-gris-bg:   #F3F4F6;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans:  'DM Sans', -apple-system, sans-serif;
+  --sw: 270px; --th: 54px; --r: 8px; --rl: 12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);font-size:15px;line-height:1.65;color:var(--ur-navy);background:var(--ur-surface);min-height:100vh;}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;height:var(--th);background:var(--ur-navy);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:3px solid var(--ur-rojo);}
+.tb-l{display:flex;align-items:center;}
+.tb-brand{font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5);}
+.tb-sep{width:1px;height:18px;background:rgba(255,255,255,.15);margin:0 14px;}
+.tb-title{font-family:var(--serif);font-size:15px;color:#fff;}
+.tb-r{display:flex;align-items:center;gap:12px;}
+.tb-prog-lbl{font-size:11px;color:rgba(255,255,255,.5);font-weight:500;}
+.tb-track{width:140px;height:5px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden;}
+.tb-fill{height:100%;background:var(--ur-rojo);border-radius:3px;transition:width .5s ease;}
+.tb-pct{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);min-width:32px;text-align:right;}
+
+/* LAYOUT */
+.layout{display:flex;margin-top:var(--th);min-height:calc(100vh - var(--th));}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);background:var(--ur-white);border-right:1px solid var(--ur-border);position:fixed;top:var(--th);bottom:0;overflow-y:auto;display:flex;flex-direction:column;}
+.sb-head{padding:20px 18px 16px;border-bottom:1px solid var(--ur-border);}
+.sb-pill{display:inline-flex;align-items:center;gap:6px;background:var(--ur-rojo-light);color:var(--ur-rojo);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
+.sb-mod-title{font-family:var(--serif);font-size:13px;color:var(--ur-navy);line-height:1.4;}
+.sb-nav{flex:1;padding:6px 0 16px;}
+.nav-item{display:flex;align-items:flex-start;gap:11px;padding:10px 18px;cursor:pointer;border-left:3px solid transparent;transition:background .15s,border-color .15s;}
+.nav-item:hover{background:var(--ur-surface);}
+.nav-item.active{background:var(--ur-rojo-light);border-left-color:var(--ur-rojo);}
+.nav-item.done .nd{background:var(--c-verde);}
+.nav-item.active .nd{background:var(--ur-rojo);}
+.nd{width:22px;height:22px;border-radius:50%;flex-shrink:0;background:var(--ur-border);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;margin-top:2px;}
+.nav-b{flex:1;}
+.nav-id{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--ur-rojo);text-transform:uppercase;}
+.nav-ttl{font-size:12px;color:var(--ur-navy);line-height:1.35;margin-top:1px;}
+.nav-item.active .nav-ttl{font-weight:600;}
+.nav-time{font-size:10px;color:var(--ur-muted);margin-top:2px;}
+.sidebar::-webkit-scrollbar{width:4px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--ur-border);border-radius:2px;}
+
+/* MAIN */
+.main{margin-left:var(--sw);flex:1;padding:36px 44px 64px;max-width:calc(var(--sw) + 820px);}
+
+/* SESSIONS */
+.session{display:none;}
+.session.active{display:block;animation:up .28s ease;}
+@keyframes up{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* SESSION HEADER */
+.sh{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--ur-border);}
+.sh-ey{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.sh-id{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ur-rojo);}
+.sh-rule{flex:1;height:1px;background:var(--ur-rojo-mid);}
+.sh-title{font-family:var(--serif);font-size:1.7rem;color:var(--ur-navy);line-height:1.25;margin-bottom:14px;}
+.sh-meta{display:flex;gap:8px;flex-wrap:wrap;}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+.b-def   {background:var(--c-gris-bg);  color:var(--c-gris);}
+.b-rojo  {background:var(--ur-rojo-light);color:var(--ur-rojo);}
+.b-azul  {background:var(--c-azul-bg);  color:var(--c-azul);}
+.b-verde {background:var(--c-verde-bg); color:var(--c-verde);}
+.b-dorado{background:var(--c-dorado-bg);color:var(--c-dorado);}
+.b-rosa  {background:var(--c-rosa-bg);  color:var(--c-rosa);}
+
+/* PROSE */
+.section{margin-bottom:36px;}
+.sec-title{font-family:var(--serif);font-size:1.12rem;color:var(--ur-navy);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--ur-rojo-mid);}
+.prose{font-size:14.5px;line-height:1.8;color:var(--ur-navy-mid);margin-bottom:14px;}
+.prose strong{color:var(--ur-navy);font-weight:600;}
+.prose em{color:var(--ur-rojo-dark);font-style:normal;font-weight:600;}
+
+/* CARD GRID */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px;margin:18px 0;}
+.card-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.card{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);padding:18px 16px;border-top:3px solid var(--ur-border);transition:box-shadow .2s;}
+.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07);}
+.c-rojo   {border-top-color:var(--ur-rojo);}
+.c-azul   {border-top-color:var(--c-azul);}
+.c-verde  {border-top-color:var(--c-verde);}
+.c-dorado {border-top-color:var(--c-dorado);}
+.c-rosa   {border-top-color:var(--c-rosa);}
+.card-ico{font-size:1.4rem;margin-bottom:8px;}
+.card-ttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:6px;}
+.card-body{font-size:12.5px;color:var(--ur-slate);line-height:1.6;}
+.card-tag{display:inline-block;margin-top:10px;font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 8px;border-radius:20px;background:var(--ur-rojo-light);color:var(--ur-rojo);}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.cmp{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);overflow:hidden;}
+.cmp-h{padding:11px 16px;font-size:13px;font-weight:700;color:#fff;}
+.cmp-h.navy{background:var(--ur-navy);}
+.cmp-h.rojo{background:var(--ur-rojo);}
+.cmp-h.azul{background:var(--c-azul);}
+.cmp-b{padding:12px 16px;}
+.cmp-row{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--ur-slate);padding:5px 0;border-bottom:1px solid var(--ur-border);line-height:1.5;}
+.cmp-row:last-child{border-bottom:none;}
+.cmp-row::before{content:'›';color:var(--ur-rojo);font-weight:700;flex-shrink:0;}
+
+/* TABLE */
+.tbl-w{overflow-x:auto;margin:16px 0;border-radius:var(--rl);border:1px solid var(--ur-border);box-shadow:0 1px 4px rgba(0,0,0,.04);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead tr{background:var(--ur-navy);}
+thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:12px;color:#fff;}
+tbody tr{border-bottom:1px solid var(--ur-border);}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:nth-child(even){background:var(--ur-surface);}
+tbody td{padding:9px 14px;}
+tbody td:first-child{font-weight:600;color:var(--ur-navy);}
+
+/* CALLOUT */
+.callout{display:flex;gap:14px;padding:16px 18px;border-radius:var(--r);margin:22px 0;border-left:4px solid;}
+.cl-rojo  {background:var(--ur-rojo-light); border-color:var(--ur-rojo);}
+.cl-azul  {background:var(--c-azul-bg);     border-color:var(--c-azul);}
+.cl-verde {background:var(--c-verde-bg);    border-color:var(--c-verde);}
+.cl-dorado{background:var(--c-dorado-bg);   border-color:var(--c-dorado);}
+.cl-rosa  {background:var(--c-rosa-bg);     border-color:var(--c-rosa);}
+.cl-ico{font-size:1.1rem;flex-shrink:0;line-height:1.6;}
+.cl-body{flex:1;}
+.cl-ttl{font-size:13px;font-weight:700;margin-bottom:4px;}
+.cl-rojo   .cl-ttl{color:var(--ur-rojo);}
+.cl-azul   .cl-ttl{color:var(--c-azul);}
+.cl-verde  .cl-ttl{color:var(--c-verde);}
+.cl-dorado .cl-ttl{color:var(--c-dorado);}
+.cl-rosa   .cl-ttl{color:var(--c-rosa);}
+.cl-txt{font-size:13px;color:var(--ur-slate);line-height:1.7;}
+.cl-txt strong{color:var(--ur-navy);}
+
+/* TIMELINE */
+.timeline{margin:18px 0;}
+.tl-item{display:flex;gap:16px;position:relative;}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:17px;top:36px;bottom:0;width:2px;background:var(--ur-border);}
+.tl-num{width:36px;height:36px;flex-shrink:0;border-radius:50%;background:var(--ur-rojo);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;font-family:var(--serif);}
+.tl-body{padding:4px 0 24px;flex:1;}
+.tl-period{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ur-rojo);margin-bottom:3px;}
+.tl-ttl{font-size:14px;font-weight:700;color:var(--ur-navy);margin-bottom:6px;}
+.tl-txt{font-size:13px;color:var(--ur-slate);line-height:1.65;margin-bottom:8px;}
+.tl-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.tl-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--ur-rojo-light);color:var(--ur-rojo);}
+
+/* PRINCIPIO LIST */
+.plist{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.pitem{display:flex;gap:14px;background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--r);padding:14px 16px;}
+.pnum{width:30px;height:30px;flex-shrink:0;border-radius:6px;background:var(--ur-navy);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:var(--serif);}
+.pb{flex:1;}
+.pttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:4px;}
+.ptxt{font-size:12.5px;color:var(--ur-slate);line-height:1.65;}
+.ptxt strong{color:var(--ur-navy);}
+
+/* PROMPT BOX */
+.prompt-box{background:var(--ur-navy);border-radius:var(--r);padding:18px 20px;margin:16px 0;position:relative;}
+.prompt-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:10px;}
+.prompt-text{font-size:13px;color:#E8EAF0;line-height:1.75;font-family:var(--sans);}
+.prompt-text strong{color:var(--ur-rojo-light);font-weight:600;}
+.prompt-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:rgba(200,16,46,.25);color:var(--ur-rojo-light);margin-bottom:8px;}
+
+/* STEP FLOW */
+.step-flow{display:flex;flex-direction:column;gap:0;margin:18px 0;}
+.step{display:flex;gap:14px;align-items:flex-start;}
+.step:not(:last-child) .step-connector{width:2px;flex:1;background:var(--ur-border);margin:4px 0;}
+.step-left{display:flex;flex-direction:column;align-items:center;width:36px;flex-shrink:0;}
+.step-dot{width:36px;height:36px;border-radius:50%;background:var(--ur-rojo);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:var(--serif);flex-shrink:0;}
+.step-line{width:2px;flex:1;background:var(--ur-border);min-height:20px;}
+.step-body{padding:6px 0 20px;flex:1;}
+.step-ttl{font-size:14px;font-weight:700;color:var(--ur-navy);margin-bottom:5px;}
+.step-txt{font-size:13px;color:var(--ur-slate);line-height:1.65;}
+.step-txt strong{color:var(--ur-navy);}
+
+/* STYLED LIST */
+.slist{list-style:none;margin:10px 0;}
+.slist li{display:flex;gap:10px;font-size:13.5px;color:var(--ur-navy-mid);line-height:1.65;padding:6px 0;border-bottom:1px solid var(--ur-border);}
+.slist li:last-child{border-bottom:none;}
+.slist li::before{content:'›';color:var(--ur-rojo);font-weight:700;flex-shrink:0;}
+
+/* SESSION NAV */
+.sess-nav{display:flex;justify-content:space-between;align-items:center;margin-top:44px;padding-top:24px;border-top:1px solid var(--ur-border);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:var(--sans);letter-spacing:.01em;}
+.btn-p{background:var(--ur-rojo);color:#fff;}
+.btn-p:hover{background:var(--ur-rojo-dark);}
+.btn-g{background:var(--ur-white);color:var(--ur-navy);border:1px solid var(--ur-border);}
+.btn-g:hover{background:var(--ur-surface);}
+.btn-v{background:var(--c-verde);color:#fff;}
+.btn-v:hover{background:#14532d;}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+
+/* QUIZ */
+.quiz-wrap{max-width:660px;}
+.qdots{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px;}
+.qdot{width:10px;height:10px;border-radius:50%;background:var(--ur-border);cursor:pointer;transition:all .18s;}
+.qdot.cur{background:var(--ur-rojo);transform:scale(1.4);}
+.qdot.ans{background:var(--ur-slate);}
+.qdot.ok{background:var(--c-verde);}
+.qdot.err{background:var(--ur-rojo);}
+.q-head{margin-bottom:20px;}
+.q-ctr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ur-rojo);margin-bottom:8px;}
+.q-txt{font-family:var(--serif);font-size:1.05rem;color:var(--ur-navy);line-height:1.45;margin-bottom:6px;}
+.q-hint{font-size:12px;color:var(--ur-muted);}
+.q-opts{display:flex;flex-direction:column;gap:9px;margin:18px 0;}
+.qopt{display:flex;align-items:flex-start;gap:12px;padding:13px 15px;background:var(--ur-white);border:2px solid var(--ur-border);border-radius:var(--r);cursor:pointer;transition:all .18s;font-size:13.5px;color:var(--ur-navy);line-height:1.5;}
+.qopt:hover:not(.locked){border-color:var(--ur-rojo);background:var(--ur-rojo-light);}
+.qopt.sel{border-color:var(--ur-navy);background:var(--c-gris-bg);}
+.qopt.ok{border-color:var(--c-verde);background:var(--c-verde-bg);color:var(--c-verde);}
+.qopt.err{border-color:var(--ur-rojo);background:var(--ur-rojo-light);color:var(--ur-rojo-dark);}
+.qopt.locked{cursor:default;}
+.qletter{width:26px;height:26px;flex-shrink:0;border-radius:50%;border:2px solid var(--ur-border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--ur-muted);}
+.qopt.sel .qletter{border-color:var(--ur-navy);color:var(--ur-navy);}
+.qopt.ok  .qletter{border-color:var(--c-verde);color:var(--c-verde);background:var(--c-verde-bg);}
+.qopt.err .qletter{border-color:var(--ur-rojo);color:var(--ur-rojo);background:var(--ur-rojo-light);}
+.q-fb{display:none;font-size:13px;line-height:1.7;padding:13px 16px;border-radius:var(--r);border-left:4px solid;margin-top:4px;}
+.q-fb.show{display:block;}
+.q-fb.ok{background:var(--c-verde-bg);border-color:var(--c-verde);color:var(--c-verde);}
+.q-fb.err{background:var(--ur-rojo-light);border-color:var(--ur-rojo);color:var(--ur-rojo-dark);}
+.q-ctrl{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap;}
+.quiz-result{display:none;text-align:center;padding:48px 20px;}
+.quiz-result.show{display:block;animation:up .35s ease;}
+.res-icon{font-size:3rem;margin-bottom:12px;}
+.res-score{font-family:var(--serif);font-size:3.2rem;color:var(--ur-rojo);margin-bottom:6px;}
+.res-lbl{font-size:14px;color:var(--ur-muted);margin-bottom:20px;}
+.res-badge{display:inline-block;font-size:13px;font-weight:700;padding:8px 22px;border-radius:20px;margin-bottom:28px;}
+.rb-gold{background:var(--c-dorado-bg);color:var(--c-dorado);}
+.rb-verde{background:var(--c-verde-bg);color:var(--c-verde);}
+.rb-azul{background:var(--c-azul-bg);color:var(--c-azul);}
+.res-note{font-size:13px;color:var(--ur-slate);max-width:400px;margin:0 auto 24px;line-height:1.65;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .main{margin-left:0;padding:20px 16px 48px;}
+  .compare,.card-grid-2{grid-template-columns:1fr;}
+  .card-grid{grid-template-columns:1fr;}
+  .tb-r .tb-track{width:90px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="tb-l">
+    <span class="tb-brand">ADVANCE · Universidad del Rosario</span>
+    <div class="tb-sep"></div>
+    <span class="tb-title">Análisis Financiero con IA</span>
+  </div>
+  <div class="tb-r">
+    <span class="tb-prog-lbl">Progreso</span>
+    <div class="tb-track"><div class="tb-fill" id="pgBar" style="width:0%"></div></div>
+    <span class="tb-pct" id="pgPct">0%</span>
+  </div>
+</header>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-pill">Módulo 2</div>
+    <div class="sb-mod-title">Prompting Estratégico para Finanzas</div>
+  </div>
+  <nav class="sb-nav" id="sbNav"></nav>
+</aside>
+
+<main class="main">
+
+<!-- ══════ S2.1 ══════ -->
+<section class="session" id="s1" data-title="Fundamentos del Prompting Profesional">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 2.1</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Fundamentos del Prompting Profesional en el Análisis Financiero Asistido por IA</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 45 min</span>
+      <span class="badge b-azul">Fundamentos</span>
+      <span class="badge b-rojo">Competencia cognitiva</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">El prompting profesional hace referencia a la capacidad de <strong>diseñar instrucciones analíticamente rigurosas</strong> que orienten el comportamiento inferencial de sistemas de IA para resolver problemas especializados. En finanzas corporativas, esta habilidad adquiere relevancia estratégica: la calidad del análisis producido depende directamente de la capacidad del usuario para estructurar el problema, definir los objetivos analíticos y establecer criterios metodológicos claros.</p>
+    <p class="prose">El prompting no es una simple interacción conversacional con una herramienta digital. Es una <em>práctica metodológica</em> orientada a diseñar estructuras de comunicación que traduzcan problemas económicos complejos en instrucciones analíticas interpretables por modelos de lenguaje avanzados.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Naturaleza conceptual del prompt financiero</h2>
+    <p class="prose">Un prompt puede definirse como una <strong>estructura de instrucciones destinada a orientar el proceso de razonamiento de un modelo de IA</strong>. A diferencia de los sistemas informáticos tradicionales basados en comandos formales estrictos, los LLM operan mediante interpretación probabilística de instrucciones en lenguaje natural. Esto permite una interacción más flexible, pero exige mayor precisión conceptual y metodológica.</p>
+
+    <div class="card-grid">
+      <div class="card c-azul">
+        <div class="card-ico">🎯</div>
+        <div class="card-ttl">Contexto analítico</div>
+        <div class="card-body">Información que permite al sistema comprender el entorno económico o empresarial en que se sitúa el problema financiero.</div>
+      </div>
+      <div class="card c-rojo">
+        <div class="card-ico">📋</div>
+        <div class="card-ttl">Objetivo analítico</div>
+        <div class="card-body">Definición precisa de la tarea que se desea ejecutar. Delimita el alcance y la profundidad esperada del análisis.</div>
+      </div>
+      <div class="card c-dorado">
+        <div class="card-ico">📊</div>
+        <div class="card-ttl">Datos e insumos</div>
+        <div class="card-body">Información financiera que debe ser utilizada durante el proceso: estados financieros, indicadores, series históricas.</div>
+      </div>
+      <div class="card c-verde">
+        <div class="card-ico">⚙️</div>
+        <div class="card-ttl">Restricciones metodológicas</div>
+        <div class="card-body">Criterios que delimitan el análisis: marco normativo (NIIF/US GAAP), audiencia, horizonte temporal, nivel de detalle.</div>
+      </div>
+      <div class="card c-rosa">
+        <div class="card-ico">📤</div>
+        <div class="card-ttl">Formato de salida</div>
+        <div class="card-body">Estructura esperada de la respuesta: secciones, tablas, resúmenes ejecutivos, nivel de síntesis requerido.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Prompting analítico vs. Prompting estratégico</h2>
+    <p class="prose">Dentro del uso de IA aplicada a finanzas es fundamental diferenciar dos niveles de interacción analítica:</p>
+    <div class="compare">
+      <div class="cmp">
+        <div class="cmp-h navy">Prompting analítico</div>
+        <div class="cmp-b">
+          <div class="cmp-row">Cálculo de indicadores financieros</div>
+          <div class="cmp-row">Análisis vertical y horizontal de ER/ESF</div>
+          <div class="cmp-row">Identificación de variaciones entre periodos</div>
+          <div class="cmp-row">Verificación de consistencia estructural</div>
+          <div class="cmp-row">Organización y clasificación de información contable</div>
+          <div class="cmp-row">Nivel técnico del análisis financiero</div>
+        </div>
+      </div>
+      <div class="cmp">
+        <div class="cmp-h rojo">Prompting estratégico</div>
+        <div class="cmp-b">
+          <div class="cmp-row">Implicaciones estratégicas del desempeño financiero</div>
+          <div class="cmp-row">Evaluación de riesgos financieros estructurales</div>
+          <div class="cmp-row">Sostenibilidad del modelo de negocio</div>
+          <div class="cmp-row">Interpretación dentro del contexto competitivo</div>
+          <div class="cmp-row">Exploración de escenarios estratégicos futuros</div>
+          <div class="cmp-row">Nivel interpretativo, diagnóstico y decisional</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Los estados financieros como representación cuantitativa de la estrategia</h2>
+    <p class="prose">Desde una perspectiva analítica profunda, los estados financieros constituyen una <strong>representación cuantitativa del conjunto de decisiones estratégicas adoptadas por una organización</strong>. Cada decisión empresarial relevante termina reflejándose, directa o indirectamente, en los resultados financieros.</p>
+
+    <ul class="slist">
+      <li>¿Qué revela la evolución de los márgenes sobre la estructura competitiva de la empresa?</li>
+      <li>¿Cómo influye la estructura de costos en la sostenibilidad del modelo de negocio?</li>
+      <li>¿Qué riesgos financieros emergen de la trayectoria de crecimiento observada?</li>
+      <li>¿Qué decisiones estratégicas podrían explicar las variaciones en los resultados financieros?</li>
+      <li>¿Existe coherencia entre la estrategia de crecimiento y la capacidad financiera de la empresa?</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Ejemplo: prompt de análisis estratégico financiero</h2>
+    <div class="prompt-box">
+      <div class="prompt-label">Ejemplo · Prompt estratégico</div>
+      <div class="prompt-text">"Actúa como <strong>consultor financiero especializado en estrategia empresarial</strong>. Analiza la evolución del Estado de Resultados de la empresa durante los últimos tres años. Identifica las principales tendencias en ingresos, estructura de costos y niveles de rentabilidad. Evalúa los riesgos financieros potenciales asociados a estas tendencias y propone posibles interpretaciones estratégicas que expliquen los cambios observados en el desempeño financiero."</div>
+    </div>
+    <div class="callout cl-azul">
+      <span class="cl-ico">💡</span>
+      <div class="cl-body">
+        <div class="cl-ttl">Clave del prompting estratégico</div>
+        <p class="cl-txt">Este tipo de instrucciones permite al modelo generar interpretaciones que trascienden el simple cálculo de indicadores y favorecen una comprensión estratégica del desempeño empresarial. El valor diferencial está en la <strong>arquitectura de la instrucción</strong>, no en la herramienta.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" disabled>← Anterior</button>
+    <button class="btn btn-p" onclick="goTo(2)">Sesión 2.2 →</button>
+  </div>
+</section>
+
+<!-- ══════ S2.2 ══════ -->
+<section class="session" id="s2" data-title="Técnicas Avanzadas de Prompting Financiero">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 2.2</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Técnicas Avanzadas de Prompting Aplicadas al Análisis Financiero</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 45 min</span>
+      <span class="badge b-rojo">Alta aplicabilidad</span>
+      <span class="badge b-def">3 técnicas</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">Más allá de la estructura básica de un prompt profesional, la investigación reciente sobre interacción con modelos de lenguaje ha identificado diversas técnicas que permiten mejorar significativamente la calidad del razonamiento generado. Dominar estas técnicas es una competencia diferenciadora para el analista financiero moderno.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Técnica 1 — Chain-of-Thought Prompting</h2>
+    <p class="prose">El <strong>Chain-of-Thought prompting</strong> consiste en solicitar explícitamente al modelo que exponga las diferentes etapas de su proceso de razonamiento. Esta técnica resulta especialmente útil en análisis financieros que implican múltiples pasos de cálculo o interpretación. Incrementa la transparencia del proceso analítico y facilita la validación de los resultados.</p>
+
+    <div class="step-flow">
+      <div class="step">
+        <div class="step-left"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-body"><div class="step-ttl">Identificar las principales variaciones en el estado financiero</div><div class="step-txt">El modelo señala las partidas con mayor variación absoluta y relativa respecto al periodo anterior.</div></div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-body"><div class="step-ttl">Calcular los indicadores financieros relevantes</div><div class="step-txt">Márgenes bruto, operativo y neto. Ratios de liquidez, endeudamiento y cobertura. KPIs de rentabilidad.</div></div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">3</div><div class="step-line"></div></div>
+        <div class="step-body"><div class="step-ttl">Interpretar las causas económicas de las variaciones</div><div class="step-txt">Vincula los datos cuantitativos con hipótesis económicas plausibles: presión en costos, cambios de mix, política comercial.</div></div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">4</div></div>
+        <div class="step-body"><div class="step-ttl">Formular conclusiones estratégicas</div><div class="step-txt">Articula implicaciones para la toma de decisiones: riesgos prioritarios, oportunidades de mejora, alertas sobre sostenibilidad del modelo.</div></div>
+      </div>
+    </div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Ejemplo · Chain-of-Thought</div>
+      <div class="prompt-text">"Actúa como analista financiero senior. Analiza el Estado de Resultados proporcionado en <strong>4 etapas explícitas y diferenciadas</strong>: (1) identifica las 3 variaciones más significativas vs. año anterior; (2) calcula márgenes bruto, operativo y neto; (3) interpreta las causas económicas de las variaciones; (4) formula conclusiones estratégicas para la junta directiva."</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Técnica 2 — Few-Shot Prompting</h2>
+    <p class="prose">El <strong>Few-Shot prompting</strong> consiste en proporcionar ejemplos previos dentro del propio prompt con el objetivo de orientar el comportamiento del modelo. Al observar ejemplos de análisis financieros correctamente estructurados, el modelo puede replicar patrones de razonamiento similares. Resulta especialmente útil cuando las organizaciones desean <strong>estandarizar la forma en que se generan reportes financieros o diagnósticos empresariales</strong>.</p>
+
+    <div class="card-grid">
+      <div class="card c-azul">
+        <div class="card-ico">📄</div>
+        <div class="card-ttl">Cuándo aplicarlo</div>
+        <div class="card-body">Cuando se requiere consistencia de formato entre múltiples análisis, reportes periódicos estandarizados o comunicaciones dirigidas a audiencias específicas.</div>
+      </div>
+      <div class="card c-verde">
+        <div class="card-ico">✅</div>
+        <div class="card-ttl">Ventaja estratégica</div>
+        <div class="card-body">Permite "enseñar" al modelo el estilo, tono y estructura de los reportes financieros de la organización sin necesidad de configuración técnica avanzada.</div>
+      </div>
+      <div class="card c-dorado">
+        <div class="card-ico">⚠️</div>
+        <div class="card-ttl">Consideración crítica</div>
+        <div class="card-body">Los ejemplos incluidos en el prompt deben ser metodológicamente sólidos. Ejemplos deficientes inducen patrones de razonamiento igualmente deficientes en el modelo.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Técnica 3 — Prompting Iterativo</h2>
+    <p class="prose">El <strong>Prompting iterativo</strong> se basa en la idea de que el análisis financiero asistido por IA puede desarrollarse en múltiples etapas sucesivas. En lugar de solicitar un análisis completo en un único prompt, el profesional divide el proceso analítico en fases que se retroalimentan. Cada respuesta generada constituye una nueva fuente de información que redefine el alcance de las siguientes preguntas.</p>
+
+    <div class="callout cl-azul">
+      <span class="cl-ico">🔄</span>
+      <div class="cl-body">
+        <div class="cl-ttl">Analogía metodológica</div>
+        <p class="cl-txt">El prompting iterativo guarda similitud con el <strong>método hipotético-deductivo</strong>. El analista formula una hipótesis interpretativa, usa el modelo para explorar sus implicaciones, examina los resultados y ajusta nuevas preguntas. La interacción con la IA se convierte en un <strong>diálogo analítico progresivo</strong>.</p>
+      </div>
+    </div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Ejemplo · Prompt financiero avanzado integrado</div>
+      <div class="prompt-text">"Actúa como <strong>analista financiero senior especializado en análisis corporativo</strong>. Analiza el Estado de Resultados proporcionado, calcula los principales indicadores de rentabilidad (margen bruto, margen operativo y margen neto), identifica las tres variaciones más significativas respecto al periodo anterior y explica las posibles causas económicas de dichas variaciones. Finalmente, elabora un <strong>resumen ejecutivo dirigido al comité de dirección</strong>."</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Impacto organizacional del prompting estructurado</h2>
+    <div class="card-grid">
+      <div class="card c-rojo">
+        <div class="card-ico">⚡</div>
+        <div class="card-ttl">Velocidad analítica</div>
+        <div class="card-body">Reduce el tiempo de generación de análisis preliminares de días a minutos, liberando capacidad para interpretación estratégica.</div>
+      </div>
+      <div class="card c-azul">
+        <div class="card-ico">🎯</div>
+        <div class="card-ttl">Estandarización</div>
+        <div class="card-body">Permite establecer metodologías analíticas consistentes en toda la organización, independientemente de quién ejecute el análisis.</div>
+      </div>
+      <div class="card c-verde">
+        <div class="card-ico">📈</div>
+        <div class="card-ttl">Escalabilidad</div>
+        <div class="card-body">El mismo prompt bien diseñado puede aplicarse a múltiples periodos, unidades de negocio o empresas del portafolio sin rediseño.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(1)">← Sesión 2.1</button>
+    <button class="btn btn-p" onclick="goTo(3)">Sesión 2.3 →</button>
+  </div>
+</section>
+
+<!-- ══════ S2.3 ══════ -->
+<section class="session" id="s3" data-title="Prompting para Validación Estructural">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 2.3</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Prompting para Validación Estructural de Información Financiera mediante IA</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 50 min</span>
+      <span class="badge b-dorado">Control de calidad</span>
+      <span class="badge b-def">4 dimensiones</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">La solidez de las conclusiones del análisis financiero depende no únicamente de la capacidad interpretativa del analista, sino —de manera fundamental— de la <strong>calidad estructural de los datos</strong> que sirven como insumo. Los errores estructurales en los datos se propagan silenciosamente a lo largo de los procesos analíticos, generando diagnósticos distorsionados y decisiones estratégicas mal fundamentadas.</p>
+    <p class="prose">En ecosistemas informacionales complejos —que integran ERP, plataformas contables, hojas de cálculo de múltiples áreas— esta multiplicidad de fuentes incrementa la probabilidad de inconsistencias. La IA generativa emerge como herramienta con potencial significativo para asistir en la <em>validación estructural preliminar</em> de datos financieros.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Las 4 dimensiones de validación estructural</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-num">1</div>
+        <div class="tl-body">
+          <div class="tl-ttl">Validación de la estructura contable</div>
+          <div class="tl-txt">Verificar que cada cuenta esté correctamente clasificada dentro de la categoría que corresponde a su naturaleza económica: activos, pasivos, patrimonio, ingresos, costos y gastos. Detecta errores de clasificación que distorsionan los análisis financieros agregados.</div>
+          <div class="tl-tags"><span class="tl-tag">Plan de cuentas</span><span class="tl-tag">Clasificación PUC</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-num">2</div>
+        <div class="tl-body">
+          <div class="tl-ttl">Validación de signos contables</div>
+          <div class="tl-txt">Verificar que los signos contables aplicados correspondan a la naturaleza de cada cuenta. Los activos registran signo positivo; ciertos pasivos pueden aparecer con signo negativo según el formato de exportación del ERP. Inconsistencias en signos generan errores sistemáticos en el cálculo de KPIs.</div>
+          <div class="tl-tags"><span class="tl-tag">Naturaleza débito/crédito</span><span class="tl-tag">Formatos ERP</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-num">3</div>
+        <div class="tl-body">
+          <div class="tl-ttl">Validación de coherencia matemática</div>
+          <div class="tl-txt">Verificar que las agregaciones financieras respeten las relaciones aritméticas esperadas: total de activos vs. suma de componentes, consistencia de subtotales, coherencia en variaciones interperiodos, correspondencia entre totales y agregaciones del plan de cuentas.</div>
+          <div class="tl-tags"><span class="tl-tag">Subtotales</span><span class="tl-tag">Cierre matemático</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-num">4</div>
+        <div class="tl-body">
+          <div class="tl-ttl">Identificación de anomalías y valores atípicos</div>
+          <div class="tl-txt">Detectar variaciones extraordinarias en cuentas específicas, registros significativamente superiores o inferiores a los patrones históricos, inconsistencias entre periodos comparables y cambios abruptos en tendencias financieras. Punto de partida para investigaciones más profundas.</div>
+          <div class="tl-tags"><span class="tl-tag">Outliers</span><span class="tl-tag">Señales de auditoría</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Arquitectura del prompt de validación estructural</h2>
+    <p class="prose">Un prompt de validación estructural eficaz incorpora cuatro elementos fundamentales:</p>
+    <div class="card-grid">
+      <div class="card c-azul"><div class="card-ico">🎭</div><div class="card-ttl">1. Rol analítico</div><div class="card-body">Define el perfil del modelo: auditor financiero, controlador de calidad de datos contables, revisor de integridad estructural.</div></div>
+      <div class="card c-rojo"><div class="card-ico">📊</div><div class="card-ttl">2. Descripción del dataset</div><div class="card-body">Describe el conjunto de datos analizado: balance de prueba, ER, ESF, número de cuentas, período, sistema de origen.</div></div>
+      <div class="card c-dorado"><div class="card-ico">✅</div><div class="card-ttl">3. Criterios de validación</div><div class="card-body">Especifica las dimensiones a verificar: estructura contable, signos, coherencia matemática, anomalías.</div></div>
+      <div class="card c-verde"><div class="card-ico">📋</div><div class="card-ttl">4. Formato del reporte</div><div class="card-body">Define la estructura del output: hallazgos por dimensión, nivel de severidad, recomendaciones de corrección.</div></div>
+    </div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Ejemplo · Prompt de validación estructural completo</div>
+      <div class="prompt-text">"Actúa como <strong>auditor financiero especializado en control de calidad de datos contables</strong>. Analiza el balance de prueba proporcionado y verifica: (1) la correcta clasificación de las cuentas según su naturaleza contable dentro del plan de cuentas; (2) la coherencia de los signos contables aplicados; (3) la consistencia matemática de los subtotales y totales; (4) la presencia de valores atípicos o variaciones extraordinarias. Presenta un <strong>reporte estructurado de hallazgos</strong> con nivel de severidad (crítico / moderado / informativo) y recomendación de corrección para cada inconsistencia identificada."</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Aplicaciones organizacionales</h2>
+    <ul class="slist">
+      <li>Revisión preliminar de balances de prueba antes de análisis financiero.</li>
+      <li>Control de calidad de bases de datos contables en cierres mensuales y trimestrales.</li>
+      <li>Preparación y saneamiento de información para modelos de análisis automatizados.</li>
+      <li>Apoyo a procesos de auditoría interna como verificación preliminar no sustituta.</li>
+      <li>Validación previa a la construcción de dashboards financieros y reportes ejecutivos.</li>
+    </ul>
+  </div>
+
+  <div class="callout cl-dorado">
+    <span class="cl-ico">⚠️</span>
+    <div class="cl-body">
+      <div class="cl-ttl">Límite crítico — los LLM no sustituyen la auditoría formal</div>
+      <p class="cl-txt">Los modelos de lenguaje no reemplazan los controles contables formales ni las auditorías financieras realizadas por profesionales especializados. Su función es de <strong>asistencia en la verificación preliminar</strong>. Todo diagnóstico generado debe ser evaluado críticamente por profesionales financieros antes de ser utilizado en informes oficiales o procesos de toma de decisiones.</p>
+    </div>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(2)">← Sesión 2.2</button>
+    <button class="btn btn-p" onclick="goTo(4)">Sesión 2.4 →</button>
+  </div>
+</section>
+
+<!-- ══════ S2.4 ══════ -->
+<section class="session" id="s4" data-title="Arquitectura del Prompting Estratégico">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 2.4</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Arquitectura del Prompting Estratégico para el Análisis Financiero y la Toma de Decisiones Empresariales</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 50 min</span>
+      <span class="badge b-rojo">Diseño avanzado</span>
+      <span class="badge b-azul">5 componentes</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">La arquitectura del prompt estratégico no es improvisación — es <strong>diseño metodológico</strong>. Un prompt estratégico bien diseñado sigue una estructura de cinco componentes que orienta al modelo hacia interpretaciones financieras de alto valor decisional. Comprender y aplicar esta arquitectura es la competencia central del prompting profesional en finanzas.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Los 5 componentes del prompt estratégico</h2>
+    <div class="plist">
+      <div class="pitem">
+        <div class="pnum">1</div>
+        <div class="pb">
+          <div class="pttl">Definición del rol analítico del modelo</div>
+          <p class="ptxt">Establece explícitamente el perfil que el modelo debe asumir. Orienta el estilo de razonamiento y el nivel de profundidad interpretativa. <strong>Ejemplo:</strong> "Actúa como consultor financiero senior especializado en estrategia corporativa para empresas medianas en Colombia."</p>
+        </div>
+      </div>
+      <div class="pitem">
+        <div class="pnum">2</div>
+        <div class="pb">
+          <div class="pttl">Contextualización empresarial y sectorial</div>
+          <p class="ptxt">Proporciona información sobre la empresa, su industria, modelo de negocio, posicionamiento competitivo y estrategia vigente. Sin contexto empresarial, los resultados financieros se interpretan de forma aislada y el análisis pierde relevancia estratégica.</p>
+        </div>
+      </div>
+      <div class="pitem">
+        <div class="pnum">3</div>
+        <div class="pb">
+          <div class="pttl">Incorporación de información financiera relevante</div>
+          <p class="ptxt">Introduce los datos financieros que servirán de base para el análisis: estados de resultados, evolución de ingresos, variaciones en costos operativos, indicadores clave de desempeño. El objetivo es proporcionar la base analítica necesaria para generar interpretaciones estratégicas coherentes.</p>
+        </div>
+      </div>
+      <div class="pitem">
+        <div class="pnum">4</div>
+        <div class="pb">
+          <div class="pttl">Marco normativo explícito</div>
+          <p class="ptxt">Especifica el estándar contable aplicable (NIIF aplicables a Colombia, US GAAP) y el contexto regulatorio relevante. Sin esta especificación, el modelo puede generar análisis internamente coherentes pero externamente inconsistentes frente a los requisitos regulatorios.</p>
+        </div>
+      </div>
+      <div class="pitem">
+        <div class="pnum">5</div>
+        <div class="pb">
+          <div class="pttl">Solicitud explícita de síntesis estratégica con audiencia definida</div>
+          <p class="ptxt">Define la audiencia (junta directiva, comité de inversiones, gerencia, analistas externos) y solicita explícitamente una síntesis orientada a la toma de decisiones. Esta instrucción orienta la respuesta hacia implicaciones estratégicas, evitando que el modelo se limite a describir los datos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Prompt estratégico integrado — los 5 componentes en acción</h2>
+    <div class="prompt-box">
+      <div class="prompt-label">Ejemplo · Prompt estratégico completo · 5 componentes</div>
+      <div class="prompt-tag">ROL</div>
+      <div class="prompt-text" style="margin-bottom:12px">"Actúa como <strong>asesor financiero senior especializado en finanzas corporativas para empresas medianas colombianas</strong>."</div>
+      <div class="prompt-tag">CONTEXTO</div>
+      <div class="prompt-text" style="margin-bottom:12px">"La empresa opera en el sector de manufactura ligera, con ingresos anuales de COP 85.000 millones, fuerza de ventas propia y alta dependencia de materias primas importadas."</div>
+      <div class="prompt-tag">DATOS</div>
+      <div class="prompt-text" style="margin-bottom:12px">"[Adjunta ER comparativo 2022–2024 en formato estructurado]"</div>
+      <div class="prompt-tag">MARCO NORMATIVO</div>
+      <div class="prompt-text" style="margin-bottom:12px">"Los estados financieros están elaborados bajo NIIF aplicables a Colombia, marco regulatorio SFC."</div>
+      <div class="prompt-tag">SÍNTESIS + AUDIENCIA</div>
+      <div class="prompt-text">"Resume los principales hallazgos financieros en un <strong>informe ejecutivo de 3 secciones</strong> para la junta directiva: (1) desempeño financiero 2022–2024, (2) riesgos estratégicos identificados, (3) decisiones que requieren consideración por parte del órgano directivo."</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Tipologías de prompts para análisis estratégico</h2>
+    <div class="card-grid">
+      <div class="card c-rojo">
+        <div class="card-ico">📊</div>
+        <div class="card-ttl">Prompts de síntesis ejecutiva</div>
+        <div class="card-body">Condensan información financiera compleja en mensajes estratégicos clave. Priorizan los tres factores estructurales que más influyeron en los resultados.</div>
+      </div>
+      <div class="card c-dorado">
+        <div class="card-ico">⚠️</div>
+        <div class="card-ttl">Prompts de identificación de riesgos</div>
+        <div class="card-body">Orientados a detectar señales de deterioro estructural en liquidez, solvencia, rentabilidad o eficiencia operativa antes de que se consoliden.</div>
+      </div>
+      <div class="card c-azul">
+        <div class="card-ico">🔭</div>
+        <div class="card-ttl">Prompts de análisis prospectivo</div>
+        <div class="card-body">Proyectan escenarios futuros bajo supuestos explícitos. Modelan impactos de variables macro (TRM, tasas, inflación) sobre los resultados financieros.</div>
+      </div>
+      <div class="card c-verde">
+        <div class="card-ico">🤝</div>
+        <div class="card-ttl">Prompts de benchmarking sectorial</div>
+        <div class="card-body">Comparan el desempeño financiero de la empresa contra referentes sectoriales o competidores, identificando brechas y ventajas competitivas.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout cl-verde">
+    <span class="cl-ico">🎯</span>
+    <div class="cl-body">
+      <div class="cl-ttl">La arquitectura del prompt determina el nivel del análisis</div>
+      <p class="cl-txt">Un prompt genérico produce análisis genérico. Un prompt con los 5 componentes correctamente configurados produce análisis de nivel posgrado ejecutivo: riguroso, contextualizado, normativo y estratégicamente orientado. <strong>La inversión en el diseño del prompt es la inversión en la calidad del análisis.</strong></p>
+    </div>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(3)">← Sesión 2.3</button>
+    <button class="btn btn-p" onclick="goTo(5)">Sesión 2.5 →</button>
+  </div>
+</section>
+
+<!-- ══════ S2.5 ══════ -->
+<section class="session" id="s5" data-title="Prompting Iterativo como Competencia Analítica">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 2.5</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Prompting Iterativo como Competencia Analítica Estratégica en Finanzas</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 45 min</span>
+      <span class="badge b-verde">Metodología avanzada</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">El prompting iterativo puede definirse como un enfoque metodológico de interacción con modelos de lenguaje en el cual las instrucciones se <strong>refinan progresivamente a través de múltiples ciclos de análisis</strong> con el propósito de mejorar la precisión, profundidad y relevancia estratégica de las respuestas generadas.</p>
+    <p class="prose">A diferencia del prompting estático —donde se formula una sola instrucción— el prompting iterativo reconoce que la comprensión de un problema analítico <em>evoluciona a medida que se examinan los resultados preliminares</em>. Cada respuesta generada por el modelo constituye una nueva fuente de información que puede ser utilizada para redefinir el alcance de las siguientes preguntas.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Etapas del refinamiento progresivo</h2>
+    <div class="step-flow">
+      <div class="step">
+        <div class="step-left"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-ttl">Exploración inicial — visión panorámica</div>
+          <div class="step-txt">El analista formula una instrucción amplia para obtener una visión general del comportamiento financiero. <strong>Ejemplo:</strong> "Analiza la evolución del Estado de Resultados durante los últimos tres años e identifica las principales tendencias en ingresos, estructura de costos y rentabilidad."</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-ttl">Profundización analítica — dimensiones específicas</div>
+          <div class="step-txt">Con base en los hallazgos preliminares, el analista formula preguntas más específicas sobre los factores de mayor relevancia identificados. <strong>Ejemplo:</strong> "Profundiza en la caída del margen bruto identificada: desagrega sus posibles causas entre variación de volumen, precio de venta y costo de materias primas."</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">3</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-ttl">Diagnóstico causal — hipótesis e implicaciones</div>
+          <div class="step-txt">El analista solicita hipótesis interpretativas sobre las causas estructurales de los fenómenos identificados y sus implicaciones estratégicas. Se incorporan variables contextuales: entorno macro, dinámica sectorial, estrategia corporativa.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">4</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-ttl">Contraste de interpretaciones alternativas</div>
+          <div class="step-txt">El analista utiliza el modelo para evaluar diversas hipótesis antes de adoptar una conclusión definitiva. <strong>Ejemplo:</strong> "¿Qué otras explicaciones alternativas podrían justificar este patrón de resultados? Evalúa al menos tres hipótesis contrapuestas."</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">5</div></div>
+        <div class="step-body">
+          <div class="step-ttl">Síntesis estructurada de conclusiones</div>
+          <div class="step-txt">Al concluir el proceso iterativo, el analista solicita una síntesis estructurada de las conclusiones obtenidas a lo largo del ciclo de análisis. Esta síntesis sirve como base para el reporte ejecutivo final.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Buenas prácticas del prompting iterativo</h2>
+    <div class="plist">
+      <div class="pitem"><div class="pnum" style="background:var(--ur-rojo)">1</div><div class="pb"><div class="pttl">Comenzar con una exploración amplia, no con una pregunta hiper-específica</div><p class="ptxt">Un punto de partida demasiado estrecho limita la capacidad del modelo para identificar patrones no anticipados por el analista. La amplitud inicial permite que emerjan hallazgos inesperados de alto valor.</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--ur-rojo)">2</div><div class="pb"><div class="pttl">Registrar y documentar cada iteración</div><p class="ptxt">El proceso iterativo solo es auditable si se documenta: instrucción formulada, respuesta obtenida, validación aplicada y decisión de continuar o redirigir. Esto es especialmente crítico en organizaciones con requerimientos de gobernanza.</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--ur-rojo)">3</div><div class="pb"><div class="pttl">Validar cuantitativamente antes de cada iteración interpretativa</div><p class="ptxt">No avanzar a etapas interpretativas sin haber validado la precisión de los cálculos previos. Una interpretación construida sobre datos incorrectos amplifica el error a lo largo de todo el proceso.</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--ur-rojo)">4</div><div class="pb"><div class="pttl">Solicitar explícitamente la explicitación de supuestos</div><p class="ptxt">En cada iteración interpretativa, el analista debe pedir al modelo que declare explícitamente los supuestos que sustentan sus conclusiones. Esto permite identificar supuestos implícitos que podrían no aplicar al contexto específico de la empresa.</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--ur-rojo)">5</div><div class="pb"><div class="pttl">Contrastar siempre con interpretaciones alternativas</div><p class="ptxt">Antes de adoptar una conclusión definitiva, explorar activamente hipótesis alternativas con el modelo. El razonamiento financiero sólido requiere falsabilidad: una conclusión robusta es aquella que sobrevive a las hipótesis contrapuestas más razonables.</p></div></div>
+    </div>
+  </div>
+
+  <div class="callout cl-azul">
+    <span class="cl-ico">🔬</span>
+    <div class="cl-body">
+      <div class="cl-ttl">El prompting iterativo como investigación aplicada</div>
+      <p class="cl-txt">Dominar las técnicas de prompting iterativo representa una habilidad estratégica para los profesionales financieros que buscan utilizar la IA como herramienta de apoyo en procesos de análisis, planeación y toma de decisiones. <strong>Lejos de concebirse como generación automática de respuestas, la IA debe entenderse como un instrumento de apoyo al razonamiento analítico del profesional.</strong></p>
+    </div>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(4)">← Sesión 2.4</button>
+    <button class="btn btn-p" onclick="goTo(6)">Sesión 2.6 →</button>
+  </div>
+</section>
+
+<!-- ══════ S2.6 ══════ -->
+<section class="session" id="s6" data-title="Prompting para Juntas Directivas e Inversionistas">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 2.6</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Prompting para Juntas Directivas e Inversionistas: Comunicación Financiera Estratégica Asistida por IA</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 50 min</span>
+      <span class="badge b-rosa">Gobernanza corporativa</span>
+      <span class="badge b-rojo">Alta relevancia</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">Una de las competencias profesionales más sofisticadas en finanzas corporativas no reside únicamente en la capacidad de realizar análisis cuantitativos rigurosos, sino en la habilidad de <strong>transformar dichos análisis en conocimiento estratégico comprensible y accionable</strong> para los órganos de gobierno corporativo. El prompting para juntas directivas cumple una función de <em>traducción cognitiva</em>: convierte el análisis técnico en mensajes estratégicos de alto nivel.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Diferencia fundamental: equipos técnicos vs. juntas directivas</h2>
+    <div class="compare">
+      <div class="cmp">
+        <div class="cmp-h navy">Comunicación a equipos técnicos</div>
+        <div class="cmp-b">
+          <div class="cmp-row">Mayor profundidad técnica y cálculos detallados</div>
+          <div class="cmp-row">Explicaciones metodológicas extensas</div>
+          <div class="cmp-row">Foco en datos cuantitativos y ratios</div>
+          <div class="cmp-row">Terminología contable y financiera técnica</div>
+          <div class="cmp-row">Validación de cálculos y supuestos</div>
+        </div>
+      </div>
+      <div class="cmp">
+        <div class="cmp-h rojo">Comunicación a junta directiva</div>
+        <div class="cmp-b">
+          <div class="cmp-row">Síntesis estratégica sobre significado de los datos</div>
+          <div class="cmp-row">Implicaciones para la toma de decisiones</div>
+          <div class="cmp-row">Tendencias estructurales del desempeño</div>
+          <div class="cmp-row">Riesgos financieros emergentes y oportunidades</div>
+          <div class="cmp-row">Decisiones que requieren evaluación o aprobación</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Arquitectura del prompt para órganos directivos</h2>
+    <div class="plist">
+      <div class="pitem">
+        <div class="pnum">1</div>
+        <div class="pb">
+          <div class="pttl">Definición explícita de la audiencia directiva</div>
+          <p class="ptxt">Especificar claramente que el análisis está dirigido a la junta directiva, comité de inversiones u órgano de gobierno corporativo. Esta instrucción redefine el marco interpretativo del modelo: ajusta el nivel de detalle, el tono y la estructura narrativa hacia el ejecutivo. <strong>Ejemplo:</strong> "Actúa como asesor financiero senior preparando un informe estratégico para la junta directiva de una empresa."</p>
+        </div>
+      </div>
+      <div class="pitem">
+        <div class="pnum">2</div>
+        <div class="pb">
+          <div class="pttl">Contextualización empresarial con variables estratégicas</div>
+          <p class="ptxt">Proveer información sobre la empresa, su industria, modelo de negocio y estrategia vigente. Sin contexto, los resultados financieros se interpretan de forma aislada. La inclusión de variables sectoriales y competitivas mejora significativamente la calidad interpretativa del análisis.</p>
+        </div>
+      </div>
+      <div class="pitem">
+        <div class="pnum">3</div>
+        <div class="pb">
+          <div class="pttl">Incorporación de datos financieros estructurados</div>
+          <p class="ptxt">Introducir los estados financieros comparativos, la evolución de indicadores clave y los datos contextuales relevantes (sectoriales, macroeconómicos). Esta es la base analítica que el modelo utilizará para generar las interpretaciones estratégicas.</p>
+        </div>
+      </div>
+      <div class="pitem">
+        <div class="pnum">4</div>
+        <div class="pb">
+          <div class="pttl">Solicitud explícita de síntesis orientada a decisiones</div>
+          <p class="ptxt">Pedir explícitamente que el análisis destaque los hallazgos financieros clave y los riesgos estratégicos que deben ser discutidos por la junta. <strong>Ejemplo:</strong> "Resume los principales hallazgos financieros y destaca los riesgos estratégicos más relevantes que deberían ser discutidos por la junta directiva en la próxima sesión ordinaria."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Tipologías de prompts para comunicación a órganos directivos</h2>
+    <div class="card-grid">
+      <div class="card c-rojo">
+        <div class="card-ico">📋</div>
+        <div class="card-ttl">Síntesis ejecutiva</div>
+        <div class="card-body">Condensan información financiera compleja en un conjunto reducido de mensajes estratégicos. Identifican los tres factores estructurales que más influyeron en los resultados del período.</div>
+      </div>
+      <div class="card c-dorado">
+        <div class="card-ico">⚠️</div>
+        <div class="card-ttl">Identificación de riesgos</div>
+        <div class="card-body">Detectan y priorizan riesgos financieros estructurales: deterioro de liquidez, presión sobre márgenes, exposición cambiaria, concentración de cartera.</div>
+      </div>
+      <div class="card c-azul">
+        <div class="card-ico">🔭</div>
+        <div class="card-ttl">Análisis de escenarios</div>
+        <div class="card-body">Proyectan el impacto financiero de distintas decisiones estratégicas bajo supuestos explícitos y controlados. Apoyan la deliberación directiva.</div>
+      </div>
+      <div class="card c-verde">
+        <div class="card-ico">💬</div>
+        <div class="card-ttl">Narrativa para inversionistas</div>
+        <div class="card-body">Construyen narrativas financieras que comunican la tesis de valor de la empresa a inversionistas institucionales, fondos y analistas externos.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Ejemplo integrado: informe para junta directiva</h2>
+    <div class="prompt-box">
+      <div class="prompt-label">Ejemplo · Informe ejecutivo para junta directiva</div>
+      <div class="prompt-text">"Actúa como <strong>asesor financiero corporativo senior</strong>. La empresa es una manufacturera colombiana de mediana capitalización con fuerza de ventas propia. Los estados financieros 2022–2024 están elaborados bajo NIIF. [Adjunta ER comparativo].<br><br>Elabora un <strong>informe ejecutivo de tres secciones</strong> para la junta directiva de la empresa: <br><strong>(1) Desempeño financiero 2022–2024</strong>: síntesis de la evolución de ingresos, márgenes y rentabilidad. <br><strong>(2) Riesgos estratégicos identificados</strong>: señales de deterioro estructural y factores de vulnerabilidad financiera. <br><strong>(3) Agenda de decisiones</strong>: tres decisiones o temas que requieren evaluación o aprobación por parte del órgano directivo, con su fundamento financiero."</div>
+    </div>
+  </div>
+
+  <div class="callout cl-rosa">
+    <span class="cl-ico">🏛️</span>
+    <div class="cl-body">
+      <div class="cl-ttl">Responsabilidad fiduciaria en la comunicación a órganos de gobierno</div>
+      <p class="cl-txt">Los reportes destinados a juntas directivas tienen implicaciones legales y fiduciarias. El analista mantiene la responsabilidad plena sobre la <strong>exactitud, completitud y pertinencia</strong> de la información presentada. La IA asiste en la estructuración y síntesis; el juicio profesional valida la sustancia y la relevancia estratégica. La regulación SFC establece responsabilidades específicas en materia de revelación de información financiera.</p>
+    </div>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(5)">← Sesión 2.5</button>
+    <button class="btn btn-p" onclick="goTo(7)">Evaluación final →</button>
+  </div>
+</section>
+
+<!-- ══════ QUIZ ══════ -->
+<section class="session" id="s7" data-title="Evaluación — Módulo 2">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Evaluación · Módulo 2</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Quiz de Verificación — Prompting Estratégico para Finanzas</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">8 preguntas</span>
+      <span class="badge b-def">⏱ ~15 min</span>
+      <span class="badge b-verde">Criterio estratégico</span>
+    </div>
+  </div>
+  <div class="quiz-wrap">
+    <div class="qdots" id="qDots"></div>
+    <div id="qContainer"></div>
+    <div class="quiz-result" id="qResult">
+      <div class="res-icon">🎓</div>
+      <div class="res-score" id="rScore"></div>
+      <div class="res-lbl">preguntas correctas de 8</div>
+      <div id="rBadge"></div>
+      <p class="res-note">Revise las sesiones correspondientes a las respuestas incorrectas antes de avanzar al Módulo 3.</p>
+      <button class="btn btn-g" onclick="resetQuiz()" style="margin-top:8px">Reiniciar quiz</button>
+    </div>
+  </div>
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(6)">← Sesión 2.6</button>
+    <span style="font-size:12px;color:var(--ur-muted)">Fin del Módulo 2</span>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+const SESS=[
+  {id:1,lbl:'2.1',title:'Fundamentos del Prompting Profesional',time:'45 min'},
+  {id:2,lbl:'2.2',title:'Técnicas Avanzadas de Prompting Financiero',time:'45 min'},
+  {id:3,lbl:'2.3',title:'Prompting para Validación Estructural',time:'50 min'},
+  {id:4,lbl:'2.4',title:'Arquitectura del Prompting Estratégico',time:'50 min'},
+  {id:5,lbl:'2.5',title:'Prompting Iterativo como Competencia Analítica',time:'45 min'},
+  {id:6,lbl:'2.6',title:'Prompting para Juntas Directivas e Inversionistas',time:'50 min'},
+  {id:7,lbl:'✓', title:'Evaluación — Módulo 2',time:'~15 min'},
+];
+
+const QUIZ=[
+  {
+    q:'¿Cuál es la distinción conceptual fundamental entre el prompting analítico y el prompting estratégico en finanzas?',
+    opts:[
+      'El prompting analítico usa modelos más simples que el estratégico.',
+      'El prompting analítico opera en el nivel técnico (cálculo, clasificación), mientras que el estratégico opera en el nivel interpretativo, diagnóstico y decisional.',
+      'El prompting estratégico se aplica solo en presentaciones para inversionistas.',
+      'No existe una diferencia conceptual relevante; ambos términos son sinónimos.'
+    ],
+    ok:1,
+    fb:'Correcto. El prompting analítico ejecuta tareas técnicas: cálculo de indicadores, análisis vertical/horizontal, validación de datos. El prompting estratégico interpreta implicaciones económicas, evalúa riesgos estructurales y apoya la toma de decisiones. Son niveles diferentes del mismo proceso analítico.'
+  },
+  {
+    q:'¿Qué componente del prompt financiero profesional permite al modelo ajustar el nivel de profundidad interpretativa y el estilo de razonamiento?',
+    opts:[
+      'La especificación del formato de salida.',
+      'La incorporación de datos e insumos financieros.',
+      'La definición explícita del rol analítico del modelo.',
+      'Las restricciones metodológicas del análisis.'
+    ],
+    ok:2,
+    fb:'Correcto. La definición del rol analítico ("actúa como consultor financiero senior", "actúa como auditor especializado") orienta el estilo de razonamiento y el nivel de profundidad interpretativa del modelo. Es el primer componente de la arquitectura del prompt estratégico y establece el marco cognitivo de toda la interacción.'
+  },
+  {
+    q:'El Chain-of-Thought prompting en análisis financiero consiste en:',
+    opts:[
+      'Proporcionar ejemplos previos al modelo para que replique el estilo de análisis.',
+      'Solicitar explícitamente al modelo que exponga las etapas de su razonamiento: variaciones → cálculo → causas económicas → conclusiones estratégicas.',
+      'Dividir el análisis en múltiples conversaciones independientes para evitar la pérdida de contexto.',
+      'Solicitar únicamente el resultado final del análisis sin detalles intermedios.'
+    ],
+    ok:1,
+    fb:'Correcto. El Chain-of-Thought prompting solicita explícitamente que el modelo exponga cada etapa de su proceso de razonamiento. En finanzas, esto incrementa la transparencia analítica y facilita la validación de los resultados: el analista puede verificar cada paso antes de avanzar al siguiente.'
+  },
+  {
+    q:'En validación estructural de datos financieros mediante IA, ¿cuál de las siguientes afirmaciones es correcta?',
+    opts:[
+      'Los LLM pueden sustituir completamente las auditorías financieras formales.',
+      'Los modelos de IA deben usarse como herramientas de verificación preliminar, cuyas conclusiones deben ser evaluadas críticamente por profesionales antes de utilizarse en informes oficiales.',
+      'La validación estructural con IA garantiza la exactitud de los estados financieros auditados.',
+      'Solo se puede aplicar validación estructural a datos originados en sistemas SAP.'
+    ],
+    ok:1,
+    fb:'Correcto. Los LLM son herramientas de apoyo para verificación preliminar, no sustitutos de la auditoría formal. Su utilidad reside en detectar inconsistencias estructurales de forma rápida y sistemática. La responsabilidad sobre la calidad de la información financiera permanece en los profesionales financieros.'
+  },
+  {
+    q:'¿Cuál es el propósito de incluir el marco normativo explícito (NIIF, US GAAP) en la arquitectura del prompt estratégico?',
+    opts:[
+      'Para que el modelo genere respuestas más extensas y detalladas.',
+      'Para que el modelo entienda en qué país opera la empresa.',
+      'Para que el análisis sea consistente con los requisitos regulatorios aplicables, ya que los modelos no internalizan automáticamente estándares contables sin especificación expresa.',
+      'El marco normativo no es necesario en un prompt estratégico; solo aplica en prompts técnicos.'
+    ],
+    ok:2,
+    fb:'Correcto. Los modelos de lenguaje no integran automáticamente NIIF, US GAAP ni regulaciones sectoriales (Límite IV de los LLM). Sin esta especificación, el análisis puede ser internamente coherente pero externamente inconsistente frente a los requisitos regulatorios aplicables. Especificar el marco normativo es una condición metodológica previa en cualquier análisis con implicaciones regulatorias.'
+  },
+  {
+    q:'¿En qué se diferencia el prompting iterativo del prompting estático en el análisis financiero?',
+    opts:[
+      'El prompting iterativo es más lento y menos eficiente que el estático.',
+      'El prompting iterativo refina progresivamente las instrucciones a través de múltiples ciclos analíticos, donde cada respuesta informa las siguientes preguntas, generando un diálogo analítico.',
+      'El prompting estático produce mejores resultados que el iterativo en todos los casos.',
+      'El prompting iterativo solo aplica en análisis de series temporales.'
+    ],
+    ok:1,
+    fb:'Correcto. El prompting iterativo reconoce que la comprensión de un problema analítico evoluciona con los resultados preliminares. Cada respuesta del modelo es una nueva fuente de información que redefine el alcance de las siguientes preguntas. Es metodológicamente superior al prompting estático para análisis complejos que requieren profundidad interpretativa progresiva.'
+  },
+  {
+    q:'Un analista diseña un prompt para la junta directiva. ¿Cuál de estos elementos es más crítico para garantizar la utilidad estratégica del output?',
+    opts:[
+      'Incluir todos los cálculos detallados y fórmulas utilizadas.',
+      'Especificar explícitamente la audiencia directiva y solicitar una síntesis orientada a la toma de decisiones con agenda de decisiones.',
+      'Usar terminología contable técnica para demostrar rigor metodológico.',
+      'Incluir el mayor volumen posible de datos financieros históricos.'
+    ],
+    ok:1,
+    fb:'Correcto. La comunicación financiera a juntas directivas cumple una función de "traducción cognitiva": convierte el análisis técnico en mensajes estratégicos accionables. Especificar la audiencia directiva y solicitar explícitamente una síntesis orientada a decisiones es lo que diferencia un informe para junta de un análisis técnico estándar.'
+  },
+  {
+    q:'¿Cuál de estas prácticas describe correctamente el uso responsable del prompting iterativo en un contexto de gobernanza financiera corporativa?',
+    opts:[
+      'Avanzar rápidamente a etapas interpretativas sin validar los cálculos previos para ganar eficiencia.',
+      'Documentar cada iteración: instrucción formulada, respuesta obtenida, validación aplicada y decisión de continuar, para garantizar la auditorabilidad del proceso.',
+      'Delegar completamente la síntesis final al modelo sin revisión humana.',
+      'Usar el mismo prompt en todas las iteraciones sin modificarlo, para mantener consistencia.'
+    ],
+    ok:1,
+    fb:'Correcto. El prompting iterativo en organizaciones con requerimientos de gobernanza exige documentación de cada ciclo: instrucción, respuesta, validación y decisión de avanzar. Esto garantiza la trazabilidad del proceso analítico (Principio VII de gobernanza) y permite la auditoría de las conclusiones adoptadas en procesos de toma de decisiones.'
+  },
+];
+
+let cur=1, done=new Set();
+let qs={idx:0,ans:Array(8).fill(null),sub:Array(8).fill(false)};
+
+function buildSB(){
+  document.getElementById('sbNav').innerHTML=SESS.map(s=>`
+    <div class="nav-item ${s.id===cur?'active':''} ${done.has(s.id)?'done':''}" onclick="goTo(${s.id})">
+      <div class="nd">${done.has(s.id)?'✓':s.id===7?'📝':s.id}</div>
+      <div class="nav-b">
+        <div class="nav-id">Sesión ${s.lbl}</div>
+        <div class="nav-ttl">${s.title}</div>
+        <div class="nav-time">${s.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+function goTo(n){
+  if(n>cur&&cur<7)done.add(cur);
+  document.querySelectorAll('.session').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  cur=n; buildSB(); updateProg();
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===7)initQuiz();
+}
+
+function updateProg(){
+  const p=Math.round((done.size/7)*100);
+  document.getElementById('pgBar').style.width=p+'%';
+  document.getElementById('pgPct').textContent=p+'%';
+}
+
+function initQuiz(){renderQ(qs.idx);renderDots();}
+
+function renderDots(){
+  document.getElementById('qDots').innerHTML=QUIZ.map((_,i)=>{
+    let c='qdot';
+    if(i===qs.idx)c+=' cur';
+    else if(qs.sub[i])c+=qs.ans[i]===QUIZ[i].ok?' ok':' err';
+    else if(qs.ans[i]!==null)c+=' ans';
+    return `<div class="${c}" onclick="jumpQ(${i})"></div>`;
+  }).join('');
+}
+
+function jumpQ(i){qs.idx=i;renderQ(i);renderDots();}
+
+function renderQ(i){
+  const d=QUIZ[i],sub=qs.sub[i],sel=qs.ans[i];
+  document.getElementById('qContainer').innerHTML=`
+    <div class="q-head">
+      <div class="q-ctr">Pregunta ${i+1} de ${QUIZ.length}</div>
+      <div class="q-txt">${d.q}</div>
+      <div class="q-hint">Seleccione la respuesta más adecuada.</div>
+    </div>
+    <div class="q-opts">
+      ${d.opts.map((o,j)=>{
+        let c='qopt'+(sub?' locked':'');
+        if(sub){if(j===d.ok)c+=' ok';else if(j===sel&&j!==d.ok)c+=' err';}
+        else if(j===sel)c+=' sel';
+        return `<div class="${c}" onclick="${sub?'':'selectOpt('+j+')'}">
+          <div class="qletter">${['A','B','C','D'][j]}</div><span>${o}</span></div>`;
+      }).join('')}
+    </div>
+    <div class="q-fb ${sub?'show '+(sel===d.ok?'ok':'err'):''}">
+      ${sub?(sel===d.ok?'✅ ':'❌ ')+d.fb:''}
+    </div>
+    <div class="q-ctrl">
+      ${!sub?`<button class="btn btn-p" onclick="submitQ()" ${sel===null?'disabled':''}>Confirmar respuesta</button>`:''}
+      ${sub&&i<QUIZ.length-1?`<button class="btn btn-p" onclick="nextQ()">Siguiente →</button>`:''}
+      ${sub&&i===QUIZ.length-1?`<button class="btn btn-v" onclick="showResult()">Ver resultado →</button>`:''}
+      ${i>0?`<button class="btn btn-g" onclick="jumpQ(${i-1})">← Anterior</button>`:''}
+    </div>`;
+}
+
+function selectOpt(j){qs.ans[qs.idx]=j;renderQ(qs.idx);renderDots();}
+function submitQ(){qs.sub[qs.idx]=true;renderQ(qs.idx);renderDots();}
+function nextQ(){qs.idx++;renderQ(qs.idx);renderDots();}
+
+function showResult(){
+  document.getElementById('qContainer').style.display='none';
+  document.getElementById('qDots').style.display='none';
+  const n=qs.ans.filter((a,i)=>a===QUIZ[i].ok).length;
+  document.getElementById('rScore').textContent=n+'/8';
+  const b=n===8?'<div class="res-badge rb-gold">🏆 Excelente — Dominio pleno del módulo</div>':
+           n>=6?'<div class="res-badge rb-verde">✅ Aprobado — Comprensión sólida del módulo</div>':
+                '<div class="res-badge rb-azul">📖 Refuerzo recomendado — Revise las sesiones con error</div>';
+  document.getElementById('rBadge').innerHTML=b;
+  document.getElementById('qResult').classList.add('show');
+  done.add(7);updateProg();buildSB();
+}
+
+function resetQuiz(){
+  qs={idx:0,ans:Array(8).fill(null),sub:Array(8).fill(false)};
+  document.getElementById('qContainer').style.display='';
+  document.getElementById('qDots').style.display='';
+  document.getElementById('qResult').classList.remove('show');
+  initQuiz();
+}
+
+buildSB();
+document.getElementById('s1').classList.add('active');
+</script>
+</body>
+</html>

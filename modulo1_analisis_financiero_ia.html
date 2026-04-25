@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Módulo 1 · ChatGPT y Fundamentos de IA · ADVANCE UR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
+<style>
+/* ─── DESIGN TOKENS — ADVANCE · UNIVERSIDAD DEL ROSARIO ─────────────────── */
+:root {
+  --ur-rojo:       #C8102E;
+  --ur-rojo-dark:  #A00D25;
+  --ur-rojo-light: #FBEAED;
+  --ur-rojo-mid:   #F2AABA;
+  --ur-navy:       #1A1F36;
+  --ur-navy-mid:   #2D3454;
+  --ur-slate:      #4A5178;
+  --ur-muted:      #6B7280;
+  --ur-border:     #E2E5ED;
+  --ur-surface:    #F8F9FC;
+  --ur-white:      #FFFFFF;
+  /* Semántico */
+  --c-azul:        #1B5EBF; --c-azul-bg:   #EBF2FF;
+  --c-dorado:      #B45309; --c-dorado-bg: #FEF3C7;
+  --c-verde:       #166534; --c-verde-bg:  #DCFCE7;
+  --c-rosa:        #9D174D; --c-rosa-bg:   #FCE7F3;
+  --c-gris:        #374151; --c-gris-bg:   #F3F4F6;
+  /* Tipo */
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans:  'DM Sans', -apple-system, sans-serif;
+  /* Layout */
+  --sw: 270px; --th: 54px; --r: 8px; --rl: 12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);font-size:15px;line-height:1.65;color:var(--ur-navy);background:var(--ur-surface);min-height:100vh;}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;height:var(--th);background:var(--ur-navy);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:3px solid var(--ur-rojo);}
+.tb-l{display:flex;align-items:center;}
+.tb-brand{font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5);}
+.tb-sep{width:1px;height:18px;background:rgba(255,255,255,.15);margin:0 14px;}
+.tb-title{font-family:var(--serif);font-size:15px;color:#fff;}
+.tb-r{display:flex;align-items:center;gap:12px;}
+.tb-prog-lbl{font-size:11px;color:rgba(255,255,255,.5);font-weight:500;}
+.tb-track{width:140px;height:5px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden;}
+.tb-fill{height:100%;background:var(--ur-rojo);border-radius:3px;transition:width .5s ease;}
+.tb-pct{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);min-width:32px;text-align:right;}
+
+/* LAYOUT */
+.layout{display:flex;margin-top:var(--th);min-height:calc(100vh - var(--th));}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);background:var(--ur-white);border-right:1px solid var(--ur-border);position:fixed;top:var(--th);bottom:0;overflow-y:auto;display:flex;flex-direction:column;}
+.sb-head{padding:20px 18px 16px;border-bottom:1px solid var(--ur-border);}
+.sb-pill{display:inline-flex;align-items:center;gap:6px;background:var(--ur-rojo-light);color:var(--ur-rojo);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
+.sb-mod-title{font-family:var(--serif);font-size:13px;color:var(--ur-navy);line-height:1.4;}
+.sb-nav{flex:1;padding:6px 0 16px;}
+.nav-item{display:flex;align-items:flex-start;gap:11px;padding:10px 18px;cursor:pointer;border-left:3px solid transparent;transition:background .15s,border-color .15s;}
+.nav-item:hover{background:var(--ur-surface);}
+.nav-item.active{background:var(--ur-rojo-light);border-left-color:var(--ur-rojo);}
+.nav-item.done .nd{background:var(--c-verde);}
+.nav-item.active .nd{background:var(--ur-rojo);}
+.nd{width:22px;height:22px;border-radius:50%;flex-shrink:0;background:var(--ur-border);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;margin-top:2px;}
+.nav-b{flex:1;}
+.nav-id{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--ur-rojo);text-transform:uppercase;}
+.nav-ttl{font-size:12px;color:var(--ur-navy);line-height:1.35;margin-top:1px;}
+.nav-item.active .nav-ttl{font-weight:600;}
+.nav-time{font-size:10px;color:var(--ur-muted);margin-top:2px;}
+.sidebar::-webkit-scrollbar{width:4px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--ur-border);border-radius:2px;}
+
+/* MAIN */
+.main{margin-left:var(--sw);flex:1;padding:36px 44px 64px;max-width:calc(var(--sw) + 820px);}
+
+/* SESSIONS */
+.session{display:none;}
+.session.active{display:block;animation:up .28s ease;}
+@keyframes up{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* SESSION HEADER */
+.sh{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--ur-border);}
+.sh-ey{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.sh-id{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ur-rojo);}
+.sh-rule{flex:1;height:1px;background:var(--ur-rojo-mid);}
+.sh-title{font-family:var(--serif);font-size:1.7rem;color:var(--ur-navy);line-height:1.25;margin-bottom:14px;}
+.sh-meta{display:flex;gap:8px;flex-wrap:wrap;}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+.b-def   {background:var(--c-gris-bg);  color:var(--c-gris);}
+.b-rojo  {background:var(--ur-rojo-light);color:var(--ur-rojo);}
+.b-azul  {background:var(--c-azul-bg);  color:var(--c-azul);}
+.b-verde {background:var(--c-verde-bg); color:var(--c-verde);}
+.b-dorado{background:var(--c-dorado-bg);color:var(--c-dorado);}
+.b-rosa  {background:var(--c-rosa-bg);  color:var(--c-rosa);}
+
+/* PROSE */
+.section{margin-bottom:36px;}
+.sec-title{font-family:var(--serif);font-size:1.12rem;color:var(--ur-navy);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--ur-rojo-mid);}
+.prose{font-size:14.5px;line-height:1.8;color:var(--ur-navy-mid);margin-bottom:14px;}
+.prose strong{color:var(--ur-navy);font-weight:600;}
+.prose em{color:var(--ur-rojo-dark);font-style:normal;font-weight:600;}
+
+/* CARD GRID */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px;margin:18px 0;}
+.card{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);padding:18px 16px;border-top:3px solid var(--ur-border);transition:box-shadow .2s;}
+.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07);}
+.c-rojo   {border-top-color:var(--ur-rojo);}
+.c-azul   {border-top-color:var(--c-azul);}
+.c-verde  {border-top-color:var(--c-verde);}
+.c-dorado {border-top-color:var(--c-dorado);}
+.c-rosa   {border-top-color:var(--c-rosa);}
+.card-ico {font-size:1.4rem;margin-bottom:8px;}
+.card-ttl {font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:6px;}
+.card-body{font-size:12.5px;color:var(--ur-slate);line-height:1.6;}
+.card-tag {display:inline-block;margin-top:10px;font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 8px;border-radius:20px;background:var(--ur-rojo-light);color:var(--ur-rojo);}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.cmp{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);overflow:hidden;}
+.cmp-h{padding:11px 16px;font-size:13px;font-weight:700;color:#fff;}
+.cmp-h.navy {background:var(--ur-navy);}
+.cmp-h.rojo {background:var(--ur-rojo);}
+.cmp-h.verde{background:var(--c-verde);}
+.cmp-b{padding:12px 16px;}
+.cmp-row{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--ur-slate);padding:5px 0;border-bottom:1px solid var(--ur-border);line-height:1.5;}
+.cmp-row:last-child{border-bottom:none;}
+.cmp-row::before{content:'›';color:var(--ur-rojo);font-weight:700;flex-shrink:0;}
+
+/* TABLE */
+.tbl-w{overflow-x:auto;margin:16px 0;border-radius:var(--rl);border:1px solid var(--ur-border);box-shadow:0 1px 4px rgba(0,0,0,.04);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead tr{background:var(--ur-navy);}
+thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:12px;color:#fff;}
+tbody tr{border-bottom:1px solid var(--ur-border);}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:nth-child(even){background:var(--ur-surface);}
+tbody td{padding:9px 14px;}
+tbody td:first-child{font-weight:600;color:var(--ur-navy);}
+
+/* CALLOUT */
+.callout{display:flex;gap:14px;padding:16px 18px;border-radius:var(--r);margin:22px 0;border-left:4px solid;}
+.cl-rojo   {background:var(--ur-rojo-light);  border-color:var(--ur-rojo);}
+.cl-azul   {background:var(--c-azul-bg);      border-color:var(--c-azul);}
+.cl-verde  {background:var(--c-verde-bg);     border-color:var(--c-verde);}
+.cl-dorado {background:var(--c-dorado-bg);    border-color:var(--c-dorado);}
+.cl-rosa   {background:var(--c-rosa-bg);      border-color:var(--c-rosa);}
+.cl-ico{font-size:1.1rem;flex-shrink:0;line-height:1.6;}
+.cl-body{flex:1;}
+.cl-ttl{font-size:13px;font-weight:700;margin-bottom:4px;}
+.cl-rojo   .cl-ttl{color:var(--ur-rojo);}
+.cl-azul   .cl-ttl{color:var(--c-azul);}
+.cl-verde  .cl-ttl{color:var(--c-verde);}
+.cl-dorado .cl-ttl{color:var(--c-dorado);}
+.cl-rosa   .cl-ttl{color:var(--c-rosa);}
+.cl-txt{font-size:13px;color:var(--ur-slate);line-height:1.7;}
+.cl-txt strong{color:var(--ur-navy);}
+
+/* TIMELINE */
+.timeline{margin:18px 0;}
+.tl-item{display:flex;gap:16px;position:relative;}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:17px;top:36px;bottom:0;width:2px;background:var(--ur-border);}
+.tl-num{width:36px;height:36px;flex-shrink:0;border-radius:50%;background:var(--ur-rojo);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;font-family:var(--serif);}
+.tl-body{padding:4px 0 24px;flex:1;}
+.tl-period{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ur-rojo);margin-bottom:3px;}
+.tl-ttl{font-size:14px;font-weight:700;color:var(--ur-navy);margin-bottom:6px;}
+.tl-txt{font-size:13px;color:var(--ur-slate);line-height:1.65;margin-bottom:8px;}
+.tl-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.tl-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--ur-rojo-light);color:var(--ur-rojo);}
+
+/* PRINCIPIO LIST */
+.plist{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.pitem{display:flex;gap:14px;background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--r);padding:14px 16px;}
+.pnum{width:30px;height:30px;flex-shrink:0;border-radius:6px;background:var(--ur-navy);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:var(--serif);}
+.pb{flex:1;}
+.pttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:4px;}
+.ptxt{font-size:12.5px;color:var(--ur-slate);line-height:1.65;}
+.ptxt strong{color:var(--ur-navy);}
+
+/* LIMIT CARDS */
+.lim-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+.lcard{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--r);padding:16px;border-left:4px solid;}
+.l1{border-left-color:var(--ur-rojo);}
+.l2{border-left-color:var(--c-dorado);}
+.l3{border-left-color:var(--c-azul);}
+.l4{border-left-color:var(--c-rosa);}
+.l5{border-left-color:var(--c-verde);}
+.lnum{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ur-muted);margin-bottom:5px;}
+.lttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:6px;}
+.ltxt{font-size:12px;color:var(--ur-slate);line-height:1.65;}
+.lerr{margin-top:10px;font-size:11.5px;color:var(--c-dorado);background:var(--c-dorado-bg);border-radius:4px;padding:6px 10px;line-height:1.5;}
+
+/* STYLED LIST */
+.slist{list-style:none;margin:10px 0;}
+.slist li{display:flex;gap:10px;font-size:13.5px;color:var(--ur-navy-mid);line-height:1.65;padding:6px 0;border-bottom:1px solid var(--ur-border);}
+.slist li:last-child{border-bottom:none;}
+.slist li::before{content:'›';color:var(--ur-rojo);font-weight:700;flex-shrink:0;}
+
+/* SESSION NAV */
+.sess-nav{display:flex;justify-content:space-between;align-items:center;margin-top:44px;padding-top:24px;border-top:1px solid var(--ur-border);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:var(--sans);letter-spacing:.01em;}
+.btn-p{background:var(--ur-rojo);color:#fff;}
+.btn-p:hover{background:var(--ur-rojo-dark);}
+.btn-g{background:var(--ur-white);color:var(--ur-navy);border:1px solid var(--ur-border);}
+.btn-g:hover{background:var(--ur-surface);}
+.btn-v{background:var(--c-verde);color:#fff;}
+.btn-v:hover{background:#14532d;}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+
+/* QUIZ */
+.quiz-wrap{max-width:660px;}
+.qdots{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px;}
+.qdot{width:10px;height:10px;border-radius:50%;background:var(--ur-border);cursor:pointer;transition:all .18s;}
+.qdot.cur{background:var(--ur-rojo);transform:scale(1.4);}
+.qdot.ans{background:var(--ur-slate);}
+.qdot.ok {background:var(--c-verde);}
+.qdot.err{background:var(--ur-rojo);}
+
+.q-head{margin-bottom:20px;}
+.q-ctr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ur-rojo);margin-bottom:8px;}
+.q-txt{font-family:var(--serif);font-size:1.05rem;color:var(--ur-navy);line-height:1.45;margin-bottom:6px;}
+.q-hint{font-size:12px;color:var(--ur-muted);}
+.q-opts{display:flex;flex-direction:column;gap:9px;margin:18px 0;}
+.qopt{display:flex;align-items:flex-start;gap:12px;padding:13px 15px;background:var(--ur-white);border:2px solid var(--ur-border);border-radius:var(--r);cursor:pointer;transition:all .18s;font-size:13.5px;color:var(--ur-navy);line-height:1.5;}
+.qopt:hover:not(.locked){border-color:var(--ur-rojo);background:var(--ur-rojo-light);}
+.qopt.sel{border-color:var(--ur-navy);background:var(--c-gris-bg);}
+.qopt.ok {border-color:var(--c-verde); background:var(--c-verde-bg);color:var(--c-verde);}
+.qopt.err{border-color:var(--ur-rojo); background:var(--ur-rojo-light);color:var(--ur-rojo-dark);}
+.qopt.locked{cursor:default;}
+.qletter{width:26px;height:26px;flex-shrink:0;border-radius:50%;border:2px solid var(--ur-border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--ur-muted);}
+.qopt.sel .qletter{border-color:var(--ur-navy);color:var(--ur-navy);}
+.qopt.ok  .qletter{border-color:var(--c-verde);color:var(--c-verde);background:var(--c-verde-bg);}
+.qopt.err .qletter{border-color:var(--ur-rojo);color:var(--ur-rojo);background:var(--ur-rojo-light);}
+.q-fb{display:none;font-size:13px;line-height:1.7;padding:13px 16px;border-radius:var(--r);border-left:4px solid;margin-top:4px;}
+.q-fb.show{display:block;}
+.q-fb.ok {background:var(--c-verde-bg);border-color:var(--c-verde);color:var(--c-verde);}
+.q-fb.err{background:var(--ur-rojo-light);border-color:var(--ur-rojo);color:var(--ur-rojo-dark);}
+.q-ctrl{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap;}
+
+.quiz-result{display:none;text-align:center;padding:48px 20px;}
+.quiz-result.show{display:block;animation:up .35s ease;}
+.res-icon{font-size:3rem;margin-bottom:12px;}
+.res-score{font-family:var(--serif);font-size:3.2rem;color:var(--ur-rojo);margin-bottom:6px;}
+.res-lbl{font-size:14px;color:var(--ur-muted);margin-bottom:20px;}
+.res-badge{display:inline-block;font-size:13px;font-weight:700;padding:8px 22px;border-radius:20px;margin-bottom:28px;}
+.rb-gold {background:var(--c-dorado-bg);color:var(--c-dorado);}
+.rb-verde{background:var(--c-verde-bg); color:var(--c-verde);}
+.rb-azul {background:var(--c-azul-bg);  color:var(--c-azul);}
+.res-note{font-size:13px;color:var(--ur-slate);max-width:400px;margin:0 auto 24px;line-height:1.65;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .main{margin-left:0;padding:20px 16px 48px;}
+  .lim-grid,.compare{grid-template-columns:1fr;}
+  .card-grid{grid-template-columns:1fr;}
+  .tb-r .tb-track{width:90px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="tb-l">
+    <span class="tb-brand">ADVANCE · Universidad del Rosario</span>
+    <div class="tb-sep"></div>
+    <span class="tb-title">Análisis Financiero con IA</span>
+  </div>
+  <div class="tb-r">
+    <span class="tb-prog-lbl">Progreso</span>
+    <div class="tb-track"><div class="tb-fill" id="pgBar" style="width:0%"></div></div>
+    <span class="tb-pct" id="pgPct">0%</span>
+  </div>
+</header>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-pill">Módulo 1</div>
+    <div class="sb-mod-title">ChatGPT y Fundamentos de IA Aplicada a Finanzas</div>
+  </div>
+  <nav class="sb-nav" id="sbNav"></nav>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- ══════ S1.1 ══════ -->
+<section class="session" id="s1" data-title="Evolución de los Modelos de IA (2025–2026)">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 1.1</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Evolución de los Modelos de IA (2025–2026) y su Impacto en el Análisis Financiero</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 45 min</span>
+      <span class="badge b-azul">Fundamentos</span>
+      <span class="badge b-rojo">Maduración tecnológica</span>
+    </div>
+  </div>
+  <div class="section">
+    <p class="prose">La evolución de los modelos de IA entre 2025 y 2026 no es una mejora incremental en desempeño técnico. Es un proceso de <strong>maduración estructural</strong> con implicaciones profundas para la práctica del análisis financiero. Los modelos de lenguaje avanzados dejaron de ser herramientas de apoyo conversacional para consolidarse como <em>infraestructuras analíticas</em> que intervienen de manera significativa en la interpretación y estructuración de información financiera.</p>
+    <p class="prose">El análisis financiero contemporáneo se configura como una <strong>práctica híbrida</strong>: la interacción humano–máquina adquiere un papel central. El profesional ya no opera exclusivamente sobre datos brutos, sino sobre sistemas de interpretación asistida que amplifican su capacidad de procesamiento y estructuración argumentativa.</p>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">De interfaces conversacionales a infraestructuras cognitivas</h2>
+    <p class="prose">En 2025, ChatGPT era comprendido principalmente como una interfaz conversacional sofisticada. En 2026, esta caracterización resulta <strong>insuficiente</strong>. La transformación se manifiesta en tres ejes estructurales:</p>
+    <div class="card-grid">
+      <div class="card c-azul">
+        <div class="card-ico">🧠</div>
+        <div class="card-ttl">Comprensión de contextos extensos</div>
+        <div class="card-body">Mayor profundidad al procesar estados financieros completos con múltiples partidas y notas explicativas. Razonamientos multi-etapa sin pérdida de coherencia lógica.</div>
+      </div>
+      <div class="card c-rojo">
+        <div class="card-ico">📐</div>
+        <div class="card-ttl">Razonamiento estructurado financiero</div>
+        <div class="card-body">Integración más consistente entre cálculo cuantitativo e interpretación cualitativa. Mejor modelamiento de relaciones jerárquicas entre cuentas contables.</div>
+      </div>
+      <div class="card c-verde">
+        <div class="card-ico">🔄</div>
+        <div class="card-ttl">Multimodalidad consolidada</div>
+        <div class="card-body">Procesamiento integrado de texto, tablas, imágenes y documentos estructurados. Reducción significativa en errores de interpretación de estructuras tabulares.</div>
+        <span class="card-tag">2026</span>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Transformación del rol del analista financiero</h2>
+    <div class="compare">
+      <div class="cmp">
+        <div class="cmp-h navy">Rol tradicional</div>
+        <div class="cmp-b">
+          <div class="cmp-row">Procesador primario de datos</div>
+          <div class="cmp-row">Ejecución manual de cálculos</div>
+          <div class="cmp-row">Reportería periódica estática</div>
+          <div class="cmp-row">Análisis retrospectivo</div>
+          <div class="cmp-row">Dependencia de hojas de cálculo</div>
+        </div>
+      </div>
+      <div class="cmp">
+        <div class="cmp-h rojo">Rol en entorno IA · 2026</div>
+        <div class="cmp-b">
+          <div class="cmp-row">Supervisor crítico de sistemas</div>
+          <div class="cmp-row">Arquitecto de flujos analíticos</div>
+          <div class="cmp-row">Validación metodológica continua</div>
+          <div class="cmp-row">Modelación de escenarios prospectivos</div>
+          <div class="cmp-row">Orquestación humano–IA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Principios que permanecen invariantes</h2>
+    <ul class="slist">
+      <li>La formación financiera rigurosa continúa siendo indispensable — la IA amplifica, no sustituye.</li>
+      <li>La responsabilidad sobre decisiones estratégicas recae en el profesional humano.</li>
+      <li>Los controles internos y procesos de auditoría no pueden delegarse íntegramente a sistemas automatizados.</li>
+      <li>La ética y la gobernanza en el uso de IA son obligaciones institucionales — no opcionales.</li>
+      <li>La evolución tecnológica complejiza la disciplina financiera; exige mayor profundidad, no menor.</li>
+    </ul>
+  </div>
+  <div class="callout cl-verde">
+    <span class="cl-ico">💡</span>
+    <div class="cl-body">
+      <div class="cl-ttl">Conclusión de sesión</div>
+      <p class="cl-txt">La transición 2025–2026 posiciona a los modelos de lenguaje avanzados como <strong>componentes estructurales del ecosistema analítico financiero</strong>. La competencia diferencial no reside en delegar decisiones a la IA, sino en estructurar la información, orientar el proceso inferencial y contextualizar los resultados con rigor metodológico.</p>
+    </div>
+  </div>
+  <div class="sess-nav">
+    <button class="btn btn-g" disabled>← Anterior</button>
+    <button class="btn btn-p" onclick="goTo(2)">Sesión 1.2 →</button>
+  </div>
+</section>
+
+<!-- ══════ S1.2 ══════ -->
+<section class="session" id="s2" data-title="Multimodalidad en Inteligencia Artificial">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 1.2</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Multimodalidad en Inteligencia Artificial: Fundamentos, Alcances e Implicaciones para el Análisis Financiero</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 40 min</span>
+      <span class="badge b-verde">Capacidad clave 2026</span>
+    </div>
+  </div>
+  <div class="section">
+    <p class="prose">La multimodalidad hace referencia a la capacidad de un sistema de IA para <strong>procesar, integrar e interpretar múltiples tipos de representaciones de información</strong> —texto, datos tabulares, imágenes, gráficos y documentos estructurados— dentro de un mismo marco computacional. En el entorno corporativo financiero, donde los datos se distribuyen en hojas de cálculo, PDFs auditados, reportes ERP y gráficos ejecutivos, esta capacidad representa un avance estructural de primer orden.</p>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Modalidades relevantes en el ecosistema financiero</h2>
+    <div class="card-grid">
+      <div class="card c-azul"><div class="card-ico">📊</div><div class="card-ttl">Hojas de cálculo</div><div class="card-body">Estados de Resultados, Balances, Flujos de Caja con estructuras jerárquicas complejas y múltiples niveles.</div></div>
+      <div class="card c-rojo"><div class="card-ico">📄</div><div class="card-ttl">PDFs auditados</div><div class="card-body">Estados financieros con notas explicativas, políticas contables y revelaciones bajo NIIF.</div></div>
+      <div class="card c-dorado"><div class="card-ico">📈</div><div class="card-ttl">Gráficos y dashboards</div><div class="card-body">KPIs visuales, gráficos de tendencias y reportes de desempeño ejecutivo.</div></div>
+      <div class="card c-verde"><div class="card-ico">🏭</div><div class="card-ttl">Extractos ERP</div><div class="card-body">Exportaciones de SAP, Oracle, Siigo y otras plataformas contables corporativas.</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Escenario aplicado: análisis multimodal integrado</h2>
+    <p class="prose">Un analista carga cuatro insumos simultáneamente al modelo:</p>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-num">1</div><div class="tl-body"><div class="tl-ttl">Excel con Estado de Resultados</div><div class="tl-txt">El sistema extrae y estructura las cifras, reconoce jerarquías contables y calcula variaciones horizontales. Identifica subtotales y relaciones entre partidas.</div></div></div>
+      <div class="tl-item"><div class="tl-num">2</div><div class="tl-body"><div class="tl-ttl">PDF con notas explicativas</div><div class="tl-txt">Identifica información sobre políticas contables, contingencias, cambios normativos y estimaciones bajo NIIF aplicables a Colombia.</div></div></div>
+      <div class="tl-item"><div class="tl-num">3</div><div class="tl-body"><div class="tl-ttl">Gráfico de tendencia de ventas</div><div class="tl-txt">Reconoce patrones visuales: crecimiento, estancamiento, puntos de inflexión. Los integra en la narrativa analítica del desempeño.</div></div></div>
+      <div class="tl-item"><div class="tl-num">4</div><div class="tl-body"><div class="tl-ttl">Comentario estratégico cualitativo</div><div class="tl-txt">Integra el contexto narrativo — política de reducción de costos, estrategia comercial — dentro de la interpretación final del análisis.</div></div></div>
+    </div>
+    <div class="callout cl-azul"><span class="cl-ico">🎯</span><div class="cl-body"><div class="cl-ttl">Resultado: articulación contextualizada</div><p class="cl-txt">No es una simple agregación de elementos. Es una <strong>convergencia informativa</strong> que reduce la fragmentación interpretativa. La multimodalidad integra dimensiones cuantitativas y cualitativas en un mismo proceso analítico.</p></div></div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Límites — responsabilidad profesional</h2>
+    <ul class="slist">
+      <li>La calidad y completitud de los insumos proporcionados determinan la calidad del output.</li>
+      <li>La claridad de las instrucciones formuladas define la profundidad del análisis producido.</li>
+      <li>La coherencia interna de los documentos cargados es condición necesaria para resultados fiables.</li>
+      <li>Los modelos operan bajo principios probabilísticos — pueden generar interpretaciones plausibles pero imperfectas.</li>
+    </ul>
+    <div class="callout cl-dorado"><span class="cl-ico">⚠️</span><div class="cl-body"><div class="cl-ttl">Principio operativo crítico</div><p class="cl-txt">La responsabilidad última sobre la validación de cifras y la toma de decisiones recae en el profesional financiero. La multimodalidad amplía el alcance instrumental del análisis, pero no desplaza la responsabilidad ética ni técnica del usuario.</p></div></div>
+  </div>
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(1)">← Sesión 1.1</button>
+    <button class="btn btn-p" onclick="goTo(3)">Sesión 1.3 →</button>
+  </div>
+</section>
+
+<!-- ══════ S1.3 ══════ -->
+<section class="session" id="s3" data-title="Lectura Algorítmica de Estados Financieros">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 1.3</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">La Lectura Algorítmica de Estados Financieros: Arquitectura Computacional, Fases y Límites</h1>
+    <div class="sh-meta"><span class="badge b-def">⏱ 50 min</span><span class="badge b-rojo">Alta relevancia práctica</span></div>
+  </div>
+  <div class="section">
+    <p class="prose">Cuando un profesional carga un estado financiero en un modelo de lenguaje avanzado, desencadena una secuencia de procesos computacionales que transforma la representación documental en una <strong>estructura analítica interna</strong>. Comprender esta mecánica permite utilizarla con rigor, diseñar mejores inputs y evitar errores interpretativos de alto costo.</p>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Las 4 fases del procesamiento algorítmico</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-num">I</div><div class="tl-body"><div class="tl-period">Fase 1</div><div class="tl-ttl">Reconocimiento estructural del documento</div><div class="tl-txt">El sistema identifica jerarquías contables, subtotales, totales, encabezados y relaciones entre partidas. La calidad del análisis depende críticamente de la claridad estructural del documento fuente. Ambigüedades en jerarquías o inconsistencias en signos afectan la precisión del procesamiento.</div><div class="tl-tags"><span class="tl-tag">Jerarquías</span><span class="tl-tag">Signos contables</span><span class="tl-tag">Subtotales</span></div></div></div>
+      <div class="tl-item"><div class="tl-num">II</div><div class="tl-body"><div class="tl-period">Fase 2</div><div class="tl-ttl">Representación vectorial y construcción relacional</div><div class="tl-txt">Cada término y cifra se codifica como vector en un espacio de alta dimensionalidad. Conceptos como "Ingresos", "EBITDA" o "Activo Corriente" son nodos dentro de una red relacional — no etiquetas aisladas. Las asociaciones emergen de correlaciones estadísticas consolidadas en el entrenamiento.</div><div class="tl-tags"><span class="tl-tag">Vectores semánticos</span><span class="tl-tag">Redes relacionales</span></div></div></div>
+      <div class="tl-item"><div class="tl-num">III</div><div class="tl-body"><div class="tl-period">Fase 3</div><div class="tl-ttl">Cálculo estructurado y validación cuantitativa interna</div><div class="tl-txt">El modelo ejecuta variaciones absolutas y relativas, márgenes, ratios y comparaciones. Combina cálculo simbólico con mecanismos probabilísticos. Cuando los datos están claramente delimitados, la precisión es elevada. Ante ambigüedades jerárquicas, surgen errores interpretativos.</div><div class="tl-tags"><span class="tl-tag">KPIs</span><span class="tl-tag">Análisis H/V</span><span class="tl-tag">Ratios</span></div></div></div>
+      <div class="tl-item"><div class="tl-num">IV</div><div class="tl-body"><div class="tl-period">Fase 4</div><div class="tl-ttl">Inferencia probabilística y detección de configuraciones económicas</div><div class="tl-txt">El sistema identifica configuraciones asociadas históricamente a fenómenos financieros: márgenes bajo presión, tensiones de liquidez, distorsiones en capital de trabajo. Estas inferencias son estimaciones de plausibilidad — no diagnósticos determinísticos. Requieren validación experta.</div><div class="tl-tags"><span class="tl-tag">Patrones estadísticos</span><span class="tl-tag">Señales de riesgo</span></div></div></div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Niveles de salida analítica</h2>
+    <div class="card-grid">
+      <div class="card c-azul"><div class="card-ico">📋</div><div class="card-ttl">Nivel I — Síntesis descriptiva</div><div class="card-body">Reorganización estructurada de cifras. El modelo presenta la información de manera ordenada sin agregar interpretación. Punto de partida necesario.</div></div>
+      <div class="card c-dorado"><div class="card-ico">📐</div><div class="card-ttl">Nivel II — Análisis cuantitativo</div><div class="card-body">Cálculo de indicadores, detección de variaciones significativas, comparaciones horizontales e intertemporales con señalización de desviaciones.</div></div>
+      <div class="card c-rojo"><div class="card-ico">🎯</div><div class="card-ttl">Nivel III — Interpretación estratégica</div><div class="card-body">Articulación de implicaciones y posibles escenarios. Depende del diseño riguroso del prompt y del contexto organizacional proporcionado.</div><span class="card-tag">Mayor valor</span></div>
+    </div>
+  </div>
+  <div class="callout cl-dorado"><span class="cl-ico">⚙️</span><div class="cl-body"><div class="cl-ttl">Principio operativo central</div><p class="cl-txt">La robustez del análisis depende tanto del modelo como del <strong>diseño informacional del input</strong>. Jerarquías claras, signos consistentes y estructura coherente son condiciones necesarias. Un entorno mal estructurado limita incluso al modelo más avanzado. <strong>Garbage in, garbage out aplica con mayor impacto en entornos de IA.</strong></p></div></div>
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(2)">← Sesión 1.2</button>
+    <button class="btn btn-p" onclick="goTo(4)">Sesión 1.4 →</button>
+  </div>
+</section>
+
+<!-- ══════ S1.4 ══════ -->
+<section class="session" id="s4" data-title="Buenas Prácticas de Interacción con IA">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 1.4</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Buenas Prácticas de Interacción Financiera con IA: Arquitectura Metodológica y Gobernanza Analítica</h1>
+    <div class="sh-meta"><span class="badge b-def">⏱ 50 min</span><span class="badge b-rosa">Gobernanza</span><span class="badge b-def">10 principios</span></div>
+  </div>
+  <div class="section">
+    <p class="prose">La integración de IA en el análisis financiero no es únicamente una adopción tecnológica. Es una <strong>transformación metodológica del proceso analítico</strong>. En organizaciones con alta exposición fiduciaria, responsabilidad legal y supervisión regulatoria intensiva, la interacción con modelos como ChatGPT debe inscribirse dentro de un esquema explícito de <em>gobernanza analítica</em>.</p>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Los 10 Principios de Gobernanza Analítica</h2>
+    <div class="plist">
+      <div class="pitem"><div class="pnum">I</div><div class="pb"><div class="pttl">Modularidad secuencial del proceso analítico</div><p class="ptxt">Estructurar la interacción en etapas diferenciadas: <strong>validación de datos → cálculo de indicadores → diagnóstico → interpretación estratégica</strong>. Evitar colapsar múltiples etapas en una sola instrucción.</p></div></div>
+      <div class="pitem"><div class="pnum">II</div><div class="pb"><div class="pttl">Precisión semántica en la instrucción</div><p class="ptxt">Delimitar con claridad el objetivo analítico, el marco normativo (NIIF, US GAAP), la audiencia del reporte y el horizonte temporal. La ambigüedad en el prompt genera ambigüedad en el output.</p></div></div>
+      <div class="pitem"><div class="pnum">III</div><div class="pb"><div class="pttl">Integridad y completitud del input</div><p class="ptxt">La robustez del análisis es función directa de la calidad del entorno informacional suministrado. Omisiones relevantes — contingencias legales, reclasificaciones, partidas no recurrentes — restringen el marco interpretativo del modelo.</p></div></div>
+      <div class="pitem"><div class="pnum">IV</div><div class="pb"><div class="pttl">Validación crítica independiente</div><p class="ptxt">Los resultados deben contrastarse con los datos originales y evaluarse mediante <strong>juicio experto independiente</strong> antes de incorporarlos en decisiones. Una respuesta bien estructurada no equivale a una conclusión técnicamente correcta.</p></div></div>
+      <div class="pitem"><div class="pnum">V</div><div class="pb"><div class="pttl">Contextualización estratégica y marco explicativo</div><p class="ptxt">Proporcionar información sobre entorno macroeconómico, dinámicas sectoriales, cambios regulatorios y eventos extraordinarios. El contexto reduce la ambigüedad inferencial y mejora la pertinencia del análisis.</p></div></div>
+      <div class="pitem"><div class="pnum">VI</div><div class="pb"><div class="pttl">Preservación del juicio profesional</div><p class="ptxt">La IA no desplaza la responsabilidad técnica, legal ni ética del profesional financiero. El analista debe contrastar resultados con conocimiento del negocio, restricciones regulatorias y evaluaciones de riesgo específicas.</p></div></div>
+      <div class="pitem"><div class="pnum">VII</div><div class="pb"><div class="pttl">Trazabilidad y auditorabilidad del proceso</div><p class="ptxt">Registrar instrucciones formuladas, versiones de datos utilizadas, resultados generados, ajustes realizados y fundamentos de las decisiones adoptadas. Fortalece la transparencia y mitiga riesgos regulatorios (<strong>AI Act UE · SFC Colombia</strong>).</p></div></div>
+      <div class="pitem"><div class="pnum">VIII</div><div class="pb"><div class="pttl">Diseño estratégico de prompts como arquitectura de control</div><p class="ptxt">Esquema modular recomendado: <strong>validación inicial → cálculo de indicadores → identificación de desviaciones → evaluación de riesgos → síntesis ejecutiva</strong>. La arquitectura del prompt determina la coherencia del resultado.</p></div></div>
+      <div class="pitem"><div class="pnum">IX</div><div class="pb"><div class="pttl">Interrogación crítica y contraste inferencial</div><p class="ptxt">Solicitar explicitación de supuestos implícitos, identificar variables potencialmente omitidas, explorar escenarios alternativos y contrastar conclusiones bajo distintas hipótesis. La interrogación crítica reduce el riesgo de sesgos interpretativos.</p></div></div>
+      <div class="pitem"><div class="pnum">X</div><div class="pb"><div class="pttl">Ética, confidencialidad y gobierno de datos</div><p class="ptxt">Los marcos regulatorios aplicables — <strong>AI Act (UE), ISO 42001, Ley 1581 Colombia, regulación SFC</strong> — son de cumplimiento obligatorio en todo proceso de análisis asistido por IA.</p></div></div>
+    </div>
+  </div>
+  <div class="callout cl-rosa"><span class="cl-ico">🏛️</span><div class="cl-body"><div class="cl-ttl">Gobernanza como hilo transversal — no tema aislado</div><p class="cl-txt">Estos diez principios no son recomendaciones opcionales. En organizaciones con estándares de gobernanza elevados, su aplicación sistemática es una <strong>exigencia fiduciaria</strong>. La IA amplifica la capacidad analítica; la gobernanza garantiza que esa amplificación opere dentro de marcos de responsabilidad institucional.</p></div></div>
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(3)">← Sesión 1.3</button>
+    <button class="btn btn-p" onclick="goTo(5)">Sesión 1.5 →</button>
+  </div>
+</section>
+
+<!-- ══════ S1.5 ══════ -->
+<section class="session" id="s5" data-title="Límites Estructurales de la IA Generativa">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 1.5</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Límites Estructurales de la IA Generativa en el Análisis Financiero Corporativo</h1>
+    <div class="sh-meta"><span class="badge b-def">⏱ 45 min</span><span class="badge b-rosa">Gobernanza</span><span class="badge b-rojo">5 límites críticos</span></div>
+  </div>
+  <div class="section">
+    <p class="prose">La comprensión rigurosa de los límites de estos sistemas no es un ejercicio precautorio accesorio. Es una <strong>exigencia epistemológica inherente</strong> a su utilización responsable. En entornos corporativos con alta exposición fiduciaria, ignorar la naturaleza probabilística de estos modelos puede generar distorsiones analíticas con consecuencias financieras significativas.</p>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Los 5 límites estructurales</h2>
+    <div class="lim-grid">
+      <div class="lcard l1"><div class="lnum">Límite I</div><div class="lttl">Naturaleza probabilística — sin garantía epistémica de verdad</div><div class="ltxt">Los LLM maximizan la probabilidad de secuencias lingüísticas coherentes a partir de patrones aprendidos. No poseen validación factual autónoma. La coherencia argumentativa no constituye garantía de veracidad.</div><div class="lerr">⚠ Error frecuente: Inferir que una respuesta bien estructurada equivale a una conclusión técnicamente correcta.</div></div>
+      <div class="lcard l2"><div class="lnum">Límite II</div><div class="lttl">Clausura del universo informacional</div><div class="ltxt">El modelo opera estrictamente dentro de la información explícitamente proporcionada. No accede a sistemas contables internos ni documentación estratégica no compartida. Cualquier omisión relevante restringe el marco interpretativo.</div><div class="lerr">⚠ Error frecuente: Suponer que el sistema identificará vacíos informacionales sin orientación explícita del analista.</div></div>
+      <div class="lcard l3"><div class="lnum">Límite III</div><div class="lttl">Indeterminación estructural y no determinismo contable</div><div class="ltxt">Jerarquías contables ambiguas, codificaciones inconsistentes o subtotales mal definidos inducen errores interpretativos. La aplicación de ratios sobre bases no intencionadas genera distorsiones analíticas significativas.</div><div class="lerr">⚠ Error frecuente: Omitir validación independiente de indicadores críticos antes de incorporarlos a decisiones.</div></div>
+      <div class="lcard l4"><div class="lnum">Límite IV</div><div class="lttl">Neutralidad normativa — sin internalización automática de marcos regulatorios</div><div class="ltxt">Los modelos no integran automáticamente NIIF, US GAAP ni regulaciones sectoriales, salvo especificación explícita del usuario. Un análisis puede ser internamente coherente y externamente inconsistente frente a requisitos regulatorios aplicables.</div><div class="lerr">⚠ Error frecuente: Presuponer que la IA internaliza legislación contable sin especificación expresa.</div></div>
+      <div class="lcard l5"><div class="lnum">Límite V</div><div class="lttl">Hipótesis plausibles sin validación causal empírica</div><div class="ltxt">Los modelos generan hipótesis plausibles a partir de configuraciones estadísticas recurrentes. Estas hipótesis no equivalen a diagnósticos causales verificados. La inferencia es exploratoria y probabilística — carece de validación empírica específica sobre la organización analizada.</div><div class="lerr">⚠ Error frecuente: Tratar hipótesis exploratorias como diagnósticos confirmados y fundar decisiones en ellas.</div></div>
+    </div>
+  </div>
+  <div class="callout cl-rojo"><span class="cl-ico">🛡️</span><div class="cl-body"><div class="cl-ttl">La supervisión humana es una salvaguarda estructural — no opcional</div><p class="cl-txt">Los riesgos de <strong>automation bias, dependencia excesiva y falsa precisión</strong> deben gestionarse activamente mediante protocolos de validación explícitos y documentados. La regulación SFC y el AI Act (UE) establecen responsabilidades claras al respecto.</p></div></div>
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(4)">← Sesión 1.4</button>
+    <button class="btn btn-p" onclick="goTo(6)">Sesión 1.6 →</button>
+  </div>
+</section>
+
+<!-- ══════ S1.6 ══════ -->
+<section class="session" id="s6" data-title="Errores Frecuentes en Prompting Financiero">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 1.6</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Errores Frecuentes en el Uso de IA para Análisis Financiero: Diagnóstico y Corrección</h1>
+    <div class="sh-meta"><span class="badge b-def">⏱ 45 min</span><span class="badge b-dorado">Alta aplicabilidad</span></div>
+  </div>
+  <div class="section">
+    <p class="prose">El uso profesional de IA en finanzas requiere identificar y corregir los patrones de error más frecuentes. Estos errores responden a supuestos incorrectos sobre la naturaleza y los límites de los modelos de lenguaje. Cada uno tiene una corrección metodológica concreta y aplicable de inmediato.</p>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Los 5 errores críticos — diagnóstico y corrección</h2>
+    <div class="plist">
+      <div class="pitem"><div class="pnum" style="background:var(--ur-rojo)">1</div><div class="pb"><div class="pttl">Prompts excesivamente amplios y sin estructura</div><p class="ptxt"><strong>Error:</strong> "Analiza los estados financieros de la empresa." — Sin delimitar período, indicadores, audiencia ni marco normativo. Genera respuestas genéricas sin valor analítico diferenciado.<br><br><strong>Corrección:</strong> "Actúa como analista financiero senior. Analiza el Estado de Resultados 2023–2024 bajo NIIF. Calcula márgenes bruto, operativo y neto. Identifica las 3 variaciones más significativas e interpreta sus implicaciones estratégicas para la junta directiva."</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--ur-rojo)">2</div><div class="pb"><div class="pttl">Ausencia de marco normativo o contable</div><p class="ptxt"><strong>Error:</strong> Solicitar análisis sin especificar NIIF, US GAAP u otro estándar aplicable. Genera interpretaciones incorrectas en reconocimiento de ingresos, arrendamientos o instrumentos financieros.<br><br><strong>Corrección:</strong> "Analiza estos estados financieros elaborados bajo NIIF aplicables a Colombia y evalúa los riesgos asociados al nivel de endeudamiento y cobertura de intereses."</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--ur-rojo)">3</div><div class="pb"><div class="pttl">Confusión entre cálculo cuantitativo e interpretación estratégica</div><p class="ptxt"><strong>Error:</strong> Solicitar simultáneamente cálculos e interpretación en una sola instrucción. Genera respuestas desorganizadas con mezcla incoherente de niveles de profundidad.<br><br><strong>Corrección:</strong> Separar las etapas. Primera interacción: cálculo de indicadores. Segunda interacción: interpretación estratégica de los resultados obtenidos y validados previamente.</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--ur-rojo)">4</div><div class="pb"><div class="pttl">Omisión de la audiencia objetivo</div><p class="ptxt"><strong>Error:</strong> "Elabora un análisis del desempeño financiero." — Sin especificar destinatario, el modelo no puede calibrar profundidad técnica, tono ni estructura narrativa adecuada.<br><br><strong>Corrección:</strong> "Elabora un resumen ejecutivo del desempeño financiero dirigido a la junta directiva, destacando los principales riesgos estratégicos y oportunidades identificadas."</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--ur-rojo)">5</div><div class="pb"><div class="pttl">Ausencia de validación crítica de resultados</div><p class="ptxt"><strong>Error:</strong> Asumir que las respuestas generadas son necesariamente correctas. Los modelos producen narrativas analíticamente plausibles, pero la plausibilidad retórica no garantiza exactitud conceptual ni normativa.<br><br><strong>Corrección:</strong> Todo resultado debe contrastarse con los datos originales, revisarse a la luz del contexto empresarial y evaluarse mediante juicio experto independiente antes de ser incorporado en decisiones.</p></div></div>
+    </div>
+  </div>
+  <div class="callout cl-azul"><span class="cl-ico">📋</span><div class="cl-body"><div class="cl-ttl">Arquitectura de prompt financiero recomendada — 6 componentes</div><p class="cl-txt"><strong>Rol + Contexto empresarial + Marco normativo + Tarea específica + Audiencia + Formato de salida.</strong> Esta estructura de seis componentes produce resultados consistentemente más rigurosos, relevantes y auditables que los prompts no estructurados. Es el punto de partida para el Módulo 2 — Prompting Estratégico.</p></div></div>
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(5)">← Sesión 1.5</button>
+    <button class="btn btn-p" onclick="goTo(7)">Evaluación final →</button>
+  </div>
+</section>
+
+<!-- ══════ QUIZ ══════ -->
+<section class="session" id="s7" data-title="Evaluación — Módulo 1">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Evaluación · Módulo 1</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Quiz de Verificación — ChatGPT y Fundamentos de IA Aplicada a Finanzas</h1>
+    <div class="sh-meta"><span class="badge b-def">8 preguntas</span><span class="badge b-def">⏱ ~15 min</span><span class="badge b-verde">Criterio estratégico</span></div>
+  </div>
+  <div class="quiz-wrap">
+    <div class="qdots" id="qDots"></div>
+    <div id="qContainer"></div>
+    <div class="quiz-result" id="qResult">
+      <div class="res-icon">🎓</div>
+      <div class="res-score" id="rScore"></div>
+      <div class="res-lbl">preguntas correctas de 8</div>
+      <div id="rBadge"></div>
+      <p class="res-note">Revise las sesiones correspondientes a las respuestas incorrectas antes de avanzar al Módulo 2.</p>
+      <button class="btn btn-g" onclick="resetQuiz()" style="margin-top:8px">Reiniciar quiz</button>
+    </div>
+  </div>
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(6)">← Sesión 1.6</button>
+    <span style="font-size:12px;color:var(--ur-muted)">Fin del Módulo 1</span>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+const SESS=[
+  {id:1,lbl:'1.1',title:'Evolución de los Modelos de IA (2025–2026)',time:'45 min'},
+  {id:2,lbl:'1.2',title:'Multimodalidad en Inteligencia Artificial',time:'40 min'},
+  {id:3,lbl:'1.3',title:'Lectura Algorítmica de Estados Financieros',time:'50 min'},
+  {id:4,lbl:'1.4',title:'Buenas Prácticas de Interacción con IA',time:'50 min'},
+  {id:5,lbl:'1.5',title:'Límites Estructurales de la IA Generativa',time:'45 min'},
+  {id:6,lbl:'1.6',title:'Errores Frecuentes en Prompting Financiero',time:'45 min'},
+  {id:7,lbl:'✓', title:'Evaluación — Módulo 1',time:'~15 min'},
+];
+const QUIZ=[
+  {q:'¿Cuál es la diferencia conceptual fundamental entre los modelos de IA de 2025 y los de 2026 en el análisis financiero?',opts:['Los modelos de 2026 son más rápidos y económicos en su uso.','Los modelos de 2026 transitan de interfaces conversacionales a infraestructuras cognitivas aplicadas, con razonamiento y multimodalidad más consolidados.','Los modelos de 2026 pueden tomar decisiones financieras de manera autónoma sin supervisión.','La diferencia es exclusivamente técnica y no afecta la práctica del analista.'],ok:1,fb:'Correcto. La transición 2025–2026 es de naturaleza, no de velocidad: los modelos evolucionan de herramientas conversacionales a infraestructuras cognitivas analíticas. Esto redefine el rol del analista, no lo elimina.'},
+  {q:'La multimodalidad en IA financiera significa que el sistema puede:',opts:['Tomar decisiones financieras complejas de manera completamente autónoma.','Procesar simultáneamente texto, tablas, imágenes y documentos estructurados dentro de un mismo marco analítico.','Conectarse a sistemas ERP en tiempo real sin intervención humana.','Garantizar la exactitud de todos los cálculos financieros sin validación.'],ok:1,fb:'Correcto. La multimodalidad es la capacidad de integrar múltiples tipos de representaciones en un mismo proceso interpretativo. Reduce la fricción entre la fuente de datos y el análisis, pero no elimina la necesidad de validación experta.'},
+  {q:'En la lectura algorítmica, ¿cuál es la implicación del principio "Garbage in, garbage out" en entornos de IA?',opts:['Los modelos solo funcionan con datos perfectamente limpios y estructurados.','La calidad del análisis depende críticamente del diseño informacional del input: jerarquías claras, signos consistentes y estructura coherente.','Es suficiente proporcionar el estado financiero sin instrucciones adicionales.','Los errores en los datos son detectados y corregidos automáticamente por el modelo.'],ok:1,fb:'Correcto. La robustez del análisis es función directa del entorno informacional suministrado. Jerarquías contables ambiguas, signos inconsistentes o subtotales mal definidos inducen errores que se propagan a todo el análisis. El diseño del input es responsabilidad del analista.'},
+  {q:'¿Cuál es el Límite I estructural de los modelos de lenguaje avanzados en análisis financiero?',opts:['No pueden procesar documentos en formato PDF.','Su capacidad de cálculo es inferior a la de una hoja de cálculo.','Operan mediante arquitecturas estadísticas probabilísticas — la coherencia de una respuesta no garantiza su veracidad.','Solo pueden analizar datos del año en curso.'],ok:2,fb:'Correcto. Los LLM maximizan la probabilidad de secuencias lingüísticas coherentes, no verifican la verdad factual de sus respuestas. Una respuesta puede ser sofisticada argumentativamente e incorrecta técnicamente. Este es el Límite I: ausencia de garantía epistémica de verdad.'},
+  {q:'Un analista solicita a ChatGPT: "Analiza los estados financieros." ¿Cuál es el error metodológico principal?',opts:['El prompt es demasiado corto — debería tener al menos 200 palabras.','El prompt carece de delimitación de período, marco normativo, indicadores específicos, audiencia y formato de salida.','El analista debería usar otro modelo de IA más especializado.','Los estados financieros deben analizarse sin instrucciones para obtener resultados objetivos.'],ok:1,fb:'Correcto. Un prompt no estructurado genera respuestas genéricas sin valor analítico diferenciado. La arquitectura recomendada incluye: Rol + Contexto + Marco normativo + Tarea específica + Audiencia + Formato de salida.'},
+  {q:'¿Cuál es el principio de gobernanza analítica más crítico en procesos financieros corporativos con alta exposición fiduciaria?',opts:['Usar únicamente modelos de código abierto para garantizar transparencia.','Delegar completamente el análisis a la IA para eliminar el sesgo humano.','Mantener trazabilidad completa de instrucciones, datos, resultados y ajustes para garantizar auditorabilidad.','Actualizar los modelos de IA mensualmente para mantener su precisión.'],ok:2,fb:'Correcto. El Principio VII establece que en organizaciones con altos estándares de control, la trazabilidad del análisis asistido por IA es esencial: registrar instrucciones, versiones de datos, resultados y fundamentos de decisiones adoptadas. Esto mitiga riesgos regulatorios.'},
+  {q:'Un modelo genera la hipótesis: "El deterioro del margen operativo podría asociarse a presión en costos variables." ¿Cómo debe tratar el analista esta inferencia?',opts:['Incorporarla directamente al informe ejecutivo — la IA tiene acceso a más datos.','Descartarla — las IA no pueden hacer inferencias válidas sobre estados financieros.','Tratarla como hipótesis exploratoria y plausible que requiere validación empírica con datos específicos de la empresa.','Solicitar al modelo que confirme si la hipótesis es correcta antes de usarla.'],ok:2,fb:'Correcto. Las inferencias del modelo son estimaciones de plausibilidad basadas en patrones estadísticos — no diagnósticos causales verificados (Límite V). El analista las trata como punto de partida para investigación específica, no como conclusiones definitivas.'},
+  {q:'¿Cuál es el impacto estructural más relevante de la IA sobre el rol del analista financiero en 2026?',opts:['El analista financiero será completamente reemplazado por sistemas de IA en los próximos dos años.','El analista evoluciona de procesador primario de datos a supervisor crítico, validador metodológico y arquitecto de sistemas analíticos asistidos.','El analista solo necesitará supervisar que los sistemas funcionen, sin requerir formación financiera especializada.','El impacto es principalmente en velocidad de cálculo, sin cambios en el rol estratégico.'],ok:1,fb:'Correcto. La IA redefine — no elimina — el rol del analista. Su competencia diferencial se desplaza hacia interpretación crítica, validación metodológica y orquestación humano–IA. La formación financiera rigurosa continúa siendo indispensable.'},
+];
+
+let cur=1, done=new Set();
+let qs={idx:0,ans:Array(8).fill(null),sub:Array(8).fill(false)};
+
+function buildSB(){
+  document.getElementById('sbNav').innerHTML=SESS.map(s=>`
+    <div class="nav-item ${s.id===cur?'active':''} ${done.has(s.id)?'done':''}" onclick="goTo(${s.id})">
+      <div class="nd">${done.has(s.id)?'✓':s.id===7?'📝':s.id}</div>
+      <div class="nav-b">
+        <div class="nav-id">Sesión ${s.lbl}</div>
+        <div class="nav-ttl">${s.title}</div>
+        <div class="nav-time">${s.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+function goTo(n){
+  if(n>cur&&cur<7)done.add(cur);
+  document.querySelectorAll('.session').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  cur=n; buildSB(); updateProg();
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===7)initQuiz();
+}
+
+function updateProg(){
+  const p=Math.round((done.size/7)*100);
+  document.getElementById('pgBar').style.width=p+'%';
+  document.getElementById('pgPct').textContent=p+'%';
+}
+
+function initQuiz(){renderQ(qs.idx);renderDots();}
+
+function renderDots(){
+  document.getElementById('qDots').innerHTML=QUIZ.map((_,i)=>{
+    let c='qdot';
+    if(i===qs.idx)c+=' cur';
+    else if(qs.sub[i])c+=qs.ans[i]===QUIZ[i].ok?' ok':' err';
+    else if(qs.ans[i]!==null)c+=' ans';
+    return `<div class="${c}" onclick="jumpQ(${i})"></div>`;
+  }).join('');
+}
+
+function jumpQ(i){qs.idx=i;renderQ(i);renderDots();}
+
+function renderQ(i){
+  const d=QUIZ[i],sub=qs.sub[i],sel=qs.ans[i];
+  document.getElementById('qContainer').innerHTML=`
+    <div class="q-head">
+      <div class="q-ctr">Pregunta ${i+1} de ${QUIZ.length}</div>
+      <div class="q-txt">${d.q}</div>
+      <div class="q-hint">Seleccione la respuesta más adecuada.</div>
+    </div>
+    <div class="q-opts">
+      ${d.opts.map((o,j)=>{
+        let c='qopt'+(sub?' locked':'');
+        if(sub){if(j===d.ok)c+=' ok';else if(j===sel&&j!==d.ok)c+=' err';}
+        else if(j===sel)c+=' sel';
+        return `<div class="${c}" onclick="${sub?'':'selectOpt('+j+')'}">
+          <div class="qletter">${['A','B','C','D'][j]}</div><span>${o}</span></div>`;
+      }).join('')}
+    </div>
+    <div class="q-fb ${sub?'show '+(sel===d.ok?'ok':'err'):''}">
+      ${sub?(sel===d.ok?'✅ ':'❌ ')+d.fb:''}
+    </div>
+    <div class="q-ctrl">
+      ${!sub?`<button class="btn btn-p" onclick="submitQ()" ${sel===null?'disabled':''}>Confirmar respuesta</button>`:''}
+      ${sub&&i<QUIZ.length-1?`<button class="btn btn-p" onclick="nextQ()">Siguiente →</button>`:''}
+      ${sub&&i===QUIZ.length-1?`<button class="btn btn-v" onclick="showResult()">Ver resultado →</button>`:''}
+      ${i>0?`<button class="btn btn-g" onclick="jumpQ(${i-1})">← Anterior</button>`:''}
+    </div>`;
+}
+
+function selectOpt(j){qs.ans[qs.idx]=j;renderQ(qs.idx);renderDots();}
+function submitQ(){qs.sub[qs.idx]=true;renderQ(qs.idx);renderDots();}
+function nextQ(){qs.idx++;renderQ(qs.idx);renderDots();}
+
+function showResult(){
+  document.getElementById('qContainer').style.display='none';
+  document.getElementById('qDots').style.display='none';
+  const n=qs.ans.filter((a,i)=>a===QUIZ[i].ok).length;
+  document.getElementById('rScore').textContent=n+'/8';
+  const b=n===8?'<div class="res-badge rb-gold">🏆 Excelente — Dominio pleno del módulo</div>':
+           n>=6?'<div class="res-badge rb-verde">✅ Aprobado — Comprensión sólida del módulo</div>':
+                '<div class="res-badge rb-azul">📖 Refuerzo recomendado — Revise las sesiones con error</div>';
+  document.getElementById('rBadge').innerHTML=b;
+  document.getElementById('qResult').classList.add('show');
+  done.add(7);updateProg();buildSB();
+}
+
+function resetQuiz(){
+  qs={idx:0,ans:Array(8).fill(null),sub:Array(8).fill(false)};
+  document.getElementById('qContainer').style.display='';
+  document.getElementById('qDots').style.display='';
+  document.getElementById('qResult').classList.remove('show');
+  initQuiz();
+}
+
+buildSB();
+document.getElementById('s1').classList.add('active');
+</script>
+</body>
+</html>

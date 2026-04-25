@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Módulo 5 · Automatización del ER Inteligente · ADVANCE UR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
+<style>
+:root{--ur-rojo:#C8102E;--ur-rojo-dark:#A00D25;--ur-rojo-light:#FBEAED;--ur-rojo-mid:#F2AABA;--ur-navy:#1A1F36;--ur-navy-mid:#2D3454;--ur-slate:#4A5178;--ur-muted:#6B7280;--ur-border:#E2E5ED;--ur-surface:#F8F9FC;--ur-white:#FFFFFF;--teal:#0D7A7A;--teal-dark:#095E5E;--teal-light:#E0F4F4;--teal-mid:#7EC8C8;--c-azul:#1B5EBF;--c-azul-bg:#EBF2FF;--c-dorado:#B45309;--c-dorado-bg:#FEF3C7;--c-verde:#166534;--c-verde-bg:#DCFCE7;--c-rosa:#9D174D;--c-rosa-bg:#FCE7F3;--c-gris:#374151;--c-gris-bg:#F3F4F6;--serif:'DM Serif Display',Georgia,serif;--sans:'DM Sans',-apple-system,sans-serif;--sw:270px;--th:54px;--r:8px;--rl:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:var(--sans);font-size:15px;line-height:1.65;color:var(--ur-navy);background:var(--ur-surface);min-height:100vh}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;height:var(--th);background:var(--ur-navy);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:3px solid var(--teal)}
+.tb-l{display:flex;align-items:center}.tb-brand{font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5)}.tb-sep{width:1px;height:18px;background:rgba(255,255,255,.15);margin:0 14px}.tb-title{font-family:var(--serif);font-size:15px;color:#fff}.tb-badge{display:inline-flex;align-items:center;gap:5px;background:var(--teal);color:#fff;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-left:12px}
+.tb-r{display:flex;align-items:center;gap:12px}.tb-prog-lbl{font-size:11px;color:rgba(255,255,255,.5);font-weight:500}.tb-track{width:140px;height:5px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden}.tb-fill{height:100%;background:var(--teal);border-radius:3px;transition:width .5s ease}.tb-pct{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);min-width:32px;text-align:right}
+.layout{display:flex;margin-top:var(--th);min-height:calc(100vh - var(--th))}
+.sidebar{width:var(--sw);background:var(--ur-white);border-right:1px solid var(--ur-border);position:fixed;top:var(--th);bottom:0;overflow-y:auto;display:flex;flex-direction:column}
+.sb-head{padding:20px 18px 16px;border-bottom:1px solid var(--ur-border)}.sb-pill{display:inline-flex;align-items:center;background:var(--teal-light);color:var(--teal);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:6px}.sb-agentic{display:inline-flex;align-items:center;background:var(--teal);color:#fff;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-bottom:10px;margin-left:6px}.sb-mod-title{font-family:var(--serif);font-size:13px;color:var(--ur-navy);line-height:1.4}
+.sb-nav{flex:1;padding:6px 0 16px}.nav-item{display:flex;align-items:flex-start;gap:11px;padding:10px 18px;cursor:pointer;border-left:3px solid transparent;transition:background .15s,border-color .15s}.nav-item:hover{background:var(--ur-surface)}.nav-item.active{background:var(--teal-light);border-left-color:var(--teal)}.nav-item.done .nd{background:var(--c-verde)}.nav-item.active .nd{background:var(--teal)}.nd{width:22px;height:22px;border-radius:50%;flex-shrink:0;background:var(--ur-border);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;margin-top:2px}.nav-b{flex:1}.nav-id{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--teal);text-transform:uppercase}.nav-ttl{font-size:12px;color:var(--ur-navy);line-height:1.35;margin-top:1px}.nav-item.active .nav-ttl{font-weight:600}.nav-time{font-size:10px;color:var(--ur-muted);margin-top:2px}
+.sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-thumb{background:var(--ur-border);border-radius:2px}
+.main{margin-left:var(--sw);flex:1;padding:36px 44px 64px;max-width:calc(var(--sw) + 820px)}
+.session{display:none}.session.active{display:block;animation:up .28s ease}@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.sh{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--ur-border)}.sh-ey{display:flex;align-items:center;gap:10px;margin-bottom:12px}.sh-id{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}.sh-rule{flex:1;height:1px;background:var(--teal-mid)}.sh-title{font-family:var(--serif);font-size:1.7rem;color:var(--ur-navy);line-height:1.25;margin-bottom:14px}.sh-meta{display:flex;gap:8px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}.b-def{background:var(--c-gris-bg);color:var(--c-gris)}.b-teal{background:var(--teal-light);color:var(--teal)}.b-rojo{background:var(--ur-rojo-light);color:var(--ur-rojo)}.b-azul{background:var(--c-azul-bg);color:var(--c-azul)}.b-verde{background:var(--c-verde-bg);color:var(--c-verde)}.b-dorado{background:var(--c-dorado-bg);color:var(--c-dorado)}.b-rosa{background:var(--c-rosa-bg);color:var(--c-rosa)}
+.section{margin-bottom:36px}.sec-title{font-family:var(--serif);font-size:1.12rem;color:var(--ur-navy);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--teal-mid)}.prose{font-size:14.5px;line-height:1.8;color:var(--ur-navy-mid);margin-bottom:14px}.prose strong{color:var(--ur-navy);font-weight:600}.prose em{color:var(--teal-dark);font-style:normal;font-weight:600}
+/* ER PIPELINE */
+.er-pipeline{display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin:20px 0}.erp-step{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 14px;border-radius:var(--r);background:var(--ur-white);border:1px solid var(--ur-border);min-width:95px;text-align:center}.erp-step.on{background:var(--teal);border-color:var(--teal)}.erp-step.done-s{background:var(--teal-light);border-color:var(--teal-mid)}.erp-num{width:26px;height:26px;border-radius:50%;background:var(--teal-light);color:var(--teal);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}.erp-step.on .erp-num{background:rgba(255,255,255,.2);color:#fff}.erp-lbl{font-size:11px;font-weight:700;color:var(--ur-navy)}.erp-step.on .erp-lbl{color:#fff}.erp-sub{font-size:10px;color:var(--ur-muted)}.erp-step.on .erp-sub{color:rgba(255,255,255,.8)}.erp-arr{font-size:1rem;color:var(--teal-mid);padding:0 2px;margin-top:14px}
+/* CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px;margin:18px 0}.card{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);padding:18px 16px;border-top:3px solid var(--ur-border);transition:box-shadow .2s}.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07)}.c-teal{border-top-color:var(--teal)}.c-rojo{border-top-color:var(--ur-rojo)}.c-azul{border-top-color:var(--c-azul)}.c-verde{border-top-color:var(--c-verde)}.c-dorado{border-top-color:var(--c-dorado)}.c-rosa{border-top-color:var(--c-rosa)}.card-ico{font-size:1.4rem;margin-bottom:8px}.card-ttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:6px}.card-body{font-size:12.5px;color:var(--ur-slate);line-height:1.6}.card-tag{display:inline-block;margin-top:10px;font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 8px;border-radius:20px;background:var(--teal-light);color:var(--teal)}
+/* ARCH LAYERS */
+.arch-wrap{display:flex;flex-direction:column;gap:6px;margin:18px 0}.arch-layer{display:flex;align-items:center;gap:12px;padding:10px 16px;border-radius:var(--r);border:1px solid var(--ur-border)}.al-1{background:var(--c-azul-bg);border-color:var(--c-azul)}.al-2{background:var(--c-dorado-bg);border-color:var(--c-dorado)}.al-3{background:var(--teal-light);border-color:var(--teal)}.al-4{background:var(--ur-rojo-light);border-color:var(--ur-rojo)}.al-5{background:var(--c-verde-bg);border-color:var(--c-verde)}.al-6{background:var(--c-rosa-bg);border-color:var(--c-rosa)}.arch-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}.al-1 .arch-num{background:var(--c-azul)}.al-2 .arch-num{background:var(--c-dorado)}.al-3 .arch-num{background:var(--teal)}.al-4 .arch-num{background:var(--ur-rojo)}.al-5 .arch-num{background:var(--c-verde)}.al-6 .arch-num{background:var(--c-rosa)}.arch-ttl{font-size:13px;font-weight:700;color:var(--ur-navy);min-width:160px}.arch-desc{font-size:12.5px;color:var(--ur-slate);flex:1;line-height:1.5}
+/* ER STRUCT */
+.er-struct{display:flex;flex-direction:column;gap:0;margin:18px 0;border-radius:var(--rl);overflow:hidden;border:1px solid var(--ur-border)}.er-row{display:flex;border-bottom:1px solid var(--ur-border)}.er-row:last-child{border-bottom:none}.er-cell{flex:1;padding:9px 14px;font-size:13px}.er-cell.hd{font-weight:700;background:var(--ur-navy);color:#fff;font-size:12px;letter-spacing:.04em}.er-cell.sub{font-weight:700;color:var(--teal);background:var(--teal-light)}.er-cell.tot{font-weight:700;color:#fff;background:var(--teal);font-size:13.5px}.er-cell.item{color:var(--ur-slate)}.er-note{width:200px;padding:9px 14px;font-size:11.5px;color:var(--ur-muted);border-left:1px solid var(--ur-border);background:var(--ur-surface)}.er-cell.sub+.er-note,.er-cell.tot+.er-note{background:var(--teal-light)}
+/* MARGIN TABLE */
+.mtbl-w{overflow-x:auto;margin:16px 0;border-radius:var(--rl);border:1px solid var(--ur-border)}.mtbl{width:100%;border-collapse:collapse;font-size:12.5px}.mtbl thead tr{background:var(--ur-navy)}.mtbl thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:11.5px;color:#fff}.mtbl tbody tr{border-bottom:1px solid var(--ur-border)}.mtbl tbody tr:last-child{border-bottom:none}.mtbl tbody tr:nth-child(even){background:var(--ur-surface)}.mtbl tbody td{padding:9px 14px;vertical-align:top}.mtbl tbody td:first-child{font-weight:700;color:var(--teal)}
+/* ANOMALY */
+.anomaly-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.anom{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--r);padding:15px;border-left:4px solid}.a1{border-left-color:var(--ur-rojo)}.a2{border-left-color:var(--c-dorado)}.a3{border-left-color:var(--c-azul)}.a4{border-left-color:var(--c-rosa)}.anom-lbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}.a1 .anom-lbl{color:var(--ur-rojo)}.a2 .anom-lbl{color:var(--c-dorado)}.a3 .anom-lbl{color:var(--c-azul)}.a4 .anom-lbl{color:var(--c-rosa)}.anom-ttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:5px}.anom-txt{font-size:12px;color:var(--ur-slate);line-height:1.6}
+/* NLG FLOW */
+.nlg-flow{display:flex;flex-direction:column;margin:18px 0}.nlg-item{display:flex;gap:14px;position:relative}.nlg-item:not(:last-child)::before{content:'';position:absolute;left:17px;top:36px;bottom:0;width:2px;background:var(--ur-border)}.nlg-dot{width:36px;height:36px;flex-shrink:0;border-radius:50%;background:var(--teal);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;font-family:var(--serif)}.nlg-body{padding:4px 0 24px;flex:1}.nlg-q{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}.nlg-ttl{font-size:14px;font-weight:700;color:var(--ur-navy);margin-bottom:5px}.nlg-txt{font-size:13px;color:var(--ur-slate);line-height:1.65}.nlg-txt strong{color:var(--ur-navy)}
+/* PLIST */
+.plist{display:flex;flex-direction:column;gap:10px;margin:16px 0}.pitem{display:flex;gap:14px;background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--r);padding:14px 16px}.pnum{width:30px;height:30px;flex-shrink:0;border-radius:6px;background:var(--teal);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:var(--serif)}.pb{flex:1}.pttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:4px}.ptxt{font-size:12.5px;color:var(--ur-slate);line-height:1.65}.ptxt strong{color:var(--ur-navy)}
+/* CALLOUT */
+.callout{display:flex;gap:14px;padding:16px 18px;border-radius:var(--r);margin:22px 0;border-left:4px solid}.cl-teal{background:var(--teal-light);border-color:var(--teal)}.cl-rojo{background:var(--ur-rojo-light);border-color:var(--ur-rojo)}.cl-dorado{background:var(--c-dorado-bg);border-color:var(--c-dorado)}.cl-rosa{background:var(--c-rosa-bg);border-color:var(--c-rosa)}.cl-ico{font-size:1.1rem;flex-shrink:0;line-height:1.6}.cl-body{flex:1}.cl-ttl{font-size:13px;font-weight:700;margin-bottom:4px}.cl-teal .cl-ttl{color:var(--teal)}.cl-rojo .cl-ttl{color:var(--ur-rojo)}.cl-dorado .cl-ttl{color:var(--c-dorado)}.cl-rosa .cl-ttl{color:var(--c-rosa)}.cl-txt{font-size:13px;color:var(--ur-slate);line-height:1.7}.cl-txt strong{color:var(--ur-navy)}
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}.cmp{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);overflow:hidden}.cmp-h{padding:11px 16px;font-size:13px;font-weight:700;color:#fff}.cmp-h.navy{background:var(--ur-navy)}.cmp-h.teal{background:var(--teal)}.cmp-b{padding:12px 16px}.cmp-row{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--ur-slate);padding:5px 0;border-bottom:1px solid var(--ur-border);line-height:1.5}.cmp-row:last-child{border-bottom:none}.cmp-row::before{content:'›';color:var(--teal);font-weight:700;flex-shrink:0}
+/* SLIST */
+.slist{list-style:none;margin:10px 0}.slist li{display:flex;gap:10px;font-size:13.5px;color:var(--ur-navy-mid);line-height:1.65;padding:6px 0;border-bottom:1px solid var(--ur-border)}.slist li:last-child{border-bottom:none}.slist li::before{content:'›';color:var(--teal);font-weight:700;flex-shrink:0}
+/* SESSION NAV */
+.sess-nav{display:flex;justify-content:space-between;align-items:center;margin-top:44px;padding-top:24px;border-top:1px solid var(--ur-border)}.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:var(--sans);letter-spacing:.01em}.btn-p{background:var(--teal);color:#fff}.btn-p:hover{background:var(--teal-dark)}.btn-g{background:var(--ur-white);color:var(--ur-navy);border:1px solid var(--ur-border)}.btn-g:hover{background:var(--ur-surface)}.btn-v{background:var(--c-verde);color:#fff}.btn-v:hover{background:#14532d}.btn:disabled{opacity:.35;cursor:not-allowed}
+/* QUIZ */
+.quiz-wrap{max-width:660px}.qdots{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}.qdot{width:10px;height:10px;border-radius:50%;background:var(--ur-border);cursor:pointer;transition:all .18s}.qdot.cur{background:var(--teal);transform:scale(1.4)}.qdot.ans{background:var(--ur-slate)}.qdot.ok{background:var(--c-verde)}.qdot.err{background:var(--ur-rojo)}
+.q-head{margin-bottom:20px}.q-ctr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}.q-txt{font-family:var(--serif);font-size:1.05rem;color:var(--ur-navy);line-height:1.45;margin-bottom:6px}.q-hint{font-size:12px;color:var(--ur-muted)}
+.q-opts{display:flex;flex-direction:column;gap:9px;margin:18px 0}.qopt{display:flex;align-items:flex-start;gap:12px;padding:13px 15px;background:var(--ur-white);border:2px solid var(--ur-border);border-radius:var(--r);cursor:pointer;transition:all .18s;font-size:13.5px;color:var(--ur-navy);line-height:1.5}.qopt:hover:not(.locked){border-color:var(--teal);background:var(--teal-light)}.qopt.sel{border-color:var(--ur-navy);background:var(--c-gris-bg)}.qopt.ok{border-color:var(--c-verde);background:var(--c-verde-bg);color:var(--c-verde)}.qopt.err{border-color:var(--ur-rojo);background:var(--ur-rojo-light);color:var(--ur-rojo-dark)}.qopt.locked{cursor:default}
+.qletter{width:26px;height:26px;flex-shrink:0;border-radius:50%;border:2px solid var(--ur-border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--ur-muted)}.qopt.sel .qletter{border-color:var(--ur-navy);color:var(--ur-navy)}.qopt.ok .qletter{border-color:var(--c-verde);color:var(--c-verde);background:var(--c-verde-bg)}.qopt.err .qletter{border-color:var(--ur-rojo);color:var(--ur-rojo);background:var(--ur-rojo-light)}
+.q-fb{display:none;font-size:13px;line-height:1.7;padding:13px 16px;border-radius:var(--r);border-left:4px solid;margin-top:4px}.q-fb.show{display:block}.q-fb.ok{background:var(--c-verde-bg);border-color:var(--c-verde);color:var(--c-verde)}.q-fb.err{background:var(--ur-rojo-light);border-color:var(--ur-rojo);color:var(--ur-rojo-dark)}
+.q-ctrl{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.quiz-result{display:none;text-align:center;padding:48px 20px}.quiz-result.show{display:block;animation:up .35s ease}.res-icon{font-size:3rem;margin-bottom:12px}.res-score{font-family:var(--serif);font-size:3.2rem;color:var(--teal);margin-bottom:6px}.res-lbl{font-size:14px;color:var(--ur-muted);margin-bottom:20px}.res-badge{display:inline-block;font-size:13px;font-weight:700;padding:8px 22px;border-radius:20px;margin-bottom:28px}.rb-gold{background:var(--c-dorado-bg);color:var(--c-dorado)}.rb-verde{background:var(--c-verde-bg);color:var(--c-verde)}.rb-azul{background:var(--c-azul-bg);color:var(--c-azul)}.res-note{font-size:13px;color:var(--ur-slate);max-width:400px;margin:0 auto 24px;line-height:1.65}
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0;padding:20px 16px 48px}.compare,.anomaly-grid{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.tb-badge{display:none}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="tb-l">
+    <span class="tb-brand">ADVANCE · Universidad del Rosario</span>
+    <div class="tb-sep"></div>
+    <span class="tb-title">Análisis Financiero con IA</span>
+    <span class="tb-badge">⚡ IA Agéntica</span>
+  </div>
+  <div class="tb-r">
+    <span class="tb-prog-lbl">Progreso</span>
+    <div class="tb-track"><div class="tb-fill" id="pgBar" style="width:0%"></div></div>
+    <span class="tb-pct" id="pgPct">0%</span>
+  </div>
+</header>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-head">
+    <div><span class="sb-pill">Módulo 5</span><span class="sb-agentic">⚡ IA Agéntica</span></div>
+    <div class="sb-mod-title">Automatización del Estado de Resultados Inteligente</div>
+  </div>
+  <nav class="sb-nav" id="sbNav"></nav>
+</aside>
+<main class="main">
+
+<!-- S5.1 -->
+<section class="session" id="s1">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 5.1</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Extracción Multimodal: Arquitectura Computacional y Aplicación en el ER</h1>
+    <div class="sh-meta"><span class="badge b-def">⏱ 50 min</span><span class="badge b-teal">IA Agéntica</span><span class="badge b-azul">Fundamentos</span></div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Flujo completo del ER automatizado — hilo del módulo</h2>
+    <div class="er-pipeline">
+      <div class="erp-step on"><div class="erp-num">1</div><div class="erp-lbl">Extracción</div><div class="erp-sub">Multimodal</div></div>
+      <span class="erp-arr">→</span>
+      <div class="erp-step"><div class="erp-num">2</div><div class="erp-lbl">Construcción</div><div class="erp-sub">ER automático</div></div>
+      <span class="erp-arr">→</span>
+      <div class="erp-step"><div class="erp-num">3</div><div class="erp-lbl">Validación</div><div class="erp-sub">Márgenes</div></div>
+      <span class="erp-arr">→</span>
+      <div class="erp-step"><div class="erp-num">4</div><div class="erp-lbl">Detección</div><div class="erp-sub">Anomalías</div></div>
+      <span class="erp-arr">→</span>
+      <div class="erp-step"><div class="erp-num">5</div><div class="erp-lbl">Narrativa</div><div class="erp-sub">Informe</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <p class="prose">El principal cuello de botella en la generación de valor analítico no reside únicamente en la modelación o interpretación, sino en la <strong>adquisición, estructuración y estandarización de la información</strong>. La realidad organizacional se caracteriza por alta heterogeneidad de formatos: hojas de cálculo, PDFs, imágenes escaneadas, presentaciones y artefactos híbridos. La <em>extracción multimodal</em> transforma esta información fragmentada en representaciones formales y analíticamente explotables.</p>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Tipología de datos en entornos financieros</h2>
+    <div class="card-grid">
+      <div class="card c-azul"><div class="card-ico">🗃️</div><div class="card-ttl">Estructurados</div><div class="card-body">Bases de datos relacionales, hojas de cálculo ERP. Alta precisión computacional, procesamiento algorítmico eficiente.</div></div>
+      <div class="card c-teal"><div class="card-ico">📄</div><div class="card-ttl">Semi-estructurados</div><div class="card-body">PDFs con tablas, reportes financieros auditados, exportaciones con formato parcialmente definido.</div></div>
+      <div class="card c-dorado"><div class="card-ico">📝</div><div class="card-ttl">No estructurados</div><div class="card-body">Textos narrativos, correos electrónicos, notas de auditoría, actas de junta directiva.</div></div>
+      <div class="card c-rosa"><div class="card-ico">🖼️</div><div class="card-ttl">Visuales</div><div class="card-body">Imágenes, documentos escaneados, tablas en formato imagen que requieren OCR para digitalizarse.</div></div>
+      <div class="card c-rojo"><div class="card-ico">🔀</div><div class="card-ttl">Híbridos</div><div class="card-body">Combinaciones de texto, imagen y estructura tabular. El mayor desafío de integración en la práctica financiera.</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Componentes tecnológicos — 4 capas de procesamiento</h2>
+    <div class="plist">
+      <div class="pitem"><div class="pnum" style="background:var(--c-azul)">OCR</div><div class="pb"><div class="pttl">Reconocimiento Óptico de Caracteres</div><p class="ptxt">Capa inicial de digitalización: convierte representaciones visuales en texto procesable. <strong>Condición necesaria para todos los documentos escaneados.</strong> Su desempeño depende directamente de la calidad del documento fuente.</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--teal)">NLP</div><div class="pb"><div class="pttl">Procesamiento de Lenguaje Natural</div><p class="ptxt">Interpretación semántica: identificación de entidades financieras (cuentas, importes, periodos), relaciones conceptuales y estructuras narrativas en los documentos procesados.</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--c-dorado)">CV</div><div class="pb"><div class="pttl">Visión por Computador</div><p class="ptxt">Detección de patrones visuales, estructuras tabulares y jerarquías espaciales. Habilita la extracción de tablas en imágenes y la comprensión de layouts complejos.</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--c-rosa)">MM</div><div class="pb"><div class="pttl">Modelos Multimodales Integrados</div><p class="ptxt">Combinan representaciones de texto e imagen mediante embeddings para una <strong>comprensión contextual más profunda</strong>. Correlacionan múltiples fuentes en una arquitectura unificada.</p></div></div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Arquitectura del sistema — 6 capas</h2>
+    <div class="arch-wrap">
+      <div class="arch-layer al-1"><div class="arch-num">1</div><div class="arch-ttl">Adquisición</div><div class="arch-desc">Ingestión desde múltiples fuentes garantizando diversidad, cobertura y actualización continua.</div></div>
+      <div class="arch-layer al-2"><div class="arch-num">2</div><div class="arch-ttl">Procesamiento</div><div class="arch-desc">OCR, limpieza, normalización y segmentación estructural de tablas, campos y secciones.</div></div>
+      <div class="arch-layer al-3"><div class="arch-num">3</div><div class="arch-ttl">Interpretación</div><div class="arch-desc">Reconocimiento de entidades financieras, clasificación contable automatizada, inferencia de relaciones.</div></div>
+      <div class="arch-layer al-4"><div class="arch-num">4</div><div class="arch-ttl">Estructuración</div><div class="arch-desc">Transformación en formatos analíticos: matrices de datos, modelos tabulares y datasets compatibles con sistemas financieros.</div></div>
+      <div class="arch-layer al-5"><div class="arch-num">5</div><div class="arch-ttl">Validación</div><div class="arch-desc">Validaciones contables, reconciliaciones automáticas y detección de inconsistencias antes de avanzar al pipeline.</div></div>
+      <div class="arch-layer al-6"><div class="arch-num">6</div><div class="arch-ttl">Integración</div><div class="arch-desc">Interoperabilidad con ERP, plataformas BI y modelos de análisis. Output listo para alimentar la Sesión 5.2.</div></div>
+    </div>
+  </div>
+  <div class="callout cl-teal"><span class="cl-ico">🚀</span><div class="cl-body"><div class="cl-ttl">De modelo reactivo a procesamiento continuo</div><p class="cl-txt">La extracción multimodal transforma la función financiera: de esperar datos hacia un <strong>esquema de procesamiento continuo de información</strong>. El área financiera deja de depender de la disponibilidad de datos bien estructurados y empieza a operar sobre flujos de información siempre actualizados, independientemente del formato origen.</p></div></div>
+  <div class="sess-nav"><button class="btn btn-g" disabled>← Anterior</button><button class="btn btn-p" onclick="goTo(2)">Sesión 5.2 →</button></div>
+</section>
+
+<!-- S5.2 -->
+<section class="session" id="s2">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 5.2</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Construcción Automática del Estado de Resultados: Marco Conceptual y Arquitectura Computacional</h1>
+    <div class="sh-meta"><span class="badge b-def">⏱ 50 min</span><span class="badge b-teal">Pipeline ER</span><span class="badge b-def">6 capas</span></div>
+  </div>
+  <div class="section">
+    <div class="er-pipeline">
+      <div class="erp-step done-s"><div class="erp-num">✓</div><div class="erp-lbl">Extracción</div><div class="erp-sub">Completado</div></div>
+      <span class="erp-arr">→</span>
+      <div class="erp-step on"><div class="erp-num">2</div><div class="erp-lbl">Construcción</div><div class="erp-sub">ER automático</div></div>
+      <span class="erp-arr">→</span>
+      <div class="erp-step"><div class="erp-num">3</div><div class="erp-lbl">Validación</div><div class="erp-sub">Márgenes</div></div>
+      <span class="erp-arr">→</span>
+      <div class="erp-step"><div class="erp-num">4</div><div class="erp-lbl">Detección</div><div class="erp-sub">Anomalías</div></div>
+      <span class="erp-arr">→</span>
+      <div class="erp-step"><div class="erp-num">5</div><div class="erp-lbl">Narrativa</div><div class="erp-sub">Informe</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <p class="prose">La construcción del ER se configura como un problema integrado de <strong>ingeniería de sistemas, modelación contable y arquitectura de datos</strong>. La automatización permite operar bajo principios de determinismo lógico, validación continua, versionamiento y trazabilidad algorítmica — eliminando la dependencia del conocimiento tácito y la susceptibilidad a errores humanos del proceso manual.</p>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Estructura funcional del ER — jerarquía lógica NIIF</h2>
+    <div class="er-struct">
+      <div class="er-row"><div class="er-cell hd">ESTADO DE RESULTADOS — Estructura funcional bajo NIIF</div><div class="er-note" style="background:var(--ur-navy);color:rgba(255,255,255,.6)">Nivel analítico</div></div>
+      <div class="er-row"><div class="er-cell item">+ Ingresos operacionales</div><div class="er-note">Ventas netas, prestación de servicios</div></div>
+      <div class="er-row"><div class="er-cell item">− Costos de ventas (COGS)</div><div class="er-note">Costo del producto o servicio</div></div>
+      <div class="er-row"><div class="er-cell sub">= Utilidad bruta · Margen bruto</div><div class="er-note">Eficiencia productiva</div></div>
+      <div class="er-row"><div class="er-cell item">− Gastos administrativos</div><div class="er-note">Estructura organizacional</div></div>
+      <div class="er-row"><div class="er-cell item">− Gastos de ventas</div><div class="er-note">Costos comerciales y distribución</div></div>
+      <div class="er-row"><div class="er-cell sub">= EBITDA · Margen EBITDA</div><div class="er-note">Capacidad operativa bruta</div></div>
+      <div class="er-row"><div class="er-cell item">− Depreciación y amortización</div><div class="er-note">Deterioro de activos de largo plazo</div></div>
+      <div class="er-row"><div class="er-cell sub">= EBIT · Margen EBIT</div><div class="er-note">Desempeño operativo neto</div></div>
+      <div class="er-row"><div class="er-cell item">± Ingresos / Gastos no operacionales</div><div class="er-note">Financieros, otros ingresos/egresos</div></div>
+      <div class="er-row"><div class="er-cell sub">= EBT — Utilidad antes de impuestos</div><div class="er-note">Base gravable del período</div></div>
+      <div class="er-row"><div class="er-cell item">− Impuesto a la renta</div><div class="er-note">Tasa efectiva aplicable</div></div>
+      <div class="er-row"><div class="er-cell tot">= Utilidad neta · Margen neto</div><div class="er-note" style="background:var(--teal);color:rgba(255,255,255,.8)">Rentabilidad final</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Principios estructurales para la automatización</h2>
+    <div class="card-grid">
+      <div class="card c-azul"><div class="card-ico">📚</div><div class="card-ttl">Estandarización contable</div><div class="card-body">Taxonomías (PUC), naturaleza de cuentas débito/crédito, jerarquías y reglas de agregación formalizadas. <strong>La ausencia introduce ambigüedad que compromete el sistema.</strong></div></div>
+      <div class="card c-teal"><div class="card-ico">🔧</div><div class="card-ttl">Normalización de datos</div><div class="card-body">Normalizar signos contables, homogeneizar formatos, eliminar duplicidades y garantizar consistencia temporal entre periodos comparados.</div></div>
+      <div class="card c-rojo"><div class="card-ico">⚙️</div><div class="card-ttl">Reglas de negocio</div><div class="card-body">Asignación de cuentas, relaciones de cálculo, dependencias y estructura del ER. <strong>Explícitas, versionadas, auditables y alineadas con NIIF.</strong></div></div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Arquitectura computacional — 6 capas</h2>
+    <div class="arch-wrap">
+      <div class="arch-layer al-1"><div class="arch-num">1</div><div class="arch-ttl">Ingestión</div><div class="arch-desc">ERP, bases de datos, Excel/CSV, APIs y data providers. Múltiples fuentes en un flujo unificado.</div></div>
+      <div class="arch-layer al-2"><div class="arch-num">2</div><div class="arch-ttl">Transformación</div><div class="arch-desc">Limpieza, normalización de signos, homologación y mapeo de cuentas contra el catálogo estándar.</div></div>
+      <div class="arch-layer al-3"><div class="arch-num">3</div><div class="arch-ttl">Cálculo financiero</div><div class="arch-desc">Utilidades intermedias (Bruta, EBITDA, EBIT, EBT, Neta), derivación de márgenes y agregaciones jerárquicas.</div></div>
+      <div class="arch-layer al-4"><div class="arch-num">4</div><div class="arch-ttl">Validación y control</div><div class="arch-desc">Validaciones algebraicas, conciliaciones contables, detección de inconsistencias. Alimenta la Sesión 5.3.</div></div>
+      <div class="arch-layer al-5"><div class="arch-num">5</div><div class="arch-ttl">Presentación</div><div class="arch-desc">Reportes estructurados, dashboards, salidas para modelos analíticos. Alimenta la Sesión 5.5.</div></div>
+      <div class="arch-layer al-6"><div class="arch-num">6</div><div class="arch-ttl">Orquestación</div><div class="arch-desc">Automatización de pipelines, jobs periódicos, integración con sistemas corporativos y control de versiones.</div></div>
+    </div>
+  </div>
+  <div class="callout cl-teal"><span class="cl-ico">🏗️</span><div class="cl-body"><div class="cl-ttl">Del ER como documento al ER como objeto computacional</div><p class="cl-txt">En entornos automatizados, el ER se convierte en un <strong>objeto computacional integrable en modelos predictivos, simulaciones y sistemas de soporte a decisiones</strong>. Deja de ser un reporte estático y se transforma en una representación dinámica del desempeño económico, actualizable en tiempo casi real y auditable en cada transformación del pipeline.</p></div></div>
+  <div class="sess-nav"><button class="btn btn-g" onclick="goTo(1)">← Sesión 5.1</button><button class="btn btn-p" onclick="goTo(3)">Sesión 5.3 →</button></div>
+</section>
+
+<!-- S5.3 -->
+<section class="session" id="s3">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 5.3</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Validación de Márgenes: Arquitectura de Control Multicapa y Consistencia en Sistemas Automatizados</h1>
+    <div class="sh-meta"><span class="badge b-def">⏱ 50 min</span><span class="badge b-teal">Control sistémico</span><span class="badge b-def">4 principios</span></div>
+  </div>
+  <div class="section">
+    <div class="er-pipeline">
+      <div class="erp-step done-s"><div class="erp-num">✓</div><div class="erp-lbl">Extracción</div></div><span class="erp-arr">→</span>
+      <div class="erp-step done-s"><div class="erp-num">✓</div><div class="erp-lbl">Construcción</div></div><span class="erp-arr">→</span>
+      <div class="erp-step on"><div class="erp-num">3</div><div class="erp-lbl">Validación</div><div class="erp-sub">Márgenes</div></div><span class="erp-arr">→</span>
+      <div class="erp-step"><div class="erp-num">4</div><div class="erp-lbl">Detección</div></div><span class="erp-arr">→</span>
+      <div class="erp-step"><div class="erp-num">5</div><div class="erp-lbl">Narrativa</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <p class="prose">Los márgenes financieros trascienden su función descriptiva para convertirse en <strong>instrumentos estructurales de control, verificación y consistencia sistémica</strong>. La validación de márgenes es un proceso <em>endógeno al sistema</em>, no una etapa posterior. Cualquier inconsistencia en datos, clasificación contable o lógica de cálculo se manifiesta en desviaciones anómalas en estos indicadores.</p>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Los márgenes como restricciones implícitas del sistema</h2>
+    <div class="mtbl-w">
+      <table class="mtbl">
+        <thead><tr><th>Margen</th><th>Fórmula</th><th>Nivel que captura</th><th>Señal de inconsistencia</th></tr></thead>
+        <tbody>
+          <tr><td>Margen Bruto</td><td>(Ingresos − COGS) / Ingresos</td><td>Eficiencia productiva y precio</td><td>Cambio brusco sin variación de volumen o mezcla justificada</td></tr>
+          <tr><td>Margen EBITDA</td><td>EBITDA / Ingresos</td><td>Capacidad operativa antes de D&A</td><td>Divergencia con Margen Bruto sin cambio en gastos operativos</td></tr>
+          <tr><td>Margen EBIT</td><td>EBIT / Ingresos</td><td>Desempeño operativo neto</td><td>Salto respecto a EBITDA sin variación en D&A</td></tr>
+          <tr><td>Margen Neto</td><td>Utilidad Neta / Ingresos</td><td>Rentabilidad final tras impuestos</td><td>Discrepancia con EBIT sin variación en gastos financieros</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">4 principios de validación</h2>
+    <div class="plist">
+      <div class="pitem"><div class="pnum" style="background:var(--c-azul)">I</div><div class="pb"><div class="pttl">Consistencia matemática y cierre algebraico</div><p class="ptxt">Integridad en sumatorias, correcta propagación de signos contables, ausencia de duplicidades. El sistema debe satisfacer condiciones de <strong>cierre matemático</strong>: todas las relaciones algebraicas coherentes entre sí.</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--teal)">II</div><div class="pb"><div class="pttl">Coherencia contable</div><p class="ptxt">Asignación adecuada de ingresos, costos y gastos. Respeto por la naturaleza débito/crédito. Alineación con NIIF. <strong>Errores en clasificación generan distorsiones sistemáticas</strong> en todos los indicadores derivados.</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--c-dorado)">III</div><div class="pb"><div class="pttl">Consistencia intertemporal</div><p class="ptxt">Estabilidad en la estructura del ER, consistencia en criterios de clasificación entre periodos, documentación de cambios metodológicos. <strong>La falta de consistencia intertemporal invalida el análisis de tendencias.</strong></p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--c-rosa)">IV</div><div class="pb"><div class="pttl">Razonabilidad económica</div><p class="ptxt">Los márgenes deben ser interpretables dentro del contexto del negocio y el sector. <strong>Un margen algebraicamente correcto puede ser económicamente implausible.</strong> Desviaciones significativas requieren explicación en términos operativos o estratégicos.</p></div></div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Arquitectura de control multicapa</h2>
+    <div class="arch-wrap">
+      <div class="arch-layer al-3"><div class="arch-num">1</div><div class="arch-ttl">Capa de cálculo</div><div class="arch-desc">Genera los márgenes a partir del ER asegurando consistencia en fórmulas, dependencias y jerarquías.</div></div>
+      <div class="arch-layer al-1"><div class="arch-num">2</div><div class="arch-ttl">Validación lógica</div><div class="arch-desc">Integridad algebraica, control de signos contables, validación de jerarquías de agregación.</div></div>
+      <div class="arch-layer al-2"><div class="arch-num">3</div><div class="arch-ttl">Validación analítica</div><div class="arch-desc">Análisis de variaciones vs. histórico, benchmarking sectorial, identificación de outliers y comportamientos atípicos.</div></div>
+      <div class="arch-layer al-4"><div class="arch-num">4</div><div class="arch-ttl">Monitoreo y alertas</div><div class="arch-desc">Umbrales dinámicos, alertas en tiempo real, priorización de anomalías según criticidad para revisión humana.</div></div>
+      <div class="arch-layer al-6"><div class="arch-num">5</div><div class="arch-ttl">Trazabilidad y auditoría</div><div class="arch-desc">Reconstrucción del flujo de datos, identificación del origen de errores, seguimiento de cambios en reglas y modelos.</div></div>
+    </div>
+  </div>
+  <div class="callout cl-dorado"><span class="cl-ico">⚠️</span><div class="cl-body"><div class="cl-ttl">Validación endógena — no correctiva</div><p class="cl-txt">La validación de márgenes debe diseñarse <strong>dentro del sistema</strong> desde su concepción. En entornos de alta automatización, la ausencia de mecanismos robustos introduce riesgos de <strong>distorsión analítica silenciosa</strong>: errores que se propagan sin ser detectados hasta afectar decisiones estratégicas de alto impacto.</p></div></div>
+  <div class="sess-nav"><button class="btn btn-g" onclick="goTo(2)">← Sesión 5.2</button><button class="btn btn-p" onclick="goTo(4)">Sesión 5.4 →</button></div>
+</section>
+
+<!-- S5.4 -->
+<section class="session" id="s4">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 5.4</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Detección de Anomalías en el Estado de Resultados: Modelos Analíticos y Arquitectura de Control</h1>
+    <div class="sh-meta"><span class="badge b-def">⏱ 50 min</span><span class="badge b-teal">IA Agéntica</span><span class="badge b-rojo">Control financiero</span></div>
+  </div>
+  <div class="section">
+    <div class="er-pipeline">
+      <div class="erp-step done-s"><div class="erp-num">✓</div><div class="erp-lbl">Extracción</div></div><span class="erp-arr">→</span>
+      <div class="erp-step done-s"><div class="erp-num">✓</div><div class="erp-lbl">Construcción</div></div><span class="erp-arr">→</span>
+      <div class="erp-step done-s"><div class="erp-num">✓</div><div class="erp-lbl">Validación</div></div><span class="erp-arr">→</span>
+      <div class="erp-step on"><div class="erp-num">4</div><div class="erp-lbl">Detección</div><div class="erp-sub">Anomalías</div></div><span class="erp-arr">→</span>
+      <div class="erp-step"><div class="erp-num">5</div><div class="erp-lbl">Narrativa</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <p class="prose">La detección de anomalías es un <strong>componente crítico de la arquitectura del sistema financiero inteligente</strong>. Su alcance excede la identificación de errores: incorpora la validación de la integridad del modelo, la detección de cambios estructurales y la emisión de señales tempranas. Es simultáneamente un mecanismo de control y una herramienta de análisis estratégico.</p>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Tipología de anomalías financieras</h2>
+    <div class="anomaly-grid">
+      <div class="anom a1"><div class="anom-lbl">Tipo 1</div><div class="anom-ttl">Errores operativos</div><div class="anom-txt">Inconsistencias de fallas en registro o procesamiento: duplicaciones, omisiones, errores de digitación, clasificaciones incorrectas. Requieren corrección inmediata antes de cualquier análisis.</div></div>
+      <div class="anom a2"><div class="anom-lbl">Tipo 2</div><div class="anom-ttl">Desviaciones estadísticas</div><div class="anom-txt">Observaciones fuera de rangos esperados según distribuciones históricas. Variaciones de precios, volúmenes o márgenes que exceden bandas de normalidad definidas estadísticamente.</div></div>
+      <div class="anom a3"><div class="anom-lbl">Tipo 3</div><div class="anom-ttl">Cambios estructurales</div><div class="anom-txt">Alteraciones en la dinámica del negocio que rompen patrones estables: nueva mezcla de productos, adquisiciones. Requieren reinterpretación del modelo base de análisis.</div></div>
+      <div class="anom a4"><div class="anom-lbl">Tipo 4</div><div class="anom-ttl">Eventos atípicos exógenos</div><div class="anom-txt">Shocks externos con impacto financiero: cambios de regulación, crisis sectoriales, eventos de mercado. Requieren contextualización macroeconómica para interpretación correcta.</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">4 métodos de detección — complementarios, no excluyentes</h2>
+    <div class="card-grid">
+      <div class="card c-azul"><div class="card-ico">📊</div><div class="card-ttl">Enfoques estadísticos</div><div class="card-body">Desviación estándar, z-scores, rangos intercuartílicos (IQR). Eficientes en escenarios de menor complejidad con distribuciones históricas claras.</div><span class="card-tag">Bajo volumen</span></div>
+      <div class="card c-dorado"><div class="card-ico">📋</div><div class="card-ttl">Métodos basados en reglas</div><div class="card-body">Umbrales financieros definidos por el negocio, reglas contables, validaciones normativas. Especialmente útiles en entornos regulados.</div><span class="card-tag">Entornos regulados</span></div>
+      <div class="card c-teal"><div class="card-ico">🤖</div><div class="card-ttl">Machine Learning</div><div class="card-body">Captura patrones complejos y no lineales. Supervisado para anomalías conocidas, no supervisado (clustering, outlier detection) para patrones emergentes.</div><span class="card-tag">Alta dimensionalidad</span></div>
+      <div class="card c-rojo"><div class="card-ico">🔭</div><div class="card-ttl">Modelos predictivos</div><div class="card-body">Forecasting de valores esperados mediante series de tiempo y regresiones. Desviaciones entre esperado y observado son señales de anomalía.</div><span class="card-tag">Análisis prospectivo</span></div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Principios críticos para una detección robusta</h2>
+    <div class="plist">
+      <div class="pitem"><div class="pnum">1</div><div class="pb"><div class="pttl">Definición operativa de normalidad</div><p class="ptxt">El punto de partida es construir un modelo de comportamiento esperado basado en distribuciones históricas, tendencias temporales y modelos predictivos. <strong>La definición de normalidad es dependiente del contexto</strong> — lo que es normal en un sector puede ser una señal de alerta en otro.</p></div></div>
+      <div class="pitem"><div class="pnum">2</div><div class="pb"><div class="pttl">Balance sensibilidad vs. especificidad</div><p class="ptxt">El sistema debe balancear la capacidad de detectar anomalías reales (sensibilidad) con la capacidad de evitar falsos positivos (especificidad). Un sistema hiper-sensible genera ruido que paraliza la revisión humana; un sistema hiper-específico deja pasar errores relevantes.</p></div></div>
+      <div class="pitem"><div class="pnum">3</div><div class="pb"><div class="pttl">Contextualización financiera obligatoria</div><p class="ptxt">La interpretación de anomalías exige incorporar contexto económico y operativo: industria, benchmarking sectorial, estrategia del negocio y condiciones macroeconómicas. <strong>Un mismo valor puede ser normal o anómalo según el contexto.</strong></p></div></div>
+    </div>
+  </div>
+  <div class="callout cl-teal"><span class="cl-ico">🔍</span><div class="cl-body"><div class="cl-ttl">La detección de anomalías como señal estratégica</div><p class="cl-txt">En sistemas financieros inteligentes, la detección de anomalías <strong>transforma datos en señales accionables</strong>. No solo identifica errores — detecta cambios estructurales en el negocio, presiones emergentes en márgenes y riesgos operativos antes de que se consoliden. Es la diferencia entre gestión reactiva y gobernanza financiera anticipatoria.</p></div></div>
+  <div class="sess-nav"><button class="btn btn-g" onclick="goTo(3)">← Sesión 5.3</button><button class="btn btn-p" onclick="goTo(5)">Sesión 5.5 →</button></div>
+</section>
+
+<!-- S5.5 -->
+<section class="session" id="s5">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 5.5</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Generación Automática de Informes Ejecutivos: Narrativa Financiera en Sistemas Inteligentes</h1>
+    <div class="sh-meta"><span class="badge b-def">⏱ 50 min</span><span class="badge b-teal">NLG Financiero</span><span class="badge b-rojo">Alta relevancia ejecutiva</span></div>
+  </div>
+  <div class="section">
+    <div class="er-pipeline">
+      <div class="erp-step done-s"><div class="erp-num">✓</div><div class="erp-lbl">Extracción</div></div><span class="erp-arr">→</span>
+      <div class="erp-step done-s"><div class="erp-num">✓</div><div class="erp-lbl">Construcción</div></div><span class="erp-arr">→</span>
+      <div class="erp-step done-s"><div class="erp-num">✓</div><div class="erp-lbl">Validación</div></div><span class="erp-arr">→</span>
+      <div class="erp-step done-s"><div class="erp-num">✓</div><div class="erp-lbl">Anomalías</div></div><span class="erp-arr">→</span>
+      <div class="erp-step on"><div class="erp-num">5</div><div class="erp-lbl">Narrativa</div><div class="erp-sub">Informe ejecutivo</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <p class="prose">La generación automática de informes ejecutivos integra analítica avanzada, IA y comunicación estratégica en un solo flujo. <strong>No es una simple automatización de reportes</strong>: es un sistema que traduce representaciones cuantitativas en narrativas financieras de alto nivel, orientadas a la toma de decisiones. El área financiera evoluciona de una función transaccional hacia un <em>sistema cognitivo organizacional</em>.</p>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Arquitectura lógico-argumentativa — 4 preguntas estructurantes</h2>
+    <div class="nlg-flow">
+      <div class="nlg-item"><div class="nlg-dot">1</div><div class="nlg-body"><span class="nlg-q">¿Qué ocurrió?</span><div class="nlg-ttl">Identificación del fenómeno</div><div class="nlg-txt">Síntesis global del desempeño del período. Variaciones más relevantes en ingresos, costos y márgenes. <strong>Priorización de relevancia sobre exhaustividad.</strong></div></div></div>
+      <div class="nlg-item"><div class="nlg-dot">2</div><div class="nlg-body"><span class="nlg-q">¿Por qué ocurrió?</span><div class="nlg-ttl">Explicación causal</div><div class="nlg-txt">Análisis de causas subyacentes: variación de volumen, presión en precios, cambio en mezcla, incremento en costos estructurales. Integración de contexto macroeconómico y sectorial.</div></div></div>
+      <div class="nlg-item"><div class="nlg-dot">3</div><div class="nlg-body"><span class="nlg-q">¿Qué implica?</span><div class="nlg-ttl">Evaluación de impacto</div><div class="nlg-txt">Riesgos identificados, oportunidades estratégicas detectadas, señales de deterioro o mejora estructural. Evaluación de sostenibilidad del desempeño observado.</div></div></div>
+      <div class="nlg-item"><div class="nlg-dot">4</div><div class="nlg-body"><span class="nlg-q">¿Qué se debe hacer?</span><div class="nlg-ttl">Orientación a la acción</div><div class="nlg-txt">Recomendaciones estratégicas derivadas del análisis. Agenda de decisiones para la junta directiva. Propuestas accionables con fundamento financiero explícito.</div></div></div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Arquitectura cognitiva del sistema — 6 capas</h2>
+    <div class="arch-wrap">
+      <div class="arch-layer al-1"><div class="arch-num">1</div><div class="arch-ttl">Datos</div><div class="arch-desc">ER validado, análisis comparativos, márgenes, anomalías detectadas, datos sectoriales y macroeconómicos.</div></div>
+      <div class="arch-layer al-2"><div class="arch-num">2</div><div class="arch-ttl">Inferencia</div><div class="arch-desc">Variaciones significativas, tendencias, relaciones causales, detección final de anomalías no capturadas previamente.</div></div>
+      <div class="arch-layer al-3"><div class="arch-num">3</div><div class="arch-ttl">Abstracción y síntesis</div><div class="arch-desc">Priorización de insights, eliminación de redundancias, estructuración jerárquica según relevancia estratégica.</div></div>
+      <div class="arch-layer al-4"><div class="arch-num">4</div><div class="arch-ttl">Generación narrativa (NLG)</div><div class="arch-desc">Transformación en discurso estructurado: explicaciones, narrativa coherente, adaptación al nivel ejecutivo.</div></div>
+      <div class="arch-layer al-5"><div class="arch-num">5</div><div class="arch-ttl">Validación y control</div><div class="arch-desc">Coherencia lógica y semántica, alineación con datos subyacentes, trazabilidad entre fuentes e interpretación.</div></div>
+      <div class="arch-layer al-6"><div class="arch-num">6</div><div class="arch-ttl">Personalización</div><div class="arch-desc">Adaptación según perfil del receptor (gerencia, junta, inversionistas), profundidad requerida y objetivos estratégicos.</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="sec-title">Estructura del informe ejecutivo automatizado</h2>
+    <div class="card-grid">
+      <div class="card c-teal"><div class="card-ico">📋</div><div class="card-ttl">Resumen ejecutivo</div><div class="card-body">Síntesis de alto nivel que prioriza hallazgos críticos. Compresión informacional máxima sin pérdida de significado estratégico.</div></div>
+      <div class="card c-azul"><div class="card-ico">📈</div><div class="card-ttl">Análisis de ingresos</div><div class="card-body">Crecimiento, precios, volúmenes y mix de productos. Tendencias y estacionalidades identificadas.</div></div>
+      <div class="card c-dorado"><div class="card-ico">⚙️</div><div class="card-ttl">Análisis de costos</div><div class="card-body">Estructura de costos e impacto en eficiencia operativa. Presiones identificadas y elasticidad a variables externas.</div></div>
+      <div class="card c-rojo"><div class="card-ico">📊</div><div class="card-ttl">Análisis de márgenes</div><div class="card-body">Coherencia estructural de la rentabilidad en los cuatro niveles. Validación cruzada con Sesión 5.3.</div></div>
+      <div class="card c-rosa"><div class="card-ico">⚠️</div><div class="card-ttl">Riesgos y oportunidades</div><div class="card-body">Factores críticos identificados en la detección de anomalías (Sesión 5.4) con impacto potencial evaluado.</div></div>
+      <div class="card c-verde"><div class="card-ico">🎯</div><div class="card-ttl">Recomendaciones</div><div class="card-body">Propuestas accionables derivadas del análisis integral. Agenda de decisiones para la junta directiva.</div></div>
+    </div>
+  </div>
+  <div class="callout cl-rosa"><span class="cl-ico">🛡️</span><div class="cl-body"><div class="cl-ttl">Auditabilidad narrativa — la gobernanza de la narrativa</div><p class="cl-txt">El principio de <strong>auditabilidad narrativa</strong> exige que cada afirmación del informe sea trazable a los datos fuente validados del pipeline. La narrativa no puede contener interpretaciones sin sustento en los datos. La validación humana (HITL/HOTL) en puntos críticos es una <strong>exigencia fiduciaria</strong>, especialmente en reportes para juntas directivas, reguladores o inversionistas institucionales.</p></div></div>
+  <div class="sess-nav"><button class="btn btn-g" onclick="goTo(4)">← Sesión 5.4</button><button class="btn btn-p" onclick="goTo(6)">Evaluación final →</button></div>
+</section>
+
+<!-- QUIZ -->
+<section class="session" id="s6">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Evaluación · Módulo 5</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Quiz de Verificación — Automatización del Estado de Resultados Inteligente</h1>
+    <div class="sh-meta"><span class="badge b-def">8 preguntas</span><span class="badge b-def">⏱ ~15 min</span><span class="badge b-verde">Criterio estratégico</span></div>
+  </div>
+  <div class="quiz-wrap">
+    <div class="qdots" id="qDots"></div>
+    <div id="qContainer"></div>
+    <div class="quiz-result" id="qResult">
+      <div class="res-icon">🎓</div><div class="res-score" id="rScore"></div>
+      <div class="res-lbl">preguntas correctas de 8</div>
+      <div id="rBadge"></div>
+      <p class="res-note">Revise las sesiones correspondientes antes de avanzar al Módulo 6.</p>
+      <button class="btn btn-g" onclick="resetQuiz()" style="margin-top:8px">Reiniciar quiz</button>
+    </div>
+  </div>
+  <div class="sess-nav"><button class="btn btn-g" onclick="goTo(5)">← Sesión 5.5</button><span style="font-size:12px;color:var(--ur-muted)">Fin del Módulo 5</span></div>
+</section>
+
+</main>
+</div>
+
+<script>
+const SESS=[
+  {id:1,lbl:'5.1',title:'Extracción Multimodal',time:'50 min'},
+  {id:2,lbl:'5.2',title:'Construcción Automática del ER',time:'50 min'},
+  {id:3,lbl:'5.3',title:'Validación de Márgenes',time:'50 min'},
+  {id:4,lbl:'5.4',title:'Detección de Anomalías en el ER',time:'50 min'},
+  {id:5,lbl:'5.5',title:'Generación de Informes Ejecutivos',time:'50 min'},
+  {id:6,lbl:'✓',title:'Evaluación — Módulo 5',time:'~15 min'},
+];
+const QUIZ=[
+  {q:'¿Cuál es el principal aporte de la extracción multimodal al pipeline del ER automatizado?',opts:['Permite que los analistas trabajen más rápido en Excel.','Transforma información heterogénea y fragmentada (PDFs, imágenes, hojas de cálculo, textos) en representaciones formales y analíticamente explotables, eliminando el cuello de botella en la adquisición de datos.','Sustituye la necesidad de un sistema ERP en las organizaciones.','Genera automáticamente el informe ejecutivo a partir de los datos extraídos.'],ok:1,fb:'Correcto. La extracción multimodal resuelve el primer y más crítico cuello de botella del pipeline: la adquisición y estructuración de información heterogénea. Sin esta capacidad, los sistemas de análisis automatizado dependen de datos ya estructurados, excluyendo una parte significativa de la información financiera corporativa que existe en formatos no estructurados.'},
+  {q:'En la arquitectura computacional del ER automatizado, ¿cuál es el rol específico de la capa de transformación?',opts:['Genera los reportes ejecutivos y dashboards para los usuarios finales.','Coordina la ejecución de todos los procesos mediante automatización de flujos.','Ejecuta la limpieza de datos, normalización de signos contables, homologación y mapeo de cuentas contra el catálogo estándar.','Detecta anomalías estadísticas en los márgenes del ER.'],ok:2,fb:'Correcto. La capa de transformación convierte los datos brutos en información financieramente utilizable: limpieza, normalización de signos (crítica para evitar distorsiones), homologación de cuentas contra el PUC u otro estándar, y enriquecimiento semántico. Sin esta capa, la capa de cálculo financiero opera sobre datos inconsistentes.'},
+  {q:'¿Por qué se afirma que la validación de márgenes debe ser un proceso "endógeno" al sistema financiero automatizado?',opts:['Porque es más económico hacerla automáticamente que contratar auditores externos.','Porque debe estar integrada en el diseño del sistema desde su concepción, no como capa de revisión posterior, para detectar errores que se propagarían silenciosamente si no se detienen en origen.','Porque los auditores externos no tienen acceso a los sistemas automatizados.','Porque los modelos de IA validan sus propios resultados sin necesidad de controles externos.'],ok:1,fb:'Correcto. Un proceso de validación "correctivo" llega demasiado tarde cuando los datos ya han alimentado decisiones. Los márgenes actúan como restricciones implícitas: cualquier inconsistencia en datos, clasificación o cálculo se manifiesta en desviaciones anómalas. Validarlos endógenamente significa que el sistema se auto-controla en cada paso del pipeline.'},
+  {q:'Un sistema detecta que el Margen EBITDA cayó 3 puntos porcentuales, pero el Margen Bruto se mantuvo estable. ¿Cuál es la señal más probable?',opts:['Error algebraico en el cálculo del COGS.','Incremento en los gastos operativos (administrativos y de ventas) sin variación en la eficiencia productiva.','Problema en la normalización de signos contables de los ingresos.','Cambio en el método de reconocimiento de ingresos bajo NIIF.'],ok:1,fb:'Correcto. Si el Margen Bruto es estable (ingresos y COGS se comportan bien) pero el EBITDA cae, la señal apunta directamente a los gastos operativos. Esta es la función de los márgenes como restricciones implícitas: el análisis de la distancia entre Margen Bruto y EBITDA señala dónde está la presión sin revisar cuenta por cuenta.'},
+  {q:'¿Cuál es la diferencia crítica entre una anomalía de "cambio estructural" y una de "error operativo" en el ER?',opts:['Los errores operativos son detectados automáticamente; los cambios estructurales requieren intervención humana.','Un error operativo requiere corrección del dato; un cambio estructural requiere reinterpretación del modelo base y posiblemente redefinición de los parámetros de normalidad.','Los cambios estructurales solo ocurren en empresas grandes.','No existe diferencia práctica; ambos se manejan con el mismo protocolo.'],ok:1,fb:'Correcto. Esta distinción es fundamental. Un error operativo se corrige en los datos. Un cambio estructural no se "corrige" — requiere reinterpretar el modelo financiero y actualizar los parámetros de normalidad del sistema de detección, pues lo que era anómalo puede ser el nuevo comportamiento esperado.'},
+  {q:'¿Cuál es la secuencia lógico-argumentativa que debe estructurar la narrativa del informe ejecutivo automatizado?',opts:['Datos → KPIs → Comparativo histórico → Proyección.','Identificación del fenómeno (¿qué?) → Explicación causal (¿por qué?) → Evaluación de impacto (¿qué implica?) → Orientación a la acción (¿qué hacer?).','Resumen ejecutivo → Análisis técnico → Referencias bibliográficas → Apéndices estadísticos.','Contexto macroeconómico → Análisis sectorial → Benchmarking → Recomendaciones.'],ok:1,fb:'Correcto. Esta secuencia de cuatro preguntas garantiza coherencia semántica, orientación estratégica y utilidad decisional. Un informe que responde solo "¿qué ocurrió?" es descriptivo; uno que responde las cuatro preguntas es un instrumento cognitivo de gobierno financiero orientado a la acción.'},
+  {q:'¿Qué implica el principio de "auditabilidad narrativa" en la generación automática de informes ejecutivos?',opts:['Que el informe debe ser aprobado por un auditor externo antes de distribuirse.','Que cada afirmación del informe debe ser trazable a los datos fuente validados del pipeline, sin interpretaciones que no tengan sustento en los datos.','Que el informe debe publicarse en el sistema de auditoría interna de la empresa.','Que la narrativa generada por IA no requiere validación humana porque es determinística.'],ok:1,fb:'Correcto. La auditabilidad narrativa es el principio de gobernanza de la narrativa financiera automática: cada afirmación debe poder rastrearse hasta los datos fuente validados. La validación humana (HITL/HOTL) en puntos críticos no es opcional — es una exigencia fiduciaria en reportes para juntas directivas, reguladores o inversionistas.'},
+  {q:'¿Cuál es el cambio de paradigma que describe el paso del ER como "documento" al ER como "objeto computacional"?',opts:['Que el ER ahora se genera en PDF en lugar de en Excel.','Que el ER se convierte en una representación dinámica y actualizable, integrable en modelos predictivos, simulaciones y sistemas de soporte a decisiones, con trazabilidad completa en cada transformación.','Que el ER ya no necesita aprobación del área contable antes de distribuirse.','Que la contabilidad se separa completamente del área de análisis financiero.'],ok:1,fb:'Correcto. El ER como objeto computacional es la ruptura conceptual central del Módulo 5: deja de ser un reporte periódico estático y se convierte en una representación dinámica del desempeño económico, actualizable en tiempo casi real, integrable en modelos de forecasting y simulación, y auditable en cada transformación del pipeline.'},
+];
+let cur=1,done=new Set();
+let qs={idx:0,ans:Array(8).fill(null),sub:Array(8).fill(false)};
+function buildSB(){document.getElementById('sbNav').innerHTML=SESS.map(s=>`<div class="nav-item ${s.id===cur?'active':''} ${done.has(s.id)?'done':''}" onclick="goTo(${s.id})"><div class="nd">${done.has(s.id)?'✓':s.id===6?'📝':s.id}</div><div class="nav-b"><div class="nav-id">Sesión ${s.lbl}</div><div class="nav-ttl">${s.title}</div><div class="nav-time">${s.time}</div></div></div>`).join('')}
+function goTo(n){if(n>cur&&cur<6)done.add(cur);document.querySelectorAll('.session').forEach(s=>s.classList.remove('active'));document.getElementById('s'+n).classList.add('active');cur=n;buildSB();updateProg();window.scrollTo({top:0,behavior:'smooth'});if(n===6)initQuiz()}
+function updateProg(){const p=Math.round((done.size/6)*100);document.getElementById('pgBar').style.width=p+'%';document.getElementById('pgPct').textContent=p+'%'}
+function initQuiz(){renderQ(qs.idx);renderDots()}
+function renderDots(){document.getElementById('qDots').innerHTML=QUIZ.map((_,i)=>{let c='qdot';if(i===qs.idx)c+=' cur';else if(qs.sub[i])c+=qs.ans[i]===QUIZ[i].ok?' ok':' err';else if(qs.ans[i]!==null)c+=' ans';return`<div class="${c}" onclick="jumpQ(${i})"></div>`}).join('')}
+function jumpQ(i){qs.idx=i;renderQ(i);renderDots()}
+function renderQ(i){const d=QUIZ[i],sub=qs.sub[i],sel=qs.ans[i];document.getElementById('qContainer').innerHTML=`<div class="q-head"><div class="q-ctr">Pregunta ${i+1} de ${QUIZ.length}</div><div class="q-txt">${d.q}</div><div class="q-hint">Seleccione la respuesta más adecuada.</div></div><div class="q-opts">${d.opts.map((o,j)=>{let c='qopt'+(sub?' locked':'');if(sub){if(j===d.ok)c+=' ok';else if(j===sel&&j!==d.ok)c+=' err';}else if(j===sel)c+=' sel';return`<div class="${c}" onclick="${sub?'':'selectOpt('+j+')'}"><div class="qletter">${['A','B','C','D'][j]}</div><span>${o}</span></div>`}).join('')}</div><div class="q-fb ${sub?'show '+(sel===d.ok?'ok':'err'):''}">${sub?(sel===d.ok?'✅ ':'❌ ')+d.fb:''}</div><div class="q-ctrl">${!sub?`<button class="btn btn-p" onclick="submitQ()" ${sel===null?'disabled':''}>Confirmar respuesta</button>`:''}${sub&&i<QUIZ.length-1?`<button class="btn btn-p" onclick="nextQ()">Siguiente →</button>`:''}${sub&&i===QUIZ.length-1?`<button class="btn btn-v" onclick="showResult()">Ver resultado →</button>`:''}${i>0?`<button class="btn btn-g" onclick="jumpQ(${i-1})">← Anterior</button>`:''}</div>`}
+function selectOpt(j){qs.ans[qs.idx]=j;renderQ(qs.idx);renderDots()}
+function submitQ(){qs.sub[qs.idx]=true;renderQ(qs.idx);renderDots()}
+function nextQ(){qs.idx++;renderQ(qs.idx);renderDots()}
+function showResult(){document.getElementById('qContainer').style.display='none';document.getElementById('qDots').style.display='none';const n=qs.ans.filter((a,i)=>a===QUIZ[i].ok).length;document.getElementById('rScore').textContent=n+'/8';const b=n===8?'<div class="res-badge rb-gold">🏆 Excelente — Dominio pleno del módulo</div>':n>=6?'<div class="res-badge rb-verde">✅ Aprobado — Comprensión sólida del módulo</div>':'<div class="res-badge rb-azul">📖 Refuerzo recomendado — Revise las sesiones con error</div>';document.getElementById('rBadge').innerHTML=b;document.getElementById('qResult').classList.add('show');done.add(6);updateProg();buildSB()}
+function resetQuiz(){qs={idx:0,ans:Array(8).fill(null),sub:Array(8).fill(false)};document.getElementById('qContainer').style.display='';document.getElementById('qDots').style.display='';document.getElementById('qResult').classList.remove('show');initQuiz()}
+buildSB();document.getElementById('s1').classList.add('active');
+</script>
+</body>
+</html>

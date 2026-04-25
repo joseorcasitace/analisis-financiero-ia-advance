@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Módulo 4 · IA Agéntica y Automatización Financiera · ADVANCE UR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
+<style>
+/* ─── DESIGN TOKENS — ADVANCE · UNIVERSIDAD DEL ROSARIO ─────────────────── */
+:root {
+  --ur-rojo:       #C8102E;
+  --ur-rojo-dark:  #A00D25;
+  --ur-rojo-light: #FBEAED;
+  --ur-rojo-mid:   #F2AABA;
+  --ur-navy:       #1A1F36;
+  --ur-navy-mid:   #2D3454;
+  --ur-slate:      #4A5178;
+  --ur-muted:      #6B7280;
+  --ur-border:     #E2E5ED;
+  --ur-surface:    #F8F9FC;
+  --ur-white:      #FFFFFF;
+  /* IA Agéntica badge — teal */
+  --teal:          #0D7A7A;
+  --teal-dark:     #095E5E;
+  --teal-light:    #E0F4F4;
+  --teal-mid:      #7EC8C8;
+  /* Semántico */
+  --c-azul:  #1B5EBF; --c-azul-bg:   #EBF2FF;
+  --c-dorado:#B45309; --c-dorado-bg: #FEF3C7;
+  --c-verde: #166534; --c-verde-bg:  #DCFCE7;
+  --c-rosa:  #9D174D; --c-rosa-bg:   #FCE7F3;
+  --c-gris:  #374151; --c-gris-bg:   #F3F4F6;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans:  'DM Sans', -apple-system, sans-serif;
+  --sw: 270px; --th: 54px; --r: 8px; --rl: 12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);font-size:15px;line-height:1.65;color:var(--ur-navy);background:var(--ur-surface);min-height:100vh;}
+
+/* TOPBAR — teal accent para módulos agénticos */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;height:var(--th);background:var(--ur-navy);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:3px solid var(--teal);}
+.tb-l{display:flex;align-items:center;}
+.tb-brand{font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5);}
+.tb-sep{width:1px;height:18px;background:rgba(255,255,255,.15);margin:0 14px;}
+.tb-title{font-family:var(--serif);font-size:15px;color:#fff;}
+.tb-badge{display:inline-flex;align-items:center;gap:5px;background:var(--teal);color:#fff;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-left:12px;}
+.tb-r{display:flex;align-items:center;gap:12px;}
+.tb-prog-lbl{font-size:11px;color:rgba(255,255,255,.5);font-weight:500;}
+.tb-track{width:140px;height:5px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden;}
+.tb-fill{height:100%;background:var(--teal);border-radius:3px;transition:width .5s ease;}
+.tb-pct{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);min-width:32px;text-align:right;}
+
+/* LAYOUT */
+.layout{display:flex;margin-top:var(--th);min-height:calc(100vh - var(--th));}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);background:var(--ur-white);border-right:1px solid var(--ur-border);position:fixed;top:var(--th);bottom:0;overflow-y:auto;display:flex;flex-direction:column;}
+.sb-head{padding:20px 18px 16px;border-bottom:1px solid var(--ur-border);}
+.sb-pill{display:inline-flex;align-items:center;gap:6px;background:var(--teal-light);color:var(--teal);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:6px;}
+.sb-agentic{display:inline-flex;align-items:center;gap:5px;background:var(--teal);color:#fff;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-bottom:10px;margin-left:6px;}
+.sb-mod-title{font-family:var(--serif);font-size:13px;color:var(--ur-navy);line-height:1.4;}
+.sb-nav{flex:1;padding:6px 0 16px;}
+.nav-item{display:flex;align-items:flex-start;gap:11px;padding:10px 18px;cursor:pointer;border-left:3px solid transparent;transition:background .15s,border-color .15s;}
+.nav-item:hover{background:var(--ur-surface);}
+.nav-item.active{background:var(--teal-light);border-left-color:var(--teal);}
+.nav-item.done .nd{background:var(--c-verde);}
+.nav-item.active .nd{background:var(--teal);}
+.nd{width:22px;height:22px;border-radius:50%;flex-shrink:0;background:var(--ur-border);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;margin-top:2px;}
+.nav-b{flex:1;}
+.nav-id{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--teal);text-transform:uppercase;}
+.nav-ttl{font-size:12px;color:var(--ur-navy);line-height:1.35;margin-top:1px;}
+.nav-item.active .nav-ttl{font-weight:600;}
+.nav-time{font-size:10px;color:var(--ur-muted);margin-top:2px;}
+.sidebar::-webkit-scrollbar{width:4px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--ur-border);border-radius:2px;}
+
+/* MAIN */
+.main{margin-left:var(--sw);flex:1;padding:36px 44px 64px;max-width:calc(var(--sw) + 820px);}
+
+/* SESSIONS */
+.session{display:none;}
+.session.active{display:block;animation:up .28s ease;}
+@keyframes up{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* SESSION HEADER */
+.sh{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--ur-border);}
+.sh-ey{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.sh-id{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);}
+.sh-rule{flex:1;height:1px;background:var(--teal-mid);}
+.sh-title{font-family:var(--serif);font-size:1.7rem;color:var(--ur-navy);line-height:1.25;margin-bottom:14px;}
+.sh-meta{display:flex;gap:8px;flex-wrap:wrap;}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+.b-def   {background:var(--c-gris-bg);   color:var(--c-gris);}
+.b-teal  {background:var(--teal-light);  color:var(--teal);}
+.b-rojo  {background:var(--ur-rojo-light);color:var(--ur-rojo);}
+.b-azul  {background:var(--c-azul-bg);   color:var(--c-azul);}
+.b-verde {background:var(--c-verde-bg);  color:var(--c-verde);}
+.b-dorado{background:var(--c-dorado-bg); color:var(--c-dorado);}
+.b-rosa  {background:var(--c-rosa-bg);   color:var(--c-rosa);}
+
+/* PROSE */
+.section{margin-bottom:36px;}
+.sec-title{font-family:var(--serif);font-size:1.12rem;color:var(--ur-navy);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--teal-mid);}
+.prose{font-size:14.5px;line-height:1.8;color:var(--ur-navy-mid);margin-bottom:14px;}
+.prose strong{color:var(--ur-navy);font-weight:600;}
+.prose em{color:var(--teal-dark);font-style:normal;font-weight:600;}
+
+/* CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px;margin:18px 0;}
+.card{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);padding:18px 16px;border-top:3px solid var(--ur-border);transition:box-shadow .2s;}
+.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07);}
+.c-teal  {border-top-color:var(--teal);}
+.c-rojo  {border-top-color:var(--ur-rojo);}
+.c-azul  {border-top-color:var(--c-azul);}
+.c-verde {border-top-color:var(--c-verde);}
+.c-dorado{border-top-color:var(--c-dorado);}
+.c-rosa  {border-top-color:var(--c-rosa);}
+.card-ico{font-size:1.4rem;margin-bottom:8px;}
+.card-ttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:6px;}
+.card-body{font-size:12.5px;color:var(--ur-slate);line-height:1.6;}
+.card-tag{display:inline-block;margin-top:10px;font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 8px;border-radius:20px;background:var(--teal-light);color:var(--teal);}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.cmp{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);overflow:hidden;}
+.cmp-h{padding:11px 16px;font-size:13px;font-weight:700;color:#fff;}
+.cmp-h.navy {background:var(--ur-navy);}
+.cmp-h.teal {background:var(--teal);}
+.cmp-h.rojo {background:var(--ur-rojo);}
+.cmp-h.azul {background:var(--c-azul);}
+.cmp-b{padding:12px 16px;}
+.cmp-row{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--ur-slate);padding:5px 0;border-bottom:1px solid var(--ur-border);line-height:1.5;}
+.cmp-row:last-child{border-bottom:none;}
+.cmp-row::before{content:'›';color:var(--teal);font-weight:700;flex-shrink:0;}
+
+/* TIMELINE */
+.timeline{margin:18px 0;}
+.tl-item{display:flex;gap:16px;position:relative;}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:17px;top:36px;bottom:0;width:2px;background:var(--ur-border);}
+.tl-num{width:36px;height:36px;flex-shrink:0;border-radius:50%;background:var(--teal);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;font-family:var(--serif);}
+.tl-body{padding:4px 0 24px;flex:1;}
+.tl-period{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:3px;}
+.tl-ttl{font-size:14px;font-weight:700;color:var(--ur-navy);margin-bottom:6px;}
+.tl-txt{font-size:13px;color:var(--ur-slate);line-height:1.65;margin-bottom:8px;}
+.tl-txt strong{color:var(--ur-navy);}
+.tl-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.tl-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--teal-light);color:var(--teal);}
+
+/* PLIST */
+.plist{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.pitem{display:flex;gap:14px;background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--r);padding:14px 16px;}
+.pnum{width:30px;height:30px;flex-shrink:0;border-radius:6px;background:var(--teal);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:var(--serif);}
+.pb{flex:1;}
+.pttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:4px;}
+.ptxt{font-size:12.5px;color:var(--ur-slate);line-height:1.65;}
+.ptxt strong{color:var(--ur-navy);}
+
+/* CALLOUT */
+.callout{display:flex;gap:14px;padding:16px 18px;border-radius:var(--r);margin:22px 0;border-left:4px solid;}
+.cl-teal  {background:var(--teal-light);   border-color:var(--teal);}
+.cl-rojo  {background:var(--ur-rojo-light); border-color:var(--ur-rojo);}
+.cl-azul  {background:var(--c-azul-bg);     border-color:var(--c-azul);}
+.cl-verde {background:var(--c-verde-bg);    border-color:var(--c-verde);}
+.cl-dorado{background:var(--c-dorado-bg);   border-color:var(--c-dorado);}
+.cl-rosa  {background:var(--c-rosa-bg);     border-color:var(--c-rosa);}
+.cl-ico{font-size:1.1rem;flex-shrink:0;line-height:1.6;}
+.cl-body{flex:1;}
+.cl-ttl{font-size:13px;font-weight:700;margin-bottom:4px;}
+.cl-teal  .cl-ttl{color:var(--teal);}
+.cl-rojo  .cl-ttl{color:var(--ur-rojo);}
+.cl-azul  .cl-ttl{color:var(--c-azul);}
+.cl-verde .cl-ttl{color:var(--c-verde);}
+.cl-dorado.cl-ttl{color:var(--c-dorado);}
+.cl-rosa  .cl-ttl{color:var(--c-rosa);}
+.cl-txt{font-size:13px;color:var(--ur-slate);line-height:1.7;}
+.cl-txt strong{color:var(--ur-navy);}
+
+/* SLIST */
+.slist{list-style:none;margin:10px 0;}
+.slist li{display:flex;gap:10px;font-size:13.5px;color:var(--ur-navy-mid);line-height:1.65;padding:6px 0;border-bottom:1px solid var(--ur-border);}
+.slist li:last-child{border-bottom:none;}
+.slist li::before{content:'›';color:var(--teal);font-weight:700;flex-shrink:0;}
+
+/* TABLE */
+.tbl-w{overflow-x:auto;margin:16px 0;border-radius:var(--rl);border:1px solid var(--ur-border);box-shadow:0 1px 4px rgba(0,0,0,.04);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead tr{background:var(--ur-navy);}
+thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:12px;color:#fff;}
+tbody tr{border-bottom:1px solid var(--ur-border);}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:nth-child(even){background:var(--ur-surface);}
+tbody td{padding:9px 14px;vertical-align:top;}
+tbody td:first-child{font-weight:600;color:var(--ur-navy);}
+
+/* AGENT ARCH — capas de arquitectura */
+.arch-wrap{display:flex;flex-direction:column;gap:6px;margin:18px 0;}
+.arch-layer{display:flex;align-items:center;gap:12px;padding:10px 16px;border-radius:var(--r);border:1px solid var(--ur-border);}
+.arch-layer.al-datos   {background:#EBF2FF;border-color:var(--c-azul);}
+.arch-layer.al-proc    {background:#FEF3C7;border-color:var(--c-dorado);}
+.arch-layer.al-analisis{background:var(--teal-light);border-color:var(--teal);}
+.arch-layer.al-orq     {background:var(--ur-rojo-light);border-color:var(--ur-rojo);}
+.arch-layer.al-viz     {background:var(--c-verde-bg);border-color:var(--c-verde);}
+.arch-layer.al-ctrl    {background:var(--c-rosa-bg);border-color:var(--c-rosa);}
+.arch-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.al-datos    .arch-num{background:var(--c-azul);}
+.al-proc     .arch-num{background:var(--c-dorado);}
+.al-analisis .arch-num{background:var(--teal);}
+.al-orq      .arch-num{background:var(--ur-rojo);}
+.al-viz      .arch-num{background:var(--c-verde);}
+.al-ctrl     .arch-num{background:var(--c-rosa);}
+.arch-ttl{font-size:13px;font-weight:700;color:var(--ur-navy);min-width:130px;}
+.arch-desc{font-size:12.5px;color:var(--ur-slate);flex:1;line-height:1.5;}
+
+/* MATRIX */
+.matrix-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.mx-card{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);padding:16px;position:relative;overflow:hidden;}
+.mx-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;}
+.mx-alta-alto::before{background:var(--teal);}
+.mx-alta-bajo::before{background:var(--c-azul);}
+.mx-baja-alto::before{background:var(--c-dorado);}
+.mx-baja-bajo::before{background:var(--c-gris);}
+.mx-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+.mx-alta-alto .mx-label{color:var(--teal);}
+.mx-alta-bajo .mx-label{color:var(--c-azul);}
+.mx-baja-alto .mx-label{color:var(--c-dorado);}
+.mx-baja-bajo .mx-label{color:var(--c-gris);}
+.mx-ttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:5px;}
+.mx-txt{font-size:12px;color:var(--ur-slate);line-height:1.6;}
+
+/* LOOP CONTROLS */
+.loop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0;}
+.loop-card{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);padding:16px;text-align:center;}
+.loop-icon{font-size:2rem;margin-bottom:8px;}
+.loop-ttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:6px;}
+.loop-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;margin-bottom:8px;}
+.lt-hitl {background:var(--teal-light);color:var(--teal);}
+.lt-hotl {background:var(--c-azul-bg);color:var(--c-azul);}
+.lt-hootl{background:var(--c-verde-bg);color:var(--c-verde);}
+.loop-desc{font-size:12px;color:var(--ur-slate);line-height:1.6;}
+
+/* SESSION NAV */
+.sess-nav{display:flex;justify-content:space-between;align-items:center;margin-top:44px;padding-top:24px;border-top:1px solid var(--ur-border);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:var(--sans);letter-spacing:.01em;}
+.btn-p{background:var(--teal);color:#fff;}
+.btn-p:hover{background:var(--teal-dark);}
+.btn-g{background:var(--ur-white);color:var(--ur-navy);border:1px solid var(--ur-border);}
+.btn-g:hover{background:var(--ur-surface);}
+.btn-v{background:var(--c-verde);color:#fff;}
+.btn-v:hover{background:#14532d;}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+
+/* QUIZ */
+.quiz-wrap{max-width:660px;}
+.qdots{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px;}
+.qdot{width:10px;height:10px;border-radius:50%;background:var(--ur-border);cursor:pointer;transition:all .18s;}
+.qdot.cur{background:var(--teal);transform:scale(1.4);}
+.qdot.ans{background:var(--ur-slate);}
+.qdot.ok{background:var(--c-verde);}
+.qdot.err{background:var(--ur-rojo);}
+.q-head{margin-bottom:20px;}
+.q-ctr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+.q-txt{font-family:var(--serif);font-size:1.05rem;color:var(--ur-navy);line-height:1.45;margin-bottom:6px;}
+.q-hint{font-size:12px;color:var(--ur-muted);}
+.q-opts{display:flex;flex-direction:column;gap:9px;margin:18px 0;}
+.qopt{display:flex;align-items:flex-start;gap:12px;padding:13px 15px;background:var(--ur-white);border:2px solid var(--ur-border);border-radius:var(--r);cursor:pointer;transition:all .18s;font-size:13.5px;color:var(--ur-navy);line-height:1.5;}
+.qopt:hover:not(.locked){border-color:var(--teal);background:var(--teal-light);}
+.qopt.sel{border-color:var(--ur-navy);background:var(--c-gris-bg);}
+.qopt.ok{border-color:var(--c-verde);background:var(--c-verde-bg);color:var(--c-verde);}
+.qopt.err{border-color:var(--ur-rojo);background:var(--ur-rojo-light);color:var(--ur-rojo-dark);}
+.qopt.locked{cursor:default;}
+.qletter{width:26px;height:26px;flex-shrink:0;border-radius:50%;border:2px solid var(--ur-border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--ur-muted);}
+.qopt.sel .qletter{border-color:var(--ur-navy);color:var(--ur-navy);}
+.qopt.ok  .qletter{border-color:var(--c-verde);color:var(--c-verde);background:var(--c-verde-bg);}
+.qopt.err .qletter{border-color:var(--ur-rojo);color:var(--ur-rojo);background:var(--ur-rojo-light);}
+.q-fb{display:none;font-size:13px;line-height:1.7;padding:13px 16px;border-radius:var(--r);border-left:4px solid;margin-top:4px;}
+.q-fb.show{display:block;}
+.q-fb.ok{background:var(--c-verde-bg);border-color:var(--c-verde);color:var(--c-verde);}
+.q-fb.err{background:var(--ur-rojo-light);border-color:var(--ur-rojo);color:var(--ur-rojo-dark);}
+.q-ctrl{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap;}
+.quiz-result{display:none;text-align:center;padding:48px 20px;}
+.quiz-result.show{display:block;animation:up .35s ease;}
+.res-icon{font-size:3rem;margin-bottom:12px;}
+.res-score{font-family:var(--serif);font-size:3.2rem;color:var(--teal);margin-bottom:6px;}
+.res-lbl{font-size:14px;color:var(--ur-muted);margin-bottom:20px;}
+.res-badge{display:inline-block;font-size:13px;font-weight:700;padding:8px 22px;border-radius:20px;margin-bottom:28px;}
+.rb-gold{background:var(--c-dorado-bg);color:var(--c-dorado);}
+.rb-verde{background:var(--c-verde-bg);color:var(--c-verde);}
+.rb-azul{background:var(--c-azul-bg);color:var(--c-azul);}
+.res-note{font-size:13px;color:var(--ur-slate);max-width:400px;margin:0 auto 24px;line-height:1.65;}
+
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .main{margin-left:0;padding:20px 16px 48px;}
+  .compare,.loop-grid,.matrix-wrap{grid-template-columns:1fr;}
+  .card-grid{grid-template-columns:1fr;}
+  .tb-r .tb-track{width:90px;}
+  .tb-badge{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="tb-l">
+    <span class="tb-brand">ADVANCE · Universidad del Rosario</span>
+    <div class="tb-sep"></div>
+    <span class="tb-title">Análisis Financiero con IA</span>
+    <span class="tb-badge">⚡ IA Agéntica</span>
+  </div>
+  <div class="tb-r">
+    <span class="tb-prog-lbl">Progreso</span>
+    <div class="tb-track"><div class="tb-fill" id="pgBar" style="width:0%"></div></div>
+    <span class="tb-pct" id="pgPct">0%</span>
+  </div>
+</header>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-head">
+    <div>
+      <span class="sb-pill">Módulo 4</span>
+      <span class="sb-agentic">⚡ IA Agéntica</span>
+    </div>
+    <div class="sb-mod-title">IA Agéntica y Automatización Financiera</div>
+  </div>
+  <nav class="sb-nav" id="sbNav"></nav>
+</aside>
+
+<main class="main">
+
+<!-- ══════ S4.1 ══════ -->
+<section class="session" id="s1" data-title="Automatización de Tareas Recurrentes">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 4.1</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Automatización de Tareas Recurrentes en Finanzas: Conceptos, Arquitectura y Aplicación Práctica</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 45 min</span>
+      <span class="badge b-teal">IA Agéntica</span>
+      <span class="badge b-azul">Fundamentos</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">Los equipos financieros dedican gran parte de su tiempo a tareas repetitivas como conciliaciones, reportes y validaciones. Aunque necesarias, ejecutarlas manualmente genera errores, consume tiempo y limita la capacidad de crecimiento. La <em>IA agéntica</em> permite ir más allá de automatizar tareas simples: crea sistemas que interpretan información, aprenden con el tiempo y apoyan la toma de decisiones estratégicas.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Evolución de la automatización — tres generaciones</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-num">1</div>
+        <div class="tl-body">
+          <div class="tl-period">Primera generación</div>
+          <div class="tl-ttl">Macros y scripts</div>
+          <div class="tl-txt">Automatización básica de tareas repetitivas dentro de aplicaciones específicas. Alta dependencia del diseñador, baja adaptabilidad a excepciones. Útil para tareas 100% predecibles dentro de un entorno fijo.</div>
+          <div class="tl-tags"><span class="tl-tag">VBA</span><span class="tl-tag">Scripts</span><span class="tl-tag">Reglas fijas</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-num">2</div>
+        <div class="tl-body">
+          <div class="tl-period">Segunda generación</div>
+          <div class="tl-ttl">RPA — Robotic Process Automation</div>
+          <div class="tl-txt">Automatización de procesos estructurados que cruzan múltiples aplicaciones. Los robots imitan acciones humanas en interfaces digitales. Mayor alcance que los scripts, pero aún frágil ante cambios de estructura o excepciones complejas.</div>
+          <div class="tl-tags"><span class="tl-tag">UiPath</span><span class="tl-tag">Automation Anywhere</span><span class="tl-tag">Procesos estructurados</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-num">3</div>
+        <div class="tl-body">
+          <div class="tl-period">Tercera generación</div>
+          <div class="tl-ttl">IA Agéntica — sistemas que entienden, aprenden y deciden</div>
+          <div class="tl-txt"><strong>El salto cualitativo:</strong> los agentes comprenden contexto, manejan excepciones, conectan sistemas heterogéneos y aprenden con el tiempo. Ya no solo se automatizan tareas — se automatiza también el análisis y el razonamiento preliminar. El profesional pasa de ejecutor a supervisor y diseñador del sistema.</div>
+          <div class="tl-tags"><span class="tl-tag">LLMs + Tools</span><span class="tl-tag">Razonamiento</span><span class="tl-tag">Aprendizaje adaptativo</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Arquitectura de automatización financiera — 6 capas</h2>
+    <div class="arch-wrap">
+      <div class="arch-layer al-datos">
+        <div class="arch-num">1</div>
+        <div class="arch-ttl">Datos</div>
+        <div class="arch-desc">Integración de fuentes (ERP, bancos, APIs externas). Control de calidad y validación de integridad estructural antes de procesar.</div>
+      </div>
+      <div class="arch-layer al-proc">
+        <div class="arch-num">2</div>
+        <div class="arch-ttl">Procesamiento</div>
+        <div class="arch-desc">Limpieza y organización de datos. Aplicación de reglas contables. Transformación hacia formatos analíticamente utilizables.</div>
+      </div>
+      <div class="arch-layer al-analisis">
+        <div class="arch-num">3</div>
+        <div class="arch-ttl">Análisis</div>
+        <div class="arch-desc">Modelos para detectar errores, tendencias y anomalías. Generación de insights y narrativas explicativas sobre el desempeño financiero.</div>
+      </div>
+      <div class="arch-layer al-orq">
+        <div class="arch-num">4</div>
+        <div class="arch-ttl">Orquestación</div>
+        <div class="arch-desc">Coordinación de tareas entre agentes y sistemas. Manejo de dependencias, tiempos de ejecución y manejo de excepciones.</div>
+      </div>
+      <div class="arch-layer al-viz">
+        <div class="arch-num">5</div>
+        <div class="arch-ttl">Visualización</div>
+        <div class="arch-desc">Reportes ejecutivos, dashboards interactivos y alertas automáticas. Adaptación del output según la audiencia y el nivel de profundidad requerido.</div>
+      </div>
+      <div class="arch-layer al-ctrl">
+        <div class="arch-num">6</div>
+        <div class="arch-ttl">Control</div>
+        <div class="arch-desc">Registros de ejecución, trazabilidad completa y auditoría. Mecanismo de responsabilidad institucional sobre el proceso automatizado.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Matriz de priorización — Impacto vs. Esfuerzo</h2>
+    <p class="prose">No todo debe automatizarse al mismo tiempo. Esta matriz guía la priorización estratégica:</p>
+    <div class="matrix-wrap">
+      <div class="mx-card mx-alta-alto">
+        <div class="mx-label">Alto impacto · Bajo esfuerzo</div>
+        <div class="mx-ttl">🎯 Automatizar primero</div>
+        <div class="mx-txt">Conciliaciones bancarias recurrentes, generación de reportes estándar, actualización de KPIs en dashboard. Alto retorno inmediato con implementación rápida.</div>
+      </div>
+      <div class="mx-card mx-alta-bajo">
+        <div class="mx-label">Alto impacto · Alto esfuerzo</div>
+        <div class="mx-ttl">📋 Planificar con cuidado</div>
+        <div class="mx-txt">Modelos financieros integrados, análisis predictivo de flujo de caja, sistemas de alertas tempranas. Alto valor estratégico que requiere inversión y diseño riguroso.</div>
+      </div>
+      <div class="mx-card mx-baja-alto">
+        <div class="mx-label">Bajo impacto · Bajo esfuerzo</div>
+        <div class="mx-ttl">⏳ Automatizar después</div>
+        <div class="mx-txt">Reportes de baja frecuencia, validaciones secundarias. Hacerlo cuando los procesos críticos ya estén automatizados y estabilizados.</div>
+      </div>
+      <div class="mx-card mx-baja-bajo">
+        <div class="mx-label">Bajo impacto · Alto esfuerzo</div>
+        <div class="mx-ttl">❌ Cuestionar si automatizar</div>
+        <div class="mx-txt">Procesos altamente irregulares, tareas únicas con bajo valor recurrente. El costo de automatización puede superar el beneficio esperado.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Riesgos y controles de la automatización</h2>
+    <div class="compare">
+      <div class="cmp">
+        <div class="cmp-h rojo">Riesgos críticos</div>
+        <div class="cmp-b">
+          <div class="cmp-row">Errores en modelos que se propagan silenciosamente</div>
+          <div class="cmp-row">Dependencia tecnológica sin redundancia</div>
+          <div class="cmp-row">Sesgos en algoritmos de clasificación</div>
+          <div class="cmp-row">Riesgos de seguridad en datos sensibles</div>
+          <div class="cmp-row">Pérdida de comprensión del proceso por el equipo</div>
+        </div>
+      </div>
+      <div class="cmp">
+        <div class="cmp-h teal">Controles recomendados</div>
+        <div class="cmp-b">
+          <div class="cmp-row">Validaciones independientes en puntos críticos</div>
+          <div class="cmp-row">Pruebas periódicas con datos históricos conocidos</div>
+          <div class="cmp-row">Monitoreo continuo con alertas de desviación</div>
+          <div class="cmp-row">Definición clara de responsabilidades por proceso</div>
+          <div class="cmp-row">Documentación actualizada del funcionamiento</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout cl-teal">
+    <span class="cl-ico">🤖</span>
+    <div class="cl-body">
+      <div class="cl-ttl">El futuro del área financiera — humanos + agentes</div>
+      <p class="cl-txt">La automatización no reemplaza la función financiera; la <strong>transforma</strong>. Permite pasar de tareas operativas a funciones estratégicas. Los equipos financieros del futuro combinarán juicio humano con sistemas inteligentes, amplificando su capacidad de generar valor a partir de la información.</p>
+    </div>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" disabled>← Anterior</button>
+    <button class="btn btn-p" onclick="goTo(2)">Sesión 4.2 →</button>
+  </div>
+</section>
+
+<!-- ══════ S4.2 ══════ -->
+<section class="session" id="s2" data-title="Agentes para Análisis Financiero Continuo">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 4.2</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Agentes para Análisis Financiero Continuo: Conceptos, Arquitectura y Aplicaciones Prácticas</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 50 min</span>
+      <span class="badge b-teal">Núcleo agéntico</span>
+      <span class="badge b-def">6 tipos de agentes</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">El análisis financiero tradicional basado en revisiones periódicas ya no es suficiente en entornos de alta velocidad. Surge el <em>análisis financiero continuo</em>, donde la información se procesa constantemente, permitiendo tomar decisiones más rápidas y mejor informadas. Los <strong>agentes de IA</strong> son el componente tecnológico central de este paradigma.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">¿Qué es un agente financiero?</h2>
+    <p class="prose">Un agente financiero es un sistema basado en IA que puede analizar información financiera de forma <strong>autónoma o semi-autónoma</strong>, combinando captura de datos, procesamiento, interpretación, generación de recomendaciones y orquestación de sistemas. Funciona como un asistente inteligente especializado que opera bajo reglas definidas, aprende con el tiempo y puede explicar sus resultados.</p>
+
+    <div class="arch-wrap">
+      <div class="arch-layer al-datos">
+        <div class="arch-num">📥</div>
+        <div class="arch-ttl">Captura</div>
+        <div class="arch-desc">Obtiene información desde ERP, bases de datos, APIs financieras y fuentes externas en tiempo real o por lotes programados.</div>
+      </div>
+      <div class="arch-layer al-proc">
+        <div class="arch-num">⚙️</div>
+        <div class="arch-ttl">Procesamiento</div>
+        <div class="arch-desc">Organiza, limpia y estandariza los datos. Aplica validaciones estructurales antes de alimentar los modelos analíticos.</div>
+      </div>
+      <div class="arch-layer al-analisis">
+        <div class="arch-num">🧠</div>
+        <div class="arch-ttl">Interpretación</div>
+        <div class="arch-desc">Explica los resultados en términos financieros comprensibles. Genera narrativas contextualizadas sobre el desempeño.</div>
+      </div>
+      <div class="arch-layer al-orq">
+        <div class="arch-num">🔔</div>
+        <div class="arch-ttl">Acción</div>
+        <div class="arch-desc">Genera alertas automáticas, recomendaciones priorizadas y solicitudes de revisión humana cuando los umbrales se superan.</div>
+      </div>
+      <div class="arch-layer al-viz">
+        <div class="arch-num">🔗</div>
+        <div class="arch-ttl">Orquestación</div>
+        <div class="arch-desc">Conecta diferentes sistemas y procesos. Coordina la ejecución de múltiples agentes especializados dentro de un flujo financiero integrado.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Los 6 tipos de agentes financieros</h2>
+    <div class="card-grid">
+      <div class="card c-azul">
+        <div class="card-ico">📊</div>
+        <div class="card-ttl">Agente de monitoreo</div>
+        <div class="card-body">Supervisa continuamente indicadores: ventas, márgenes, liquidez. Detecta desviaciones de umbrales predefinidos y genera alertas tempranas.</div>
+      </div>
+      <div class="card c-teal">
+        <div class="card-ico">🔬</div>
+        <div class="card-ttl">Agente analítico</div>
+        <div class="card-body">Realiza análisis financieros automatizados: variaciones, tendencias, comparativos vs. presupuesto y periodos anteriores.</div>
+      </div>
+      <div class="card c-dorado">
+        <div class="card-ico">🔭</div>
+        <div class="card-ttl">Agente predictivo</div>
+        <div class="card-body">Genera proyecciones y estimaciones futuras actualizadas con nuevos datos. Mantiene el forecast dinámicamente vigente.</div>
+      </div>
+      <div class="card c-verde">
+        <div class="card-ico">⚖️</div>
+        <div class="card-ttl">Agente prescriptivo</div>
+        <div class="card-body">Recomienda acciones basadas en diferentes escenarios. Evalúa trade-offs entre alternativas estratégicas con criterios financieros explícitos.</div>
+      </div>
+      <div class="card c-rojo">
+        <div class="card-ico">🛡️</div>
+        <div class="card-ttl">Agente de control</div>
+        <div class="card-body">Detecta errores, inconsistencias o riesgos en los datos y procesos. Actúa como primer filtro de gobernanza del sistema financiero.</div>
+      </div>
+      <div class="card c-rosa">
+        <div class="card-ico">📝</div>
+        <div class="card-ttl">Agente narrativo</div>
+        <div class="card-body">Convierte datos y análisis en reportes claros y estructurados en lenguaje natural. Adapta la narrativa según la audiencia (junta, gerencia, analistas).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">El rol del prompting en los agentes financieros</h2>
+    <p class="prose">El prompting es la forma en que se le dan instrucciones al agente. Un prompt bien diseñado para un agente financiero incluye cinco elementos esenciales:</p>
+    <div class="plist">
+      <div class="pitem"><div class="pnum">1</div><div class="pb"><div class="pttl">Definición del rol del agente</div><p class="ptxt">Especifica el perfil operativo: "Actúa como agente de monitoreo financiero especializado en detección de desviaciones de liquidez."</p></div></div>
+      <div class="pitem"><div class="pnum">2</div><div class="pb"><div class="pttl">Contexto claro del sistema</div><p class="ptxt">Describe la empresa, el tipo de datos que maneja, el período analizado y las particularidades del modelo de negocio relevantes para el análisis.</p></div></div>
+      <div class="pitem"><div class="pnum">3</div><div class="pb"><div class="pttl">Especificación de los datos de entrada</div><p class="ptxt">Define exactamente qué datos alimentan al agente: fuente, formato, frecuencia, variables y jerarquías contables aplicables.</p></div></div>
+      <div class="pitem"><div class="pnum">4</div><div class="pb"><div class="pttl">Instrucciones de análisis</div><p class="ptxt">Indica qué debe hacer el agente: calcular variaciones, comparar con umbrales, detectar patrones, clasificar por severidad, proponer hipótesis.</p></div></div>
+      <div class="pitem"><div class="pnum">5</div><div class="pb"><div class="pttl">Formato de salida</div><p class="ptxt">Define cómo debe presentar los resultados: dashboard ejecutivo, reporte por secciones, alert JSON para sistemas downstream, o narrativa para correo ejecutivo.</p></div></div>
+    </div>
+  </div>
+
+  <div class="callout cl-teal">
+    <span class="cl-ico">🔄</span>
+    <div class="cl-body">
+      <div class="cl-ttl">Del análisis puntual al análisis continuo</div>
+      <p class="cl-txt">Los agentes financieros permiten pasar de revisiones periódicas a un <strong>sistema de inteligencia financiera siempre activo</strong>. La organización detecta desviaciones antes de que se consoliden, actualiza proyecciones con cada nuevo dato y genera recomendaciones estratégicas en tiempo casi real. El área financiera se convierte en un <strong>socio estratégico dinámico</strong>, no en un generador de reportes retrospectivos.</p>
+    </div>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(1)">← Sesión 4.1</button>
+    <button class="btn btn-p" onclick="goTo(3)">Sesión 4.3 →</button>
+  </div>
+</section>
+
+<!-- ══════ S4.3 ══════ -->
+<section class="session" id="s3" data-title="Integración con Excel, BI y Bases de Datos">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 4.3</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Integración con Excel, Business Intelligence y Bases de Datos: Arquitectura del Sistema Financiero Integrado</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 45 min</span>
+      <span class="badge b-teal">Ecosistema tecnológico</span>
+      <span class="badge b-azul">Arquitectura</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">El valor en las finanzas modernas no depende solo del análisis, sino de la capacidad de <strong>integrar datos, herramientas y tecnología de forma eficiente</strong>. Las áreas financieras trabajan simultáneamente con múltiples fuentes de información, y el reto es conectarlas correctamente. Excel, plataformas de BI y bases de datos, potenciados por IA agéntica, constituyen el ecosistema tecnológico del área financiera contemporánea.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Las tres herramientas — fortalezas y límites</h2>
+    <div class="card-grid">
+      <div class="card c-azul">
+        <div class="card-ico">📗</div>
+        <div class="card-ttl">Excel — herramienta operativa</div>
+        <div class="card-body">Flexibilidad para modelos financieros, análisis de estados financieros, simulación de escenarios y consolidación. <br><br><strong>Límites críticos:</strong> dificultad con grandes volúmenes de datos, riesgo de errores en fórmulas, problemas de control de versiones, baja trazabilidad. Excel es herramienta importante, pero no puede ser el sistema central.</div>
+      </div>
+      <div class="card c-teal">
+        <div class="card-ico">📊</div>
+        <div class="card-ttl">BI — análisis y visualización</div>
+        <div class="card-body">Power BI, Tableau y similares crean dashboards interactivos, visualizaciones claras y análisis en tiempo real. Facilitan la toma de decisiones.<br><br><strong>Condición necesaria:</strong> la calidad del análisis BI es directamente proporcional a la calidad y organización de los datos que lo alimentan.</div>
+      </div>
+      <div class="card c-dorado">
+        <div class="card-ico">🗄️</div>
+        <div class="card-ttl">Bases de datos — fundamento</div>
+        <div class="card-body">Almacenamiento estructurado de grandes volúmenes de datos con acceso rápido, consistencia e integridad. Son la infraestructura sobre la cual operan todas las demás herramientas.<br><br><strong>Rol estratégico:</strong> sin una base de datos bien gobernada, el ecosistema analítico pierde solidez estructural.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Arquitectura del sistema financiero integrado — 6 capas</h2>
+    <div class="arch-wrap">
+      <div class="arch-layer al-datos">
+        <div class="arch-num">1</div>
+        <div class="arch-ttl">Datos</div>
+        <div class="arch-desc">Bases de datos relacionales y data lakes. Fuente de verdad única para toda la arquitectura. Integración ERP + CRM + bancos + fuentes externas.</div>
+      </div>
+      <div class="arch-layer al-proc">
+        <div class="arch-num">2</div>
+        <div class="arch-ttl">Procesamiento</div>
+        <div class="arch-desc">IA y lógica de negocio. Transformación, limpieza, enriquecimiento y validación de datos antes de distribuirlos a las capas superiores.</div>
+      </div>
+      <div class="arch-layer al-analisis">
+        <div class="arch-num">3</div>
+        <div class="arch-ttl">Operación</div>
+        <div class="arch-desc">Excel como herramienta de trabajo flexible para modelación, análisis ad hoc y construcción de escenarios. Alimentado desde la capa de procesamiento.</div>
+      </div>
+      <div class="arch-layer al-orq">
+        <div class="arch-num">4</div>
+        <div class="arch-ttl">Análisis</div>
+        <div class="arch-desc">Plataformas BI (Power BI, Tableau) para visualización ejecutiva, dashboards y análisis multidimensional en tiempo real.</div>
+      </div>
+      <div class="arch-layer al-viz">
+        <div class="arch-num">5</div>
+        <div class="arch-ttl">Orquestación</div>
+        <div class="arch-desc">Agentes inteligentes que coordinan flujos entre capas, ejecutan análisis automáticos, actualizan modelos y generan reportes narrativos.</div>
+      </div>
+      <div class="arch-layer al-ctrl">
+        <div class="arch-num">6</div>
+        <div class="arch-ttl">Gobernanza</div>
+        <div class="arch-desc">Controles de calidad, trazabilidad, gestión de accesos, auditoría del sistema y cumplimiento regulatorio (SFC, Ley 1581, AI Act).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Capacidades diferenciales de la IA en cada herramienta</h2>
+    <div class="tbl-w">
+      <table>
+        <thead><tr><th>Herramienta</th><th>Con IA — capacidades adicionales</th><th>Caso de uso financiero</th></tr></thead>
+        <tbody>
+          <tr><td>Excel</td><td>Limpieza automática de datos, validación de fórmulas, generación de escenarios por prompting, detección de inconsistencias</td><td>Agente lee el ER en Excel, calcula KPIs, detecta anomalías y escribe el análisis en otra hoja</td></tr>
+          <tr><td>Power BI / Tableau</td><td>Dashboards auto-actualizables, detección de anomalías, predicciones integradas, reportes narrativos en lenguaje natural</td><td>Dashboard financiero que explica en texto la causa de una desviación detectada automáticamente</td></tr>
+          <tr><td>Bases de datos</td><td>Consultas SQL generadas por prompting, detección de errores de integridad, análisis en tiempo real, gobierno de calidad del dato</td><td>Agente genera y ejecuta consultas sobre el ERP para extraer datos del cierre mensual sin intervención manual</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout cl-teal">
+    <span class="cl-ico">🔗</span>
+    <div class="cl-body">
+      <div class="cl-ttl">La integración es la competencia diferenciadora</div>
+      <p class="cl-txt">Las organizaciones que logren integrar estas herramientas de forma adecuada podrán tomar <strong>mejores decisiones, responder más rápido al entorno y generar mayor valor a partir de la información</strong>. La IA agéntica es el componente que convierte esta arquitectura de capas en un sistema verdaderamente inteligente y autónomo.</p>
+    </div>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(2)">← Sesión 4.2</button>
+    <button class="btn btn-p" onclick="goTo(4)">Sesión 4.4 →</button>
+  </div>
+</section>
+
+<!-- ══════ S4.4 ══════ -->
+<section class="session" id="s4" data-title="Inteligencia Competitiva Automatizada">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 4.4</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Inteligencia Competitiva Automatizada: Conceptos, Arquitectura y Aplicación en Finanzas</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 45 min</span>
+      <span class="badge b-teal">IA Agéntica</span>
+      <span class="badge b-rojo">Decisiones de mercado</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">No es suficiente analizar solo la información interna. Las organizaciones necesitan entender qué está ocurriendo con sus competidores y su mercado para anticiparse, no solo reaccionar. La <em>inteligencia competitiva automatizada</em> combina captura masiva de datos del entorno con análisis de IA para transformar la vigilancia del mercado en una <strong>capacidad estratégica continua</strong>.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Del análisis reactivo al anticipativo</h2>
+    <div class="compare">
+      <div class="cmp">
+        <div class="cmp-h navy">Inteligencia competitiva tradicional</div>
+        <div class="cmp-b">
+          <div class="cmp-row">Análisis manual, esporádico y demorado</div>
+          <div class="cmp-row">Dependencia de consultoras externas</div>
+          <div class="cmp-row">Cobertura limitada de fuentes</div>
+          <div class="cmp-row">Respuesta reactiva a cambios del mercado</div>
+          <div class="cmp-row">Alto costo por análisis puntual</div>
+        </div>
+      </div>
+      <div class="cmp">
+        <div class="cmp-h teal">Inteligencia competitiva automatizada con IA</div>
+        <div class="cmp-b">
+          <div class="cmp-row">Monitoreo continuo de múltiples fuentes</div>
+          <div class="cmp-row">Detección automática de cambios relevantes</div>
+          <div class="cmp-row">Alertas en tiempo real ante eventos estratégicos</div>
+          <div class="cmp-row">Anticipación de tendencias y movimientos</div>
+          <div class="cmp-row">Integración directa con planeación financiera</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Arquitectura — 5 capas del sistema</h2>
+    <div class="arch-wrap">
+      <div class="arch-layer al-datos">
+        <div class="arch-num">1</div>
+        <div class="arch-ttl">Captura de datos</div>
+        <div class="arch-desc">Páginas web y e-commerce, reportes financieros públicos, bases de datos sectoriales, noticias, redes sociales, publicaciones regulatorias y movimientos estratégicos (expansiones, fusiones, lanzamientos).</div>
+      </div>
+      <div class="arch-layer al-proc">
+        <div class="arch-num">2</div>
+        <div class="arch-ttl">Procesamiento</div>
+        <div class="arch-desc">Limpieza y estandarización de formatos heterogéneos. Integración de fuentes diversas en un modelo de datos unificado. Eliminación de duplicados y ruido informacional.</div>
+      </div>
+      <div class="arch-layer al-analisis">
+        <div class="arch-num">3</div>
+        <div class="arch-ttl">Análisis</div>
+        <div class="arch-desc">Identificación de tendencias, detección de cambios relevantes, comparación de competidores, generación de predicciones y análisis NLP de percepción de marca y sentimiento del mercado.</div>
+      </div>
+      <div class="arch-layer al-viz">
+        <div class="arch-num">4</div>
+        <div class="arch-ttl">Visualización</div>
+        <div class="arch-desc">Dashboards competitivos, reportes ejecutivos de mercado, alertas automáticas ante eventos críticos (cambios de precio, nuevos competidores, movimientos regulatorios).</div>
+      </div>
+      <div class="arch-layer al-orq">
+        <div class="arch-num">5</div>
+        <div class="arch-ttl">Orquestación agéntica</div>
+        <div class="arch-desc">Agentes que coordinan todo el proceso: ejecutan tareas automáticamente, conectan sistemas internos (ERP, CRM) con fuentes externas y aseguran el flujo continuo de inteligencia.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Modelos de análisis y aplicaciones financieras</h2>
+    <div class="card-grid">
+      <div class="card c-azul">
+        <div class="card-ico">📊</div>
+        <div class="card-ttl">Benchmarking competitivo</div>
+        <div class="card-body">Comparación de precios, márgenes y estrategias entre competidores. Posiciona la empresa en el mapa competitivo con datos actualizados.</div>
+        <span class="card-tag">Estrategia de precios</span>
+      </div>
+      <div class="card c-teal">
+        <div class="card-ico">📈</div>
+        <div class="card-ttl">Análisis de tendencias</div>
+        <div class="card-body">Cambios en la demanda, evolución de precios sectoriales, variaciones en márgenes de la industria. Insumo directo para la planeación financiera.</div>
+        <span class="card-tag">Planeación financiera</span>
+      </div>
+      <div class="card c-dorado">
+        <div class="card-ico">🔮</div>
+        <div class="card-ttl">Modelos predictivos</div>
+        <div class="card-body">Anticipación de posibles escenarios futuros de mercado. Identificación de amenazas antes de que se materialicen como pérdidas financieras.</div>
+        <span class="card-tag">Gestión de riesgos</span>
+      </div>
+      <div class="card c-verde">
+        <div class="card-ico">💬</div>
+        <div class="card-ttl">Análisis NLP de percepción</div>
+        <div class="card-body">Procesamiento de lenguaje natural para analizar opiniones de clientes, reputación de marca y señales tempranas de deterioro competitivo.</div>
+        <span class="card-tag">Evaluación de inversiones</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout cl-dorado">
+    <span class="cl-ico">⚠️</span>
+    <div class="cl-body">
+      <div class="cl-ttl">Riesgos y controles críticos</div>
+      <p class="cl-txt">La inteligencia competitiva automatizada enfrenta tres riesgos principales: <strong>mala calidad de datos externos</strong> (fuentes no verificadas, datos desactualizados), <strong>errores en modelos de clasificación</strong> (falsos positivos en alertas) y <strong>dependencia tecnológica</strong> sin capacidad humana de interpretación contextual. Los controles son: validación constante de fuentes, supervisión humana en decisiones estratégicas y reglas claras sobre qué acciones pueden automatizarse y cuáles requieren criterio profesional.</p>
+    </div>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(3)">← Sesión 4.3</button>
+    <button class="btn btn-p" onclick="goTo(5)">Sesión 4.5 →</button>
+  </div>
+</section>
+
+<!-- ══════ S4.5 ══════ -->
+<section class="session" id="s5" data-title="Gobernanza y Supervisión Humana">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 4.5</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Gobernanza y Supervisión Humana: Control y Uso Responsable de la IA en Finanzas</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 50 min</span>
+      <span class="badge b-rosa">Gobernanza algorítmica</span>
+      <span class="badge b-rojo">Marco regulatorio</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">A medida que aumenta la automatización, también crecen los riesgos. Es fundamental contar con sistemas de <strong>gobernanza y supervisión humana</strong> que aseguren que la IA funcione de manera correcta, ética y alineada con los objetivos del negocio. La gobernanza no se trata solo de controlar errores — se trata de <em>diseñar sistemas confiables desde el inicio</em>.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Los 5 principios de gobernanza en IA financiera</h2>
+    <div class="plist">
+      <div class="pitem">
+        <div class="pnum" style="background:var(--c-azul)">I</div>
+        <div class="pb">
+          <div class="pttl">Transparencia — saber cómo funciona el sistema</div>
+          <p class="ptxt">Los resultados generados por sistemas de IA deben ser explicables y auditables. No es aceptable tomar decisiones financieras basadas en "cajas negras" que no pueden justificarse ante auditores, reguladores o la junta directiva. La <strong>explicabilidad del algoritmo</strong> es una exigencia fiduciaria.</p>
+        </div>
+      </div>
+      <div class="pitem">
+        <div class="pnum" style="background:var(--ur-rojo)">II</div>
+        <div class="pb">
+          <div class="pttl">Responsabilidad — siempre hay una persona responsable</div>
+          <p class="ptxt">Independientemente del nivel de automatización, siempre debe existir un profesional responsable de las decisiones adoptadas. La delegación a sistemas automatizados no transfiere la responsabilidad fiduciaria. El AI Act (UE) e ISO 42001 establecen esta obligación de forma explícita.</p>
+        </div>
+      </div>
+      <div class="pitem">
+        <div class="pnum" style="background:var(--c-dorado)">III</div>
+        <div class="pb">
+          <div class="pttl">Calidad de datos — los resultados dependen del input</div>
+          <p class="ptxt">La gobernanza del dato es condición habilitante de todo sistema de IA financiero. Datos incorrectos, incompletos o desactualizados generan análisis formalmente sofisticados pero sustantivamente erróneos. La calidad del dato debe garantizarse <strong>antes</strong> de que los sistemas automatizados los procesen.</p>
+        </div>
+      </div>
+      <div class="pitem">
+        <div class="pnum" style="background:var(--c-rosa)">IV</div>
+        <div class="pb">
+          <div class="pttl">Seguridad — protección de información financiera sensible</div>
+          <p class="ptxt">La información financiera corporativa exige protocolos estrictos de manejo en entornos de IA. La Ley 1581 (Colombia), el GDPR (UE) y la regulación SFC establecen marcos específicos de protección de datos que aplican directamente a los sistemas automatizados del área financiera.</p>
+        </div>
+      </div>
+      <div class="pitem">
+        <div class="pnum" style="background:var(--c-verde)">V</div>
+        <div class="pb">
+          <div class="pttl">Ética — evitar sesgos y decisiones injustas</div>
+          <p class="ptxt">Los sistemas de IA financiera pueden perpetuar o amplificar sesgos presentes en los datos históricos. El diseño ético de los modelos implica identificar fuentes potenciales de sesgo, definir criterios de equidad y supervisar activamente los resultados para detectar patrones discriminatorios.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Modelos de supervisión humana — niveles de autonomía</h2>
+    <div class="loop-grid">
+      <div class="loop-card">
+        <div class="loop-icon">👤</div>
+        <span class="loop-tag lt-hitl">Human-in-the-Loop</span>
+        <div class="loop-ttl">HITL</div>
+        <div class="loop-desc">El humano participa directamente en cada decisión relevante. La IA asiste pero no actúa sin aprobación explícita. Aplicable en: decisiones de inversión, aprobación de crédito, reportes regulatorios.</div>
+      </div>
+      <div class="loop-card">
+        <div class="loop-icon">👁️</div>
+        <span class="loop-tag lt-hotl">Human-on-the-Loop</span>
+        <div class="loop-ttl">HOTL</div>
+        <div class="loop-desc">El sistema opera automáticamente pero el humano supervisa y puede intervenir. Aplicable en: monitoreo de KPIs, alertas de desviación, reportes periódicos estándar.</div>
+      </div>
+      <div class="loop-card">
+        <div class="loop-icon">🤖</div>
+        <span class="loop-tag lt-hootl">Human-out-of-the-Loop</span>
+        <div class="loop-ttl">HOOTL</div>
+        <div class="loop-desc">El sistema funciona automáticamente. Solo para procesos de <strong>muy bajo riesgo</strong> y altamente predecibles: conciliaciones rutinarias, generación de reportes operativos estándar.</div>
+      </div>
+    </div>
+
+    <div class="callout cl-dorado">
+      <span class="cl-ico">⚠️</span>
+      <div class="cl-body">
+        <div class="cl-ttl">Criterio de selección del modelo de supervisión</div>
+        <p class="cl-txt">La selección del modelo (HITL / HOTL / HOOTL) debe basarse en el <strong>nivel de riesgo del proceso</strong>, su impacto financiero, la frecuencia de excepciones y el marco regulatorio aplicable. Procesos con implicaciones fiduciarias, regulatorias o reputacionales significativas requieren siempre supervisión humana directa.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Arquitectura de control — tres capas</h2>
+    <div class="card-grid">
+      <div class="card c-azul">
+        <div class="card-ico">🛑</div>
+        <div class="card-ttl">Controles preventivos</div>
+        <div class="card-body">Evitan errores antes de que ocurran: validación de datos de entrada, reglas de negocio codificadas, límites de operación definidos, autorizaciones previas requeridas.</div>
+      </div>
+      <div class="card c-dorado">
+        <div class="card-ico">🔍</div>
+        <div class="card-ttl">Controles detectivos</div>
+        <div class="card-body">Identifican problemas cuando ocurren: monitoreo continuo de resultados, alertas automáticas ante desviaciones, revisión de logs de ejecución, auditoría de outputs.</div>
+      </div>
+      <div class="card c-verde">
+        <div class="card-ico">🔧</div>
+        <div class="card-ttl">Controles correctivos</div>
+        <div class="card-body">Permiten corregir errores detectados: ajuste y reentrenamiento de modelos, intervención humana para corrección, actualización de reglas de negocio, rollback a versiones previas.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Marco regulatorio de referencia</h2>
+    <div class="tbl-w">
+      <table>
+        <thead><tr><th>Marco</th><th>Alcance</th><th>Implicación para IA financiera</th></tr></thead>
+        <tbody>
+          <tr><td>AI Act (UE) 2024</td><td>Sistemas de IA en contextos de alto riesgo</td><td>Exige transparencia, trazabilidad y supervisión humana en sistemas financieros automatizados</td></tr>
+          <tr><td>ISO 42001</td><td>Gestión de sistemas de IA</td><td>Marco de gobernanza para el ciclo de vida completo de sistemas de IA en organizaciones</td></tr>
+          <tr><td>Regulación SFC Colombia</td><td>Entidades del sector financiero colombiano</td><td>Control de riesgos operacionales tecnológicos, protección de datos y continuidad del negocio</td></tr>
+          <tr><td>Ley 1581 Colombia</td><td>Protección de datos personales</td><td>Manejo de datos de clientes, empleados y terceros en sistemas automatizados</td></tr>
+          <tr><td>ISO/IEC 23894</td><td>Gestión de riesgos en IA</td><td>Estándar para identificar, evaluar y gestionar riesgos específicos de sistemas de IA</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout cl-rosa">
+    <span class="cl-ico">🏛️</span>
+    <div class="cl-body">
+      <div class="cl-ttl">Gobernanza como ventaja competitiva — no como carga</div>
+      <p class="cl-txt">Las empresas que logren combinar automatización con control humano robusto estarán mejor posicionadas para aprovechar los beneficios de la IA, reducir riesgos regulatorios y generar confianza institucional. <strong>La gobernanza algorítmica no es un obstáculo a la innovación — es la condición que la hace sostenible y legítima.</strong></p>
+    </div>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(4)">← Sesión 4.4</button>
+    <button class="btn btn-p" onclick="goTo(6)">Evaluación final →</button>
+  </div>
+</section>
+
+<!-- ══════ QUIZ ══════ -->
+<section class="session" id="s6" data-title="Evaluación — Módulo 4">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Evaluación · Módulo 4</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Quiz de Verificación — IA Agéntica y Automatización Financiera</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">8 preguntas</span>
+      <span class="badge b-def">⏱ ~15 min</span>
+      <span class="badge b-verde">Criterio estratégico</span>
+    </div>
+  </div>
+  <div class="quiz-wrap">
+    <div class="qdots" id="qDots"></div>
+    <div id="qContainer"></div>
+    <div class="quiz-result" id="qResult">
+      <div class="res-icon">🎓</div>
+      <div class="res-score" id="rScore"></div>
+      <div class="res-lbl">preguntas correctas de 8</div>
+      <div id="rBadge"></div>
+      <p class="res-note">Revise las sesiones correspondientes a las respuestas incorrectas antes de avanzar al Módulo 5.</p>
+      <button class="btn btn-g" onclick="resetQuiz()" style="margin-top:8px">Reiniciar quiz</button>
+    </div>
+  </div>
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(5)">← Sesión 4.5</button>
+    <span style="font-size:12px;color:var(--ur-muted)">Fin del Módulo 4</span>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+const SESS=[
+  {id:1,lbl:'4.1',title:'Automatización de Tareas Recurrentes',time:'45 min'},
+  {id:2,lbl:'4.2',title:'Agentes para Análisis Financiero Continuo',time:'50 min'},
+  {id:3,lbl:'4.3',title:'Integración con Excel, BI y Bases de Datos',time:'45 min'},
+  {id:4,lbl:'4.4',title:'Inteligencia Competitiva Automatizada',time:'45 min'},
+  {id:5,lbl:'4.5',title:'Gobernanza y Supervisión Humana',time:'50 min'},
+  {id:6,lbl:'✓', title:'Evaluación — Módulo 4',time:'~15 min'},
+];
+
+const QUIZ=[
+  {
+    q:'¿Cuál es el salto cualitativo que distingue la IA agéntica (tercera generación) de las automatizaciones previas como macros y RPA?',
+    opts:[
+      'La IA agéntica es más rápida que las automatizaciones anteriores.',
+      'La IA agéntica comprende contexto, maneja excepciones, conecta sistemas heterogéneos y aprende con el tiempo; no solo ejecuta tareas, sino que también razona y adapta su comportamiento.',
+      'La IA agéntica solo funciona con datos financieros estructurados, a diferencia del RPA.',
+      'La diferencia es únicamente de velocidad de procesamiento, no de naturaleza conceptual.'
+    ],
+    ok:1,
+    fb:'Correcto. El salto cualitativo de la IA agéntica no es de velocidad sino de naturaleza: los agentes comprenden contexto, manejan excepciones no previstas, integran sistemas heterogéneos y aprenden adaptativamente. Ya no solo se automatizan tareas mecánicas — se automatizan partes del análisis y el razonamiento preliminar.'
+  },
+  {
+    q:'En la matriz de priorización Impacto vs. Esfuerzo para automatización financiera, ¿qué procesos deben automatizarse primero?',
+    opts:[
+      'Los procesos con alto impacto y alto esfuerzo, porque tienen mayor valor estratégico.',
+      'Todos los procesos simultáneamente para maximizar el retorno.',
+      'Los procesos con alto impacto y bajo esfuerzo: conciliaciones recurrentes, reportes estándar, actualización de KPIs.',
+      'Los procesos de bajo impacto y bajo esfuerzo, porque son menos riesgosos.'
+    ],
+    ok:2,
+    fb:'Correcto. La matriz Impacto vs. Esfuerzo indica que los procesos con alto impacto y bajo esfuerzo generan el mayor retorno inmediato con menor riesgo de implementación. Las conciliaciones bancarias recurrentes, la generación de reportes estándar y la actualización de KPIs en dashboard son los candidatos naturales para la primera ola de automatización.'
+  },
+  {
+    q:'¿Cuál de las siguientes NO es una característica clave de un agente financiero bien diseñado?',
+    opts:[
+      'Opera de forma autónoma bajo reglas definidas y se adapta a cambios en los datos.',
+      'Puede explicar sus resultados de forma comprensible para el equipo financiero.',
+      'Toma decisiones estratégicas finales sin necesidad de validación humana.',
+      'Se integra con sistemas existentes como ERP, bases de datos y plataformas BI.'
+    ],
+    ok:2,
+    fb:'Correcto. Un agente financiero bien diseñado NO toma decisiones estratégicas finales de forma autónoma. Su función es asistir, automatizar el análisis preliminar, generar alertas y recomendaciones — pero la responsabilidad fiduciaria y la decisión estratégica final permanecen en el profesional humano. La autonomía completa en decisiones financieras relevantes viola los principios de gobernanza y supervisión.'
+  },
+  {
+    q:'En la arquitectura del sistema financiero integrado, ¿cuál es el rol específico de la capa de orquestación agéntica?',
+    opts:[
+      'Almacenar los datos financieros en bases de datos relacionales.',
+      'Crear dashboards visuales para la junta directiva.',
+      'Coordinar flujos entre capas, ejecutar análisis automáticos, actualizar modelos y conectar sistemas heterogéneos como ERP, BI y Excel.',
+      'Definir las políticas de gobernanza y cumplimiento regulatorio del sistema.'
+    ],
+    ok:2,
+    fb:'Correcto. La capa de orquestación agéntica es el componente que convierte una arquitectura de capas estáticas en un sistema dinámico e inteligente. Los agentes coordinan el flujo de información entre bases de datos, procesamiento, Excel y BI; ejecutan análisis de forma autónoma; actualizan modelos con nuevos datos; y conectan fuentes heterogéneas sin intervención manual constante.'
+  },
+  {
+    q:'¿Cuál es el modelo de supervisión humana apropiado para un proceso de aprobación de crédito corporativo asistido por IA?',
+    opts:[
+      'Human-out-of-the-Loop: el sistema aprueba automáticamente según el score de crédito.',
+      'Human-on-the-Loop: el sistema propone pero el humano puede intervenir si detecta problemas.',
+      'Human-in-the-Loop: el humano participa directamente en cada decisión relevante de aprobación.',
+      'Ningún modelo de supervisión humana es necesario si el modelo de IA tiene alta precisión.'
+    ],
+    ok:2,
+    fb:'Correcto. La aprobación de crédito corporativo tiene implicaciones fiduciarias, regulatorias y de riesgo financiero significativas. Requiere Human-in-the-Loop: el profesional revisa y aprueba cada decisión relevante. La IA proporciona el análisis y el score, pero la responsabilidad de la decisión recae en el humano. Automatizar completamente este proceso violaría los marcos regulatorios aplicables (SFC, AI Act).'
+  },
+  {
+    q:'¿Cuál de los cinco principios de gobernanza en IA financiera aborda directamente el riesgo de "amplificación de sesgos históricos" en sistemas automatizados?',
+    opts:[
+      'Transparencia — saber cómo funciona el sistema.',
+      'Calidad de datos — los resultados dependen del input.',
+      'Seguridad — protección de información sensible.',
+      'Ética — evitar sesgos y decisiones injustas.'
+    ],
+    ok:3,
+    fb:'Correcto. El principio de Ética aborda directamente el riesgo de que los sistemas de IA perpetúen o amplíen sesgos presentes en los datos históricos. Implica identificar fuentes potenciales de sesgo en el dataset, definir criterios de equidad en el diseño del modelo y supervisar activamente los resultados para detectar patrones discriminatorios o injustos.'
+  },
+  {
+    q:'En inteligencia competitiva automatizada, ¿qué distingue su valor estratégico respecto a los enfoques tradicionales de análisis de mercado?',
+    opts:[
+      'Es más económica que contratar consultoras externas.',
+      'Permite monitoreo continuo, detección automática de cambios relevantes y anticipación de tendencias, transformando el análisis de reactivo a anticipativo.',
+      'Produce análisis más precisos porque usa más datos históricos.',
+      'Elimina la necesidad de que los analistas financieros interpreten el entorno competitivo.'
+    ],
+    ok:1,
+    fb:'Correcto. La diferencia fundamental no es de costo sino de naturaleza estratégica. La inteligencia competitiva automatizada transforma el análisis de reactivo (responde a lo que ya ocurrió) a anticipativo (detecta señales tempranas de cambios que aún no se han consolidado). Esto permite respuestas estratégicas más rápidas, mejor integración con la planeación financiera y una gestión de riesgos verdaderamente proactiva.'
+  },
+  {
+    q:'¿Por qué la gobernanza algorítmica es considerada una ventaja competitiva y no simplemente una carga regulatoria?',
+    opts:[
+      'Porque reduce el número de analistas necesarios en el área financiera.',
+      'Porque las organizaciones con gobernanza robusta pueden automatizar procesos de alto riesgo sin supervisión.',
+      'Porque permite aprovechar los beneficios de la IA reduciendo riesgos regulatorios, generando confianza institucional y construyendo sistemas financieros sostenibles y legítimos en el largo plazo.',
+      'Porque la regulación obliga a todas las empresas a implementarla, igualando la competencia.'
+    ],
+    ok:2,
+    fb:'Correcto. La gobernanza algorítmica es la condición que hace la innovación sostenible. Organizaciones con marcos de gobernanza robustos pueden escalar la automatización con menor riesgo, acceder a procesos de mayor valor (HITL en decisiones críticas), demostrar cumplimiento ante reguladores y construir confianza institucional. La gobernanza no frena la automatización — define el ritmo y la profundidad a las que puede avanzar de forma responsable.'
+  },
+];
+
+let cur=1, done=new Set();
+let qs={idx:0,ans:Array(8).fill(null),sub:Array(8).fill(false)};
+
+function buildSB(){
+  document.getElementById('sbNav').innerHTML=SESS.map(s=>`
+    <div class="nav-item ${s.id===cur?'active':''} ${done.has(s.id)?'done':''}" onclick="goTo(${s.id})">
+      <div class="nd">${done.has(s.id)?'✓':s.id===6?'📝':s.id}</div>
+      <div class="nav-b">
+        <div class="nav-id">Sesión ${s.lbl}</div>
+        <div class="nav-ttl">${s.title}</div>
+        <div class="nav-time">${s.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+function goTo(n){
+  if(n>cur&&cur<6)done.add(cur);
+  document.querySelectorAll('.session').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  cur=n; buildSB(); updateProg();
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===6)initQuiz();
+}
+
+function updateProg(){
+  const p=Math.round((done.size/6)*100);
+  document.getElementById('pgBar').style.width=p+'%';
+  document.getElementById('pgPct').textContent=p+'%';
+}
+
+function initQuiz(){renderQ(qs.idx);renderDots();}
+
+function renderDots(){
+  document.getElementById('qDots').innerHTML=QUIZ.map((_,i)=>{
+    let c='qdot';
+    if(i===qs.idx)c+=' cur';
+    else if(qs.sub[i])c+=qs.ans[i]===QUIZ[i].ok?' ok':' err';
+    else if(qs.ans[i]!==null)c+=' ans';
+    return `<div class="${c}" onclick="jumpQ(${i})"></div>`;
+  }).join('');
+}
+
+function jumpQ(i){qs.idx=i;renderQ(i);renderDots();}
+
+function renderQ(i){
+  const d=QUIZ[i],sub=qs.sub[i],sel=qs.ans[i];
+  document.getElementById('qContainer').innerHTML=`
+    <div class="q-head">
+      <div class="q-ctr">Pregunta ${i+1} de ${QUIZ.length}</div>
+      <div class="q-txt">${d.q}</div>
+      <div class="q-hint">Seleccione la respuesta más adecuada.</div>
+    </div>
+    <div class="q-opts">
+      ${d.opts.map((o,j)=>{
+        let c='qopt'+(sub?' locked':'');
+        if(sub){if(j===d.ok)c+=' ok';else if(j===sel&&j!==d.ok)c+=' err';}
+        else if(j===sel)c+=' sel';
+        return `<div class="${c}" onclick="${sub?'':'selectOpt('+j+')'}">
+          <div class="qletter">${['A','B','C','D'][j]}</div><span>${o}</span></div>`;
+      }).join('')}
+    </div>
+    <div class="q-fb ${sub?'show '+(sel===d.ok?'ok':'err'):''}">
+      ${sub?(sel===d.ok?'✅ ':'❌ ')+d.fb:''}
+    </div>
+    <div class="q-ctrl">
+      ${!sub?`<button class="btn btn-p" onclick="submitQ()" ${sel===null?'disabled':''}>Confirmar respuesta</button>`:''}
+      ${sub&&i<QUIZ.length-1?`<button class="btn btn-p" onclick="nextQ()">Siguiente →</button>`:''}
+      ${sub&&i===QUIZ.length-1?`<button class="btn btn-v" onclick="showResult()">Ver resultado →</button>`:''}
+      ${i>0?`<button class="btn btn-g" onclick="jumpQ(${i-1})">← Anterior</button>`:''}
+    </div>`;
+}
+
+function selectOpt(j){qs.ans[qs.idx]=j;renderQ(qs.idx);renderDots();}
+function submitQ(){qs.sub[qs.idx]=true;renderQ(qs.idx);renderDots();}
+function nextQ(){qs.idx++;renderQ(qs.idx);renderDots();}
+
+function showResult(){
+  document.getElementById('qContainer').style.display='none';
+  document.getElementById('qDots').style.display='none';
+  const n=qs.ans.filter((a,i)=>a===QUIZ[i].ok).length;
+  document.getElementById('rScore').textContent=n+'/8';
+  const b=n===8?'<div class="res-badge rb-gold">🏆 Excelente — Dominio pleno del módulo</div>':
+           n>=6?'<div class="res-badge rb-verde">✅ Aprobado — Comprensión sólida del módulo</div>':
+                '<div class="res-badge rb-azul">📖 Refuerzo recomendado — Revise las sesiones con error</div>';
+  document.getElementById('rBadge').innerHTML=b;
+  document.getElementById('qResult').classList.add('show');
+  done.add(6);updateProg();buildSB();
+}
+
+function resetQuiz(){
+  qs={idx:0,ans:Array(8).fill(null),sub:Array(8).fill(false)};
+  document.getElementById('qContainer').style.display='';
+  document.getElementById('qDots').style.display='';
+  document.getElementById('qResult').classList.remove('show');
+  initQuiz();
+}
+
+buildSB();
+document.getElementById('s1').classList.add('active');
+</script>
+</body>
+</html>

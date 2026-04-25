@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Módulo 6 · Automatización del ESF · ADVANCE UR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
+<style>
+:root{--ur-rojo:#C8102E;--ur-rojo-dark:#A00D25;--ur-rojo-light:#FBEAED;--ur-rojo-mid:#F2AABA;--ur-navy:#1A1F36;--ur-navy-mid:#2D3454;--ur-slate:#4A5178;--ur-muted:#6B7280;--ur-border:#E2E5ED;--ur-surface:#F8F9FC;--ur-white:#FFFFFF;--teal:#0D7A7A;--teal-dark:#095E5E;--teal-light:#E0F4F4;--teal-mid:#7EC8C8;--c-azul:#1B5EBF;--c-azul-bg:#EBF2FF;--c-dorado:#B45309;--c-dorado-bg:#FEF3C7;--c-verde:#166534;--c-verde-bg:#DCFCE7;--c-rosa:#9D174D;--c-rosa-bg:#FCE7F3;--c-gris:#374151;--c-gris-bg:#F3F4F6;--serif:'DM Serif Display',Georgia,serif;--sans:'DM Sans',-apple-system,sans-serif;--sw:270px;--th:54px;--r:8px;--rl:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}body{font-family:var(--sans);font-size:15px;line-height:1.65;color:var(--ur-navy);background:var(--ur-surface);min-height:100vh}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;height:var(--th);background:var(--ur-navy);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:3px solid var(--teal)}
+.tb-l{display:flex;align-items:center}.tb-brand{font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5)}.tb-sep{width:1px;height:18px;background:rgba(255,255,255,.15);margin:0 14px}.tb-title{font-family:var(--serif);font-size:15px;color:#fff}.tb-badge{display:inline-flex;align-items:center;gap:5px;background:var(--teal);color:#fff;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-left:12px}
+.tb-r{display:flex;align-items:center;gap:12px}.tb-prog-lbl{font-size:11px;color:rgba(255,255,255,.5);font-weight:500}.tb-track{width:140px;height:5px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden}.tb-fill{height:100%;background:var(--teal);border-radius:3px;transition:width .5s ease}.tb-pct{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);min-width:32px;text-align:right}
+
+/* LAYOUT */
+.layout{display:flex;margin-top:var(--th);min-height:calc(100vh - var(--th))}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);background:var(--ur-white);border-right:1px solid var(--ur-border);position:fixed;top:var(--th);bottom:0;overflow-y:auto;display:flex;flex-direction:column}
+.sb-head{padding:20px 18px 16px;border-bottom:1px solid var(--ur-border)}.sb-pill{display:inline-flex;align-items:center;background:var(--teal-light);color:var(--teal);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:6px}.sb-agentic{display:inline-flex;align-items:center;background:var(--teal);color:#fff;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-bottom:10px;margin-left:6px}.sb-mod-title{font-family:var(--serif);font-size:13px;color:var(--ur-navy);line-height:1.4}
+.sb-nav{flex:1;padding:6px 0 16px}.nav-item{display:flex;align-items:flex-start;gap:11px;padding:10px 18px;cursor:pointer;border-left:3px solid transparent;transition:background .15s,border-color .15s}.nav-item:hover{background:var(--ur-surface)}.nav-item.active{background:var(--teal-light);border-left-color:var(--teal)}.nav-item.done .nd{background:var(--c-verde)}.nav-item.active .nd{background:var(--teal)}.nd{width:22px;height:22px;border-radius:50%;flex-shrink:0;background:var(--ur-border);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;margin-top:2px}.nav-b{flex:1}.nav-id{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--teal);text-transform:uppercase}.nav-ttl{font-size:12px;color:var(--ur-navy);line-height:1.35;margin-top:1px}.nav-item.active .nav-ttl{font-weight:600}.nav-time{font-size:10px;color:var(--ur-muted);margin-top:2px}
+.sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-thumb{background:var(--ur-border);border-radius:2px}
+
+/* MAIN */
+.main{margin-left:var(--sw);flex:1;padding:36px 44px 64px;max-width:calc(var(--sw) + 820px)}
+
+/* SESSIONS */
+.session{display:none}.session.active{display:block;animation:up .28s ease}@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* HEADER */
+.sh{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--ur-border)}.sh-ey{display:flex;align-items:center;gap:10px;margin-bottom:12px}.sh-id{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}.sh-rule{flex:1;height:1px;background:var(--teal-mid)}.sh-title{font-family:var(--serif);font-size:1.7rem;color:var(--ur-navy);line-height:1.25;margin-bottom:14px}.sh-meta{display:flex;gap:8px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}.b-def{background:var(--c-gris-bg);color:var(--c-gris)}.b-teal{background:var(--teal-light);color:var(--teal)}.b-rojo{background:var(--ur-rojo-light);color:var(--ur-rojo)}.b-azul{background:var(--c-azul-bg);color:var(--c-azul)}.b-verde{background:var(--c-verde-bg);color:var(--c-verde)}.b-dorado{background:var(--c-dorado-bg);color:var(--c-dorado)}.b-rosa{background:var(--c-rosa-bg);color:var(--c-rosa)}
+
+/* PROSE */
+.section{margin-bottom:36px}.sec-title{font-family:var(--serif);font-size:1.12rem;color:var(--ur-navy);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--teal-mid)}.prose{font-size:14.5px;line-height:1.8;color:var(--ur-navy-mid);margin-bottom:14px}.prose strong{color:var(--ur-navy);font-weight:600}.prose em{color:var(--teal-dark);font-style:normal;font-weight:600}
+
+/* ESF PIPELINE */
+.esf-pipeline{display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin:20px 0}
+.esf-step{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 14px;border-radius:var(--r);background:var(--ur-white);border:1px solid var(--ur-border);min-width:100px;text-align:center}
+.esf-step.on{background:var(--teal);border-color:var(--teal)}.esf-step.dn{background:var(--teal-light);border-color:var(--teal-mid)}
+.esf-num{width:26px;height:26px;border-radius:50%;background:var(--teal-light);color:var(--teal);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}.esf-step.on .esf-num{background:rgba(255,255,255,.2);color:#fff}
+.esf-lbl{font-size:11px;font-weight:700;color:var(--ur-navy)}.esf-step.on .esf-lbl{color:#fff}.esf-sub{font-size:10px;color:var(--ur-muted)}.esf-step.on .esf-sub{color:rgba(255,255,255,.8)}.esf-arr{font-size:1rem;color:var(--teal-mid);padding:0 2px;margin-top:14px}
+
+/* CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:18px 0}
+.card{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);padding:18px 16px;border-top:3px solid var(--ur-border);transition:box-shadow .2s}.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07)}
+.c-teal{border-top-color:var(--teal)}.c-rojo{border-top-color:var(--ur-rojo)}.c-azul{border-top-color:var(--c-azul)}.c-verde{border-top-color:var(--c-verde)}.c-dorado{border-top-color:var(--c-dorado)}.c-rosa{border-top-color:var(--c-rosa)}
+.card-ico{font-size:1.4rem;margin-bottom:8px}.card-ttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:6px}.card-body{font-size:12.5px;color:var(--ur-slate);line-height:1.6}.card-tag{display:inline-block;margin-top:10px;font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 8px;border-radius:20px;background:var(--teal-light);color:var(--teal)}
+
+/* ARCH LAYERS */
+.arch-wrap{display:flex;flex-direction:column;gap:6px;margin:18px 0}
+.arch-layer{display:flex;align-items:center;gap:12px;padding:10px 16px;border-radius:var(--r);border:1px solid var(--ur-border)}
+.al-1{background:var(--c-azul-bg);border-color:var(--c-azul)}.al-2{background:var(--c-dorado-bg);border-color:var(--c-dorado)}.al-3{background:var(--teal-light);border-color:var(--teal)}.al-4{background:var(--ur-rojo-light);border-color:var(--ur-rojo)}.al-5{background:var(--c-verde-bg);border-color:var(--c-verde)}.al-6{background:var(--c-rosa-bg);border-color:var(--c-rosa)}
+.arch-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.al-1 .arch-num{background:var(--c-azul)}.al-2 .arch-num{background:var(--c-dorado)}.al-3 .arch-num{background:var(--teal)}.al-4 .arch-num{background:var(--ur-rojo)}.al-5 .arch-num{background:var(--c-verde)}.al-6 .arch-num{background:var(--c-rosa)}
+.arch-ttl{font-size:13px;font-weight:700;color:var(--ur-navy);min-width:150px}.arch-desc{font-size:12.5px;color:var(--ur-slate);flex:1;line-height:1.5}
+
+/* ESF STRUCTURE */
+.esf-struct{display:flex;gap:12px;margin:18px 0;flex-wrap:wrap}
+.esf-col{flex:1;min-width:200px;border-radius:var(--rl);overflow:hidden;border:1px solid var(--ur-border)}
+.esf-col-head{padding:10px 14px;font-size:12px;font-weight:700;color:#fff;text-align:center}
+.esf-col-head.h-activo{background:var(--c-azul)}.esf-col-head.h-pasivo{background:var(--ur-rojo)}.esf-col-head.h-patrimonio{background:var(--teal)}
+.esf-col-body{padding:10px 14px}
+.esf-item{font-size:12px;color:var(--ur-slate);padding:5px 0;border-bottom:1px solid var(--ur-border);display:flex;align-items:flex-start;gap:6px}.esf-item:last-child{border-bottom:none}.esf-item::before{content:'›';color:var(--teal);font-weight:700;flex-shrink:0}
+.esf-sub-head{font-size:10.5px;font-weight:700;color:var(--ur-navy);text-transform:uppercase;letter-spacing:.06em;padding:8px 0 4px;border-bottom:2px solid var(--ur-border);margin-bottom:2px}
+
+/* KPI TABLE */
+.kpi-tbl-w{overflow-x:auto;margin:16px 0;border-radius:var(--rl);border:1px solid var(--ur-border)}
+.kpi-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.kpi-tbl thead tr{background:var(--ur-navy)}.kpi-tbl thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:11.5px;color:#fff}
+.kpi-tbl tbody tr{border-bottom:1px solid var(--ur-border)}.kpi-tbl tbody tr:last-child{border-bottom:none}.kpi-tbl tbody tr:nth-child(even){background:var(--ur-surface)}
+.kpi-tbl tbody td{padding:9px 14px;vertical-align:top}.kpi-tbl tbody td:first-child{font-weight:700;color:var(--teal)}
+.dim-pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.dp-liq{background:var(--c-azul-bg);color:var(--c-azul)}.dp-end{background:var(--ur-rojo-light);color:var(--ur-rojo)}.dp-efi{background:var(--c-verde-bg);color:var(--c-verde)}.dp-sol{background:var(--c-dorado-bg);color:var(--c-dorado)}
+
+/* SEMAPHORE ALERTS */
+.semaphore-grid{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+.sem-item{display:flex;gap:0;border-radius:var(--r);overflow:hidden;border:1px solid var(--ur-border)}
+.sem-dot{width:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.sem-dot.s-verde{background:var(--c-verde-bg)}.sem-dot.s-amarillo{background:var(--c-dorado-bg)}.sem-dot.s-rojo{background:var(--ur-rojo-light)}
+.sem-body{flex:1;padding:10px 14px;background:var(--ur-white)}
+.sem-ttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:3px}
+.sem-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.sem-dot.s-verde + .sem-body .sem-label{color:var(--c-verde)}.sem-dot.s-amarillo + .sem-body .sem-label{color:var(--c-dorado)}.sem-dot.s-rojo + .sem-body .sem-label{color:var(--ur-rojo)}
+.sem-txt{font-size:12px;color:var(--ur-slate);line-height:1.55}.sem-accion{font-size:11px;font-weight:600;color:var(--ur-navy);margin-top:4px}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+.cmp{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);overflow:hidden}
+.cmp-h{padding:11px 16px;font-size:13px;font-weight:700;color:#fff}
+.cmp-h.navy{background:var(--ur-navy)}.cmp-h.teal{background:var(--teal)}.cmp-h.rojo{background:var(--ur-rojo)}
+.cmp-b{padding:12px 16px}.cmp-row{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--ur-slate);padding:5px 0;border-bottom:1px solid var(--ur-border);line-height:1.5}.cmp-row:last-child{border-bottom:none}.cmp-row::before{content:'›';color:var(--teal);font-weight:700;flex-shrink:0}
+
+/* PLIST */
+.plist{display:flex;flex-direction:column;gap:10px;margin:16px 0}
+.pitem{display:flex;gap:14px;background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--r);padding:14px 16px}
+.pnum{width:30px;height:30px;flex-shrink:0;border-radius:6px;background:var(--teal);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:var(--serif)}
+.pb{flex:1}.pttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:4px}.ptxt{font-size:12.5px;color:var(--ur-slate);line-height:1.65}.ptxt strong{color:var(--ur-navy)}
+
+/* CALLOUT */
+.callout{display:flex;gap:14px;padding:16px 18px;border-radius:var(--r);margin:22px 0;border-left:4px solid}
+.cl-teal{background:var(--teal-light);border-color:var(--teal)}.cl-rojo{background:var(--ur-rojo-light);border-color:var(--ur-rojo)}.cl-dorado{background:var(--c-dorado-bg);border-color:var(--c-dorado)}.cl-rosa{background:var(--c-rosa-bg);border-color:var(--c-rosa)}.cl-verde{background:var(--c-verde-bg);border-color:var(--c-verde)}
+.cl-ico{font-size:1.1rem;flex-shrink:0;line-height:1.6}.cl-body{flex:1}.cl-ttl{font-size:13px;font-weight:700;margin-bottom:4px}
+.cl-teal .cl-ttl{color:var(--teal)}.cl-rojo .cl-ttl{color:var(--ur-rojo)}.cl-dorado .cl-ttl{color:var(--c-dorado)}.cl-rosa .cl-ttl{color:var(--c-rosa)}.cl-verde .cl-ttl{color:var(--c-verde)}
+.cl-txt{font-size:13px;color:var(--ur-slate);line-height:1.7}.cl-txt strong{color:var(--ur-navy)}
+
+/* SLIST */
+.slist{list-style:none;margin:10px 0}.slist li{display:flex;gap:10px;font-size:13.5px;color:var(--ur-navy-mid);line-height:1.65;padding:6px 0;border-bottom:1px solid var(--ur-border)}.slist li:last-child{border-bottom:none}.slist li::before{content:'›';color:var(--teal);font-weight:700;flex-shrink:0}
+
+/* DASHBOARD MOCKUP */
+.dash-wrap{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);overflow:hidden;margin:18px 0}
+.dash-topbar{background:var(--ur-navy);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+.dash-topbar-title{font-family:var(--serif);font-size:13px;color:#fff}.dash-topbar-badge{font-size:10px;font-weight:700;background:var(--teal);color:#fff;padding:2px 8px;border-radius:20px}
+.dash-body{padding:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.dash-kpi{background:var(--ur-surface);border:1px solid var(--ur-border);border-radius:var(--r);padding:12px 14px;border-left:3px solid var(--teal)}
+.dash-kpi.kpi-warn{border-left-color:var(--c-dorado)}.dash-kpi.kpi-alert{border-left-color:var(--ur-rojo)}
+.dk-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ur-muted);margin-bottom:4px}
+.dk-value{font-family:var(--serif);font-size:1.4rem;color:var(--ur-navy);margin-bottom:4px}
+.dk-insight{font-size:11px;color:var(--ur-slate);line-height:1.4}
+.dash-insight-box{grid-column:1/-1;background:var(--teal-light);border:1px solid var(--teal-mid);border-radius:var(--r);padding:12px 14px}
+.dib-label{font-size:10px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.dib-txt{font-size:12.5px;color:var(--ur-navy-mid);line-height:1.6}
+
+/* SESSION NAV */
+.sess-nav{display:flex;justify-content:space-between;align-items:center;margin-top:44px;padding-top:24px;border-top:1px solid var(--ur-border)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:var(--sans);letter-spacing:.01em}
+.btn-p{background:var(--teal);color:#fff}.btn-p:hover{background:var(--teal-dark)}.btn-g{background:var(--ur-white);color:var(--ur-navy);border:1px solid var(--ur-border)}.btn-g:hover{background:var(--ur-surface)}.btn-v{background:var(--c-verde);color:#fff}.btn-v:hover{background:#14532d}.btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* QUIZ */
+.quiz-wrap{max-width:660px}.qdots{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}.qdot{width:10px;height:10px;border-radius:50%;background:var(--ur-border);cursor:pointer;transition:all .18s}.qdot.cur{background:var(--teal);transform:scale(1.4)}.qdot.ans{background:var(--ur-slate)}.qdot.ok{background:var(--c-verde)}.qdot.err{background:var(--ur-rojo)}
+.q-head{margin-bottom:20px}.q-ctr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}.q-txt{font-family:var(--serif);font-size:1.05rem;color:var(--ur-navy);line-height:1.45;margin-bottom:6px}.q-hint{font-size:12px;color:var(--ur-muted)}
+.q-opts{display:flex;flex-direction:column;gap:9px;margin:18px 0}.qopt{display:flex;align-items:flex-start;gap:12px;padding:13px 15px;background:var(--ur-white);border:2px solid var(--ur-border);border-radius:var(--r);cursor:pointer;transition:all .18s;font-size:13.5px;color:var(--ur-navy);line-height:1.5}.qopt:hover:not(.locked){border-color:var(--teal);background:var(--teal-light)}.qopt.sel{border-color:var(--ur-navy);background:var(--c-gris-bg)}.qopt.ok{border-color:var(--c-verde);background:var(--c-verde-bg);color:var(--c-verde)}.qopt.err{border-color:var(--ur-rojo);background:var(--ur-rojo-light);color:var(--ur-rojo-dark)}.qopt.locked{cursor:default}
+.qletter{width:26px;height:26px;flex-shrink:0;border-radius:50%;border:2px solid var(--ur-border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--ur-muted)}.qopt.sel .qletter{border-color:var(--ur-navy);color:var(--ur-navy)}.qopt.ok .qletter{border-color:var(--c-verde);color:var(--c-verde);background:var(--c-verde-bg)}.qopt.err .qletter{border-color:var(--ur-rojo);color:var(--ur-rojo);background:var(--ur-rojo-light)}
+.q-fb{display:none;font-size:13px;line-height:1.7;padding:13px 16px;border-radius:var(--r);border-left:4px solid;margin-top:4px}.q-fb.show{display:block}.q-fb.ok{background:var(--c-verde-bg);border-color:var(--c-verde);color:var(--c-verde)}.q-fb.err{background:var(--ur-rojo-light);border-color:var(--ur-rojo);color:var(--ur-rojo-dark)}
+.q-ctrl{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.quiz-result{display:none;text-align:center;padding:48px 20px}.quiz-result.show{display:block;animation:up .35s ease}.res-icon{font-size:3rem;margin-bottom:12px}.res-score{font-family:var(--serif);font-size:3.2rem;color:var(--teal);margin-bottom:6px}.res-lbl{font-size:14px;color:var(--ur-muted);margin-bottom:20px}.res-badge{display:inline-block;font-size:13px;font-weight:700;padding:8px 22px;border-radius:20px;margin-bottom:28px}.rb-gold{background:var(--c-dorado-bg);color:var(--c-dorado)}.rb-verde{background:var(--c-verde-bg);color:var(--c-verde)}.rb-azul{background:var(--c-azul-bg);color:var(--c-azul)}.res-note{font-size:13px;color:var(--ur-slate);max-width:400px;margin:0 auto 24px;line-height:1.65}
+
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0;padding:20px 16px 48px}.compare{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.dash-body{grid-template-columns:1fr}.tb-badge{display:none}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="tb-l">
+    <span class="tb-brand">ADVANCE · Universidad del Rosario</span>
+    <div class="tb-sep"></div>
+    <span class="tb-title">Análisis Financiero con IA</span>
+    <span class="tb-badge">⚡ IA Agéntica</span>
+  </div>
+  <div class="tb-r">
+    <span class="tb-prog-lbl">Progreso</span>
+    <div class="tb-track"><div class="tb-fill" id="pgBar" style="width:0%"></div></div>
+    <span class="tb-pct" id="pgPct">0%</span>
+  </div>
+</header>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-head">
+    <div><span class="sb-pill">Módulo 6</span><span class="sb-agentic">⚡ IA Agéntica</span></div>
+    <div class="sb-mod-title">Automatización del Estado de Situación Financiera</div>
+  </div>
+  <nav class="sb-nav" id="sbNav"></nav>
+</aside>
+
+<main class="main">
+
+<!-- ══════ S6.1 ══════ -->
+<section class="session" id="s1">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 6.1</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Clasificación Automática de Cuentas del ESF: Fundamentos, Métodos y Arquitectura</h1>
+    <div class="sh-meta"><span class="badge b-def">⏱ 45 min</span><span class="badge b-teal">IA Agéntica</span><span class="badge b-azul">Fundamentos</span></div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Flujo completo del ESF automatizado — hilo del módulo</h2>
+    <div class="esf-pipeline">
+      <div class="esf-step on"><div class="esf-num">1</div><div class="esf-lbl">Clasificación</div><div class="esf-sub">Cuentas</div></div>
+      <span class="esf-arr">→</span>
+      <div class="esf-step"><div class="esf-num">2</div><div class="esf-lbl">Análisis</div><div class="esf-sub">Estructural</div></div>
+      <span class="esf-arr">→</span>
+      <div class="esf-step"><div class="esf-num">3</div><div class="esf-lbl">KPIs</div><div class="esf-sub">Automáticos</div></div>
+      <span class="esf-arr">→</span>
+      <div class="esf-step"><div class="esf-num">4</div><div class="esf-lbl">Alertas</div><div class="esf-sub">Liquidez/Solvencia</div></div>
+      <span class="esf-arr">→</span>
+      <div class="esf-step"><div class="esf-num">5</div><div class="esf-lbl">Dashboard</div><div class="esf-sub">Interpretativo</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">La clasificación adecuada de cuentas contables es el componente más crítico del pipeline del ESF automatizado. Tradicionalmente ejecutada de forma manual, implica alto consumo de tiempo, dependencia del criterio individual y riesgo significativo de errores e inconsistencias. Con IA, este proceso se automatiza permitiendo asignar cada cuenta contable a su categoría correspondiente de manera <strong>rápida, consistente y escalable</strong>.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Estructura del ESF — las tres grandes categorías</h2>
+    <div class="esf-struct">
+      <div class="esf-col">
+        <div class="esf-col-head h-activo">ACTIVOS</div>
+        <div class="esf-col-body">
+          <div class="esf-sub-head">Corrientes</div>
+          <div class="esf-item">Efectivo y equivalentes</div>
+          <div class="esf-item">Cuentas por cobrar</div>
+          <div class="esf-item">Inventarios</div>
+          <div class="esf-item">Otros activos corrientes</div>
+          <div class="esf-sub-head">No corrientes</div>
+          <div class="esf-item">Propiedad, planta y equipo</div>
+          <div class="esf-item">Activos intangibles</div>
+          <div class="esf-item">Inversiones a largo plazo</div>
+        </div>
+      </div>
+      <div class="esf-col">
+        <div class="esf-col-head h-pasivo">PASIVOS</div>
+        <div class="esf-col-body">
+          <div class="esf-sub-head">Corrientes</div>
+          <div class="esf-item">Proveedores</div>
+          <div class="esf-item">Obligaciones financieras CP</div>
+          <div class="esf-item">Impuestos por pagar</div>
+          <div class="esf-item">Otros pasivos corrientes</div>
+          <div class="esf-sub-head">No corrientes</div>
+          <div class="esf-item">Deudas a largo plazo</div>
+          <div class="esf-item">Provisiones LP</div>
+          <div class="esf-item">Otros pasivos LP</div>
+        </div>
+      </div>
+      <div class="esf-col">
+        <div class="esf-col-head h-patrimonio">PATRIMONIO</div>
+        <div class="esf-col-body">
+          <div class="esf-sub-head">Componentes</div>
+          <div class="esf-item">Capital social suscrito y pagado</div>
+          <div class="esf-item">Prima en colocación de acciones</div>
+          <div class="esf-item">Reservas legales y estatutarias</div>
+          <div class="esf-item">Utilidades retenidas acumuladas</div>
+          <div class="esf-item">Resultado del ejercicio</div>
+          <div class="esf-item">ORI — Otro resultado integral</div>
+        </div>
+      </div>
+    </div>
+    <p class="prose" style="font-size:12.5px">Una clasificación correcta garantiza que los estados financieros reflejen fielmente la realidad económica. <strong>Activos = Pasivos + Patrimonio</strong> es la ecuación contable fundamental que todo sistema automatizado debe preservar.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">4 métodos de clasificación automática</h2>
+    <div class="card-grid">
+      <div class="card c-azul"><div class="card-ico">📋</div><div class="card-ttl">Reglas determinísticas</div><div class="card-body">Clasificación por códigos contables y estructuras jerárquicas definidas. Simples, confiables y de alta precisión en entornos con PUC bien estructurado. <strong>Baja flexibilidad ante excepciones.</strong></div><span class="card-tag">PUC · Código</span></div>
+      <div class="card c-dorado"><div class="card-ico">🔤</div><div class="card-ttl">Clasificación por texto</div><div class="card-body">Análisis de palabras clave y patrones lingüísticos en el nombre de las cuentas. Útil cuando no existe codificación estructurada o se integran fuentes externas con nomenclaturas diversas.</div><span class="card-tag">NLP · Keywords</span></div>
+      <div class="card c-teal"><div class="card-ico">🤖</div><div class="card-ttl">Machine Learning</div><div class="card-body">Modelos supervisados entrenados con datos históricos etiquetados. Captura patrones complejos y ofrece mayor adaptabilidad. Mayor precisión a medida que el sistema aprende del feedback.</div><span class="card-tag">Supervisado · No supervisado</span></div>
+      <div class="card c-verde"><div class="card-ico">🔀</div><div class="card-ttl">Modelos híbridos</div><div class="card-body">Combinan reglas determinísticas con modelos de IA. Logran equilibrio entre control explícito y flexibilidad adaptativa. <strong>Recomendados para entornos de producción.</strong></div><span class="card-tag">Mejor práctica</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Arquitectura del sistema de clasificación — 5 capas</h2>
+    <div class="arch-wrap">
+      <div class="arch-layer al-1"><div class="arch-num">1</div><div class="arch-ttl">Ingestión de datos</div><div class="arch-desc">ERP, archivos Excel, bases de datos, fuentes externas. Integración de múltiples planes de cuentas en un flujo unificado.</div></div>
+      <div class="arch-layer al-2"><div class="arch-num">2</div><div class="arch-ttl">Procesamiento</div><div class="arch-desc">Limpieza, normalización de nombres, estandarización de formatos, eliminación de duplicados y errores previos a la clasificación.</div></div>
+      <div class="arch-layer al-3"><div class="arch-num">3</div><div class="arch-ttl">Clasificación</div><div class="arch-desc">Aplicación de reglas y modelos para asignar cada cuenta a su categoría (activo/pasivo/patrimonio) con nivel de certeza.</div></div>
+      <div class="arch-layer al-4"><div class="arch-num">4</div><div class="arch-ttl">Validación</div><div class="arch-desc">Verificación de coherencia: ecuación contable, jerarquías, umbrales de certeza. Marcado de excepciones para revisión humana.</div></div>
+      <div class="arch-layer al-5"><div class="arch-num">5</div><div class="arch-ttl">Salida estructurada</div><div class="arch-desc">ESF estructurado y listo para análisis. Alimenta las sesiones 6.2, 6.3, 6.4 y 6.5 del pipeline.</div></div>
+    </div>
+  </div>
+
+  <div class="callout cl-teal"><span class="cl-ico">🏛️</span><div class="cl-body"><div class="cl-ttl">Estandarización como precondición del sistema inteligente</div><p class="cl-txt">La clasificación automática exige formalizar explícitamente la lógica contable antes de implementarla en código. Las <strong>reglas de negocio deben ser explícitas, versionadas, auditables y alineadas con NIIF aplicables a Colombia</strong>. Un sistema bien diseñado no solo clasifica correctamente — también puede explicar por qué clasificó de determinada manera.</p></div></div>
+
+  <div class="sess-nav"><button class="btn btn-g" disabled>← Anterior</button><button class="btn btn-p" onclick="goTo(2)">Sesión 6.2 →</button></div>
+</section>
+
+<!-- ══════ S6.2 ══════ -->
+<section class="session" id="s2">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 6.2</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Análisis Estructural Inteligente del Balance General: Fundamentos y Automatización</h1>
+    <div class="sh-meta"><span class="badge b-def">⏱ 45 min</span><span class="badge b-teal">Análisis dinámico</span><span class="badge b-def">Estructura financiera</span></div>
+  </div>
+  <div class="section">
+    <div class="esf-pipeline">
+      <div class="esf-step dn"><div class="esf-num">✓</div><div class="esf-lbl">Clasificación</div></div><span class="esf-arr">→</span>
+      <div class="esf-step on"><div class="esf-num">2</div><div class="esf-lbl">Análisis</div><div class="esf-sub">Estructural</div></div><span class="esf-arr">→</span>
+      <div class="esf-step"><div class="esf-num">3</div><div class="esf-lbl">KPIs</div></div><span class="esf-arr">→</span>
+      <div class="esf-step"><div class="esf-num">4</div><div class="esf-lbl">Alertas</div></div><span class="esf-arr">→</span>
+      <div class="esf-step"><div class="esf-num">5</div><div class="esf-lbl">Dashboard</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <p class="prose">El ESF ha dejado de ser un reporte estático para convertirse en una herramienta dinámica de análisis estratégico. El <em>análisis estructural inteligente</em> permite comprender cómo está configurada la estructura financiera de una empresa y cómo esta influye en su liquidez, endeudamiento y sostenibilidad. Integra técnicas de análisis financiero con herramientas de IA para identificar patrones y señales no evidentes a simple vista.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Del análisis tradicional al análisis estructural inteligente</h2>
+    <div class="compare">
+      <div class="cmp"><div class="cmp-h navy">Análisis tradicional</div><div class="cmp-b">
+        <div class="cmp-row">Cálculos manuales periódicos</div>
+        <div class="cmp-row">Observaciones descriptivas estáticas</div>
+        <div class="cmp-row">Análisis de un solo periodo</div>
+        <div class="cmp-row">Responde: ¿qué ocurrió?</div>
+        <div class="cmp-row">Alta dependencia del analista</div>
+      </div></div>
+      <div class="cmp"><div class="cmp-h teal">Análisis estructural inteligente</div><div class="cmp-b">
+        <div class="cmp-row">Automatización de cálculos en tiempo real</div>
+        <div class="cmp-row">Integración histórica multianual</div>
+        <div class="cmp-row">Insights y conclusiones automáticas</div>
+        <div class="cmp-row">Responde: ¿qué? ¿por qué? ¿qué podría pasar?</div>
+        <div class="cmp-row">Analítica aumentada con IA</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">4 componentes del análisis estructural</h2>
+    <div class="plist">
+      <div class="pitem"><div class="pnum" style="background:var(--c-azul)">1</div><div class="pb"><div class="pttl">Segmentación de activos — liquidez y capacidad operativa</div><p class="ptxt">Clasificar los activos entre <strong>corrientes</strong> (efectivo, cuentas por cobrar, inventarios) y <strong>no corrientes</strong> (PP&E, intangibles). Una alta concentración de activos en inventarios o cartera puede señalar presiones de liquidez no evidentes en el total de activos corrientes.</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--ur-rojo)">2</div><div class="pb"><div class="pttl">Estructura de financiamiento — pasivos vs. patrimonio</div><p class="ptxt">Análisis de la relación entre <strong>pasivos</strong> (financiación externa) y <strong>patrimonio</strong> (financiación propia). Mide el nivel de apalancamiento financiero y el riesgo estructural asociado a la composición de las fuentes de capital.</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--teal)">3</div><div class="pb"><div class="pttl">Capital de trabajo — sostenibilidad operativa de corto plazo</div><p class="ptxt">Capital de trabajo = <strong>Activos corrientes − Pasivos corrientes</strong>. Refleja la capacidad de la empresa para cubrir sus obligaciones inmediatas y mantener la continuidad operativa. Un capital de trabajo negativo o en deterioro progresivo es una señal de alerta estructural.</p></div></div>
+      <div class="pitem"><div class="pnum" style="background:var(--c-dorado)">4</div><div class="pb"><div class="pttl">Indicadores estructurales — diagnóstico de salud financiera</div><p class="ptxt">Razón de endeudamiento (Pasivos/Activos), proporción de activos fijos, participación del patrimonio. Cada uno captura una dimensión de la <strong>solidez estructural</strong> de la organización y su capacidad de absorción ante escenarios adversos.</p></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Arquitectura del análisis automatizado — 4 capas</h2>
+    <div class="arch-wrap">
+      <div class="arch-layer al-1"><div class="arch-num">1</div><div class="arch-ttl">Datos</div><div class="arch-desc">Balance general clasificado (salida de 6.1), sistemas contables y ERP. Base informacional del análisis.</div></div>
+      <div class="arch-layer al-2"><div class="arch-num">2</div><div class="arch-ttl">Cálculo</div><div class="arch-desc">Análisis vertical automático, cálculo de capital de trabajo e indicadores estructurales de cada componente.</div></div>
+      <div class="arch-layer al-3"><div class="arch-num">3</div><div class="arch-ttl">Analítica</div><div class="arch-desc">Identificación de patrones, tendencias intertemporales y posibles señales de alerta estructural.</div></div>
+      <div class="arch-layer al-4"><div class="arch-num">4</div><div class="arch-ttl">Interpretación</div><div class="arch-desc">Generación automática de conclusiones sobre la estructura financiera. Alimenta la sesión 6.5 (Dashboard).</div></div>
+    </div>
+  </div>
+
+  <div class="callout cl-teal"><span class="cl-ico">📐</span><div class="cl-body"><div class="cl-ttl">El análisis vertical como radiografía financiera</div><p class="cl-txt">El análisis vertical — expresar cada cuenta como porcentaje del total de activos — permite <strong>comparar la composición financiera entre periodos</strong> e identificar cambios relevantes en la estructura. Una variación sostenida en la proporción de deuda sobre activos totales revela más sobre el riesgo estructural que cualquier cifra absoluta.</p></div></div>
+
+  <div class="sess-nav"><button class="btn btn-g" onclick="goTo(1)">← Sesión 6.1</button><button class="btn btn-p" onclick="goTo(3)">Sesión 6.3 →</button></div>
+</section>
+
+<!-- ══════ S6.3 ══════ -->
+<section class="session" id="s3">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 6.3</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Cálculo Automático de KPIs Financieros: Arquitectura y Aplicación Estratégica</h1>
+    <div class="sh-meta"><span class="badge b-def">⏱ 45 min</span><span class="badge b-teal">KPIs del ESF</span><span class="badge b-def">4 dimensiones</span></div>
+  </div>
+  <div class="section">
+    <div class="esf-pipeline">
+      <div class="esf-step dn"><div class="esf-num">✓</div><div class="esf-lbl">Clasificación</div></div><span class="esf-arr">→</span>
+      <div class="esf-step dn"><div class="esf-num">✓</div><div class="esf-lbl">Análisis</div></div><span class="esf-arr">→</span>
+      <div class="esf-step on"><div class="esf-num">3</div><div class="esf-lbl">KPIs</div><div class="esf-sub">Automáticos</div></div><span class="esf-arr">→</span>
+      <div class="esf-step"><div class="esf-num">4</div><div class="esf-lbl">Alertas</div></div><span class="esf-arr">→</span>
+      <div class="esf-step"><div class="esf-num">5</div><div class="esf-lbl">Dashboard</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <p class="prose">Los KPIs financieros son <strong>indicadores cuantitativos que transforman datos contables en información interpretable</strong> para la toma de decisiones. Derivados directamente del ESF, sintetizan grandes volúmenes de información en métricas claras, comparables y accionables. Su cálculo automático garantiza consistencia, elimina errores manuales y habilita monitoreo continuo.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Marco completo de KPIs del ESF — 4 dimensiones</h2>
+    <div class="kpi-tbl-w">
+      <table class="kpi-tbl">
+        <thead><tr><th>Dimensión</th><th>KPI</th><th>Fórmula</th><th>Interpretación estratégica</th><th>Señal de alerta</th></tr></thead>
+        <tbody>
+          <tr><td><span class="dim-pill dp-liq">Liquidez</span></td><td>Razón corriente</td><td>Activos corrientes / Pasivos corrientes</td><td>Capacidad de cubrir obligaciones CP</td><td>&lt; 1.0: riesgo de iliquidez operativa</td></tr>
+          <tr><td><span class="dim-pill dp-liq">Liquidez</span></td><td>Prueba ácida</td><td>(Activos corrientes − Inventarios) / Pasivos corrientes</td><td>Liquidez sin depender de inventarios</td><td>&lt; 0.7: exposición a riesgo de cobranza</td></tr>
+          <tr><td><span class="dim-pill dp-liq">Liquidez</span></td><td>Capital de trabajo</td><td>Activos corrientes − Pasivos corrientes</td><td>Excedente operativo de corto plazo</td><td>Tendencia negativa sostenida</td></tr>
+          <tr><td><span class="dim-pill dp-end">Endeudamiento</span></td><td>Razón de endeudamiento</td><td>Pasivos totales / Activos totales</td><td>Proporción de activos financiados con deuda</td><td>&gt; 0.65: alta dependencia de terceros</td></tr>
+          <tr><td><span class="dim-pill dp-end">Endeudamiento</span></td><td>Apalancamiento financiero</td><td>Pasivos totales / Patrimonio</td><td>Multiplicador de deuda sobre recursos propios</td><td>&gt; 2.0: riesgo de sobreendeudamiento</td></tr>
+          <tr><td><span class="dim-pill dp-efi">Eficiencia</span></td><td>Rotación de activos</td><td>Ingresos / Activos totales promedio</td><td>Productividad del activo en generación de ventas</td><td>Caída sostenida indica activos ociosos</td></tr>
+          <tr><td><span class="dim-pill dp-efi">Eficiencia</span></td><td>Rotación CxC (DSO)</td><td>Cuentas por cobrar × 365 / Ingresos</td><td>Días promedio de cobro de cartera</td><td>Alza sostenida: deterioro del ciclo de cobro</td></tr>
+          <tr><td><span class="dim-pill dp-sol">Solvencia</span></td><td>Proporción de patrimonio</td><td>Patrimonio / Activos totales</td><td>Solidez de la base de capital propio</td><td>&lt; 0.30: base patrimonial débil</td></tr>
+          <tr><td><span class="dim-pill dp-sol">Solvencia</span></td><td>Cobertura de activos</td><td>Activos totales / Pasivos totales</td><td>Respaldo de activos sobre obligaciones</td><td>&lt; 1.3: margen de seguridad estrecho</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Arquitectura del sistema de cálculo automático — 5 capas</h2>
+    <div class="arch-wrap">
+      <div class="arch-layer al-1"><div class="arch-num">1</div><div class="arch-ttl">Datos</div><div class="arch-desc">ESF estructurado (salida de 6.1 y 6.2), sistemas ERP u otras fuentes contables validadas.</div></div>
+      <div class="arch-layer al-2"><div class="arch-num">2</div><div class="arch-ttl">Procesamiento</div><div class="arch-desc">Limpieza, normalización y estructuración de partidas necesarias para cada fórmula de KPI.</div></div>
+      <div class="arch-layer al-3"><div class="arch-num">3</div><div class="arch-ttl">Cálculo</div><div class="arch-desc">Ejecución automática de las fórmulas estandarizadas. Consistencia garantizada por versionamiento de definiciones.</div></div>
+      <div class="arch-layer al-4"><div class="arch-num">4</div><div class="arch-ttl">Validación</div><div class="arch-desc">Verificación de coherencia y consistencia. Comparación vs. histórico, umbrales sectoriales y señales de alerta predefinidas.</div></div>
+      <div class="arch-layer al-5"><div class="arch-num">5</div><div class="arch-ttl">Visualización</div><div class="arch-desc">Dashboards, reportes ejecutivos, feeds al sistema de alertas (6.4) y al dashboard interpretativo (6.5).</div></div>
+    </div>
+  </div>
+
+  <div class="callout cl-dorado"><span class="cl-ico">⚠️</span><div class="cl-body"><div class="cl-ttl">Los KPIs son instrumentos de compresión informacional — no diagnósticos definitivos</div><p class="cl-txt">Todo KPI implica una reducción de complejidad funcional para su compresión. Esta reducción es necesaria para la toma de decisiones, pero puede derivar en simplificaciones excesivas si no se contextualiza con la estrategia del negocio, las condiciones sectoriales y las particularidades operativas de la empresa analizada. <strong>La IA contribuye a restaurar la complejidad subyacente integrando el indicador dentro de sistemas relacionales más amplios.</strong></p></div></div>
+
+  <div class="sess-nav"><button class="btn btn-g" onclick="goTo(2)">← Sesión 6.2</button><button class="btn btn-p" onclick="goTo(4)">Sesión 6.4 →</button></div>
+</section>
+
+<!-- ══════ S6.4 ══════ -->
+<section class="session" id="s4">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 6.4</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Sistema de Alertas de Liquidez y Solvencia: Diseño, Automatización y Gestión Proactiva del Riesgo</h1>
+    <div class="sh-meta"><span class="badge b-def">⏱ 50 min</span><span class="badge b-teal">IA Agéntica</span><span class="badge b-rojo">Riesgo financiero</span></div>
+  </div>
+  <div class="section">
+    <div class="esf-pipeline">
+      <div class="esf-step dn"><div class="esf-num">✓</div><div class="esf-lbl">Clasificación</div></div><span class="esf-arr">→</span>
+      <div class="esf-step dn"><div class="esf-num">✓</div><div class="esf-lbl">Análisis</div></div><span class="esf-arr">→</span>
+      <div class="esf-step dn"><div class="esf-num">✓</div><div class="esf-lbl">KPIs</div></div><span class="esf-arr">→</span>
+      <div class="esf-step on"><div class="esf-num">4</div><div class="esf-lbl">Alertas</div><div class="esf-sub">Liquidez/Solvencia</div></div><span class="esf-arr">→</span>
+      <div class="esf-step"><div class="esf-num">5</div><div class="esf-lbl">Dashboard</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <p class="prose">Las alertas de liquidez y solvencia representan la evolución natural del sistema del ESF: no solo diagnostican la situación financiera — <strong>activan respuestas oportunas</strong>. En sistemas automatizados, las alertas actúan como un <em>sistema nervioso financiero</em> que conecta datos con decisiones en tiempo real, transformando un modelo reactivo en uno proactivo.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Liquidez vs. Solvencia — dos horizontes temporales del riesgo</h2>
+    <div class="compare">
+      <div class="cmp"><div class="cmp-h azul">Liquidez — riesgo de corto plazo</div><div class="cmp-b">
+        <div class="cmp-row">Capacidad de cubrir obligaciones inmediatas</div>
+        <div class="cmp-row">Análisis de activos y pasivos corrientes</div>
+        <div class="cmp-row">Impacta la operación diaria</div>
+        <div class="cmp-row">Deterioro visible en razón corriente y capital de trabajo</div>
+        <div class="cmp-row">Umbral crítico: razón corriente &lt; 1.0</div>
+      </div></div>
+      <div class="cmp"><div class="cmp-h rojo">Solvencia — riesgo estructural de largo plazo</div><div class="cmp-b">
+        <div class="cmp-row">Capacidad de sostener obligaciones en el tiempo</div>
+        <div class="cmp-row">Análisis de estructura de capital completa</div>
+        <div class="cmp-row">Impacta la viabilidad futura del negocio</div>
+        <div class="cmp-row">Deterioro visible en endeudamiento y apalancamiento</div>
+        <div class="cmp-row">Señal crítica: endeudamiento &gt; 0.70 y tendencia al alza</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Sistema de alertas por semáforo — 8 alertas críticas</h2>
+    <div class="semaphore-grid">
+      <div class="sem-item"><div class="sem-dot s-rojo">🔴</div><div class="sem-body"><div class="sem-label">Liquidez · CRÍTICO</div><div class="sem-ttl">Razón corriente por debajo del umbral mínimo</div><div class="sem-txt">La relación activos corrientes / pasivos corrientes ha caído por debajo de 1.0. Posible incapacidad de cubrir obligaciones inmediatas sin necesidad de financiamiento adicional.</div><div class="sem-accion">→ Acción inmediata: revisión de flujo de caja y refinanciación de pasivos corrientes.</div></div></div>
+      <div class="sem-item"><div class="sem-dot s-rojo">🔴</div><div class="sem-body"><div class="sem-label">Liquidez · CRÍTICO</div><div class="sem-ttl">Deterioro sostenido del capital de trabajo</div><div class="sem-txt">El capital de trabajo neto ha disminuido tres periodos consecutivos. Presión creciente sobre la operación diaria y riesgo de interrupciones en cadena de pagos.</div><div class="sem-accion">→ Acción inmediata: optimización de ciclo de cobro y políticas de crédito.</div></div></div>
+      <div class="sem-item"><div class="sem-dot s-amarillo">🟡</div><div class="sem-body"><div class="sem-label">Liquidez · SEGUIMIENTO</div><div class="sem-ttl">Crecimiento anormal de cuentas por cobrar</div><div class="sem-txt">El DSO (días de cobro) ha aumentado significativamente respecto al promedio histórico. Acumulación de cartera que deteriora el flujo de caja efectivo sin impactar el resultado contable.</div><div class="sem-accion">→ Monitorear: revisión de política de crédito y gestión de cartera vencida.</div></div></div>
+      <div class="sem-item"><div class="sem-dot s-amarillo">🟡</div><div class="sem-body"><div class="sem-label">Liquidez · SEGUIMIENTO</div><div class="sem-ttl">Concentración elevada en inventarios</div><div class="sem-txt">Los inventarios representan una proporción elevada de los activos corrientes. La liquidez real es inferior a la que indica la razón corriente. Riesgo adicional de obsolescencia.</div><div class="sem-accion">→ Monitorear: análisis de rotación de inventarios y política de abastecimiento.</div></div></div>
+      <div class="sem-item"><div class="sem-dot s-rojo">🔴</div><div class="sem-body"><div class="sem-label">Solvencia · CRÍTICO</div><div class="sem-ttl">Nivel de endeudamiento supera umbral estructural</div><div class="sem-txt">La razón de endeudamiento (Pasivos/Activos) supera el 0.70. Alta dependencia de financiación externa. Vulnerabilidad significativa ante cambios en tasas de interés o contracción del crédito.</div><div class="sem-accion">→ Acción inmediata: plan de desapalancamiento y evaluación de refinanciación.</div></div></div>
+      <div class="sem-item"><div class="sem-dot s-amarillo">🟡</div><div class="sem-body"><div class="sem-label">Solvencia · SEGUIMIENTO</div><div class="sem-ttl">Debilidad patrimonial creciente</div><div class="sem-txt">El patrimonio pierde peso relativo dentro de la estructura financiera en periodos consecutivos. Menor capacidad de absorción de pérdidas y restricción de acceso a crédito en condiciones favorables.</div><div class="sem-accion">→ Monitorear: análisis de política de dividendos y generación de utilidades retenidas.</div></div></div>
+      <div class="sem-item"><div class="sem-dot s-rojo">🔴</div><div class="sem-body"><div class="sem-label">Solvencia · CRÍTICO</div><div class="sem-ttl">Apalancamiento financiero excesivo</div><div class="sem-txt">La relación Pasivos/Patrimonio supera el nivel 2.0. El negocio opera con una base patrimonial insuficiente para respaldar su nivel de obligaciones. Riesgo de incumplimiento ante escenarios de contracción.</div><div class="sem-accion">→ Acción inmediata: evaluación urgente de estructura de capital y plan de capitalización.</div></div></div>
+      <div class="sem-item"><div class="sem-dot s-verde">🟢</div><div class="sem-body"><div class="sem-label">Solvencia · INFORMATIVO</div><div class="sem-ttl">Estructura de financiamiento en rango normal</div><div class="sem-txt">Los indicadores de solvencia se encuentran dentro de los rangos esperados para el sector. No se identifican señales de deterioro estructural en los últimos tres periodos analizados.</div><div class="sem-accion">→ Monitoreo estándar: seguimiento en el próximo cierre.</div></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Diseño del sistema — 4 criterios estructurales</h2>
+    <div class="card-grid">
+      <div class="card c-azul"><div class="card-ico">📊</div><div class="card-ttl">Selección de KPIs base</div><div class="card-body">Definir los indicadores que servirán como variables de activación. Derivados directamente de las salidas de la Sesión 6.3.</div></div>
+      <div class="card c-teal"><div class="card-ico">🎯</div><div class="card-ttl">Umbrales contextuales</div><div class="card-body">Establecer límites que determinen el estado crítico, con ajuste dinámico por industria, ciclo económico y características del negocio.</div></div>
+      <div class="card c-dorado"><div class="card-ico">⏱</div><div class="card-ttl">Frecuencia de evaluación</div><div class="card-body">Monitoreo en tiempo real para indicadores críticos operativos. Evaluación mensual para KPIs estructurales. Revisión trimestral de umbrales.</div></div>
+      <div class="card c-rojo"><div class="card-ico">🚨</div><div class="card-ttl">Clasificación por severidad</div><div class="card-body">Nivel bajo (informativo) → Nivel medio (seguimiento activo) → Nivel alto (acción inmediata requerida con escalamiento a gerencia).</div></div>
+    </div>
+  </div>
+
+  <div class="callout cl-teal"><span class="cl-ico">⚡</span><div class="cl-body"><div class="cl-ttl">Del control periódico al gobierno dinámico del riesgo</div><p class="cl-txt">Las alertas transforman el ESF en un <strong>sistema de vigilancia financiera continua</strong>. La organización pasa de descubrir riesgos en el cierre mensual a detectarlos en su gestación. Esta anticipación es el diferenciador estratégico: los riesgos de liquidez y solvencia tienen soluciones más eficientes cuanto más temprano se identifican.</p></div></div>
+
+  <div class="sess-nav"><button class="btn btn-g" onclick="goTo(3)">← Sesión 6.3</button><button class="btn btn-p" onclick="goTo(5)">Sesión 6.5 →</button></div>
+</section>
+
+<!-- ══════ S6.5 ══════ -->
+<section class="session" id="s5">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 6.5</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Dashboard Interpretativo Generado por IA: Diseño, Arquitectura y Uso Estratégico</h1>
+    <div class="sh-meta"><span class="badge b-def">⏱ 50 min</span><span class="badge b-teal">Cierre del programa</span><span class="badge b-rojo">Alta relevancia ejecutiva</span></div>
+  </div>
+  <div class="section">
+    <div class="esf-pipeline">
+      <div class="esf-step dn"><div class="esf-num">✓</div><div class="esf-lbl">Clasificación</div></div><span class="esf-arr">→</span>
+      <div class="esf-step dn"><div class="esf-num">✓</div><div class="esf-lbl">Análisis</div></div><span class="esf-arr">→</span>
+      <div class="esf-step dn"><div class="esf-num">✓</div><div class="esf-lbl">KPIs</div></div><span class="esf-arr">→</span>
+      <div class="esf-step dn"><div class="esf-num">✓</div><div class="esf-lbl">Alertas</div></div><span class="esf-arr">→</span>
+      <div class="esf-step on"><div class="esf-num">5</div><div class="esf-lbl">Dashboard</div><div class="esf-sub">Interpretativo</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <p class="prose">Los dashboards interpretativos generados por IA representan la culminación del pipeline del ESF automatizado. No solo muestran información — la <strong>analizan, contextualizan y traducen en conclusiones accionables</strong>. Integran analítica automatizada y generación de lenguaje natural para explicar los resultados, priorizar señales críticas y orientar la acción directiva. Esto reduce la carga cognitiva del usuario y acelera el ciclo de decisión.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Dashboard tradicional vs. Dashboard interpretativo</h2>
+    <div class="compare">
+      <div class="cmp"><div class="cmp-h navy">Dashboard tradicional</div><div class="cmp-b">
+        <div class="cmp-row">Presenta datos e indicadores</div>
+        <div class="cmp-row">Requiere que el usuario interprete</div>
+        <div class="cmp-row">Visualización descriptiva estática</div>
+        <div class="cmp-row">El analista construye la narrativa</div>
+        <div class="cmp-row">Depende de actualización manual</div>
+      </div></div>
+      <div class="cmp"><div class="cmp-h teal">Dashboard interpretativo con IA</div><div class="cmp-b">
+        <div class="cmp-row">Presenta, analiza y explica los datos</div>
+        <div class="cmp-row">Genera insights y narrativa automáticamente</div>
+        <div class="cmp-row">Interpretación guiada y accionable</div>
+        <div class="cmp-row">La IA estructura la narrativa ejecutiva</div>
+        <div class="cmp-row">Actualización continua en tiempo real</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Prototipo de dashboard interpretativo — ESF</h2>
+    <div class="dash-wrap">
+      <div class="dash-topbar">
+        <span class="dash-topbar-title">Estado de Situación Financiera · Dashboard Interpretativo</span>
+        <span class="dash-topbar-badge">⚡ IA Agéntica</span>
+      </div>
+      <div class="dash-body">
+        <div class="dash-kpi">
+          <div class="dk-label">Razón corriente</div>
+          <div class="dk-value">1.24</div>
+          <div class="dk-insight">▼ −0.18 vs. periodo anterior. Por encima del umbral crítico pero con tendencia negativa sostenida.</div>
+        </div>
+        <div class="dash-kpi kpi-warn">
+          <div class="dk-label">Endeudamiento</div>
+          <div class="dk-value">0.58</div>
+          <div class="dk-insight">▲ +0.06 vs. periodo anterior. En zona de seguimiento. Requiere monitoreo activo del ritmo de incremento.</div>
+        </div>
+        <div class="dash-kpi kpi-alert">
+          <div class="dk-label">Apalancamiento</div>
+          <div class="dk-value">1.87x</div>
+          <div class="dk-insight">▲ +0.24x en 3 periodos. Tendencia de alza preocupante. Próximo umbral crítico: 2.0x.</div>
+        </div>
+        <div class="dash-kpi">
+          <div class="dk-label">Capital de trabajo</div>
+          <div class="dk-value">COP 4.2B</div>
+          <div class="dk-insight">▼ −COP 0.8B vs. periodo anterior. Deterioro moderado aún dentro de rango operativo normal.</div>
+        </div>
+        <div class="dash-kpi">
+          <div class="dk-label">Prueba ácida</div>
+          <div class="dk-value">0.82</div>
+          <div class="dk-insight">▼ −0.09 vs. periodo anterior. Concentración en inventarios reduce liquidez real disponible.</div>
+        </div>
+        <div class="dash-kpi">
+          <div class="dk-label">Prop. patrimonio</div>
+          <div class="dk-value">42%</div>
+          <div class="dk-insight">▼ −4pp en 4 periodos. Señal de debilitamiento gradual de la base patrimonial propia.</div>
+        </div>
+        <div class="dash-insight-box">
+          <div class="dib-label">💡 Insight generado por IA — Análisis integrado del período</div>
+          <div class="dib-txt">La posición financiera de la empresa muestra señales de <strong>presión gradual en liquidez y solvencia</strong>. El incremento sostenido del apalancamiento (1.87x) combinado con el deterioro del capital de trabajo y la baja prueba ácida (0.82) sugiere que el crecimiento operativo reciente está siendo financiado principalmente con deuda de corto plazo. Se recomienda revisar la estructura de financiamiento antes de que el apalancamiento alcance el umbral crítico de 2.0x. <strong>Prioridad de agenda directiva: estrategia de desapalancamiento y optimización del ciclo de cobro.</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">4 principios de diseño del dashboard interpretativo</h2>
+    <div class="plist">
+      <div class="pitem"><div class="pnum">1</div><div class="pb"><div class="pttl">Claridad y jerarquía visual</div><p class="ptxt">Diseño que permite lectura rápida: gráficos simples, jerarquía de lo general a lo específico, uso consistente de colores semánticos (verde/amarillo/rojo). <strong>Evitar la sobrecarga informacional es clave para la adopción ejecutiva.</strong></p></div></div>
+      <div class="pitem"><div class="pnum">2</div><div class="pb"><div class="pttl">Contexto e interpretabilidad</div><p class="ptxt">Todo indicador debe ir acompañado de: comparación vs. periodo anterior, benchmark sectorial o umbral de referencia, y explicación breve en lenguaje natural. Un KPI sin contexto es una cifra; con contexto es conocimiento.</p></div></div>
+      <div class="pitem"><div class="pnum">3</div><div class="pb"><div class="pttl">Personalización por rol y audiencia</div><p class="ptxt">Analista: mayor detalle técnico y drill-down a cuentas. Gerencia: síntesis ejecutiva con tendencias. Junta directiva: foco en riesgos estratégicos, alertas activas y agenda de decisiones.</p></div></div>
+      <div class="pitem"><div class="pnum">4</div><div class="pb"><div class="pttl">Narrativa automática auditada</div><p class="ptxt">La narrativa generada por IA debe ser trazable a los datos fuente. Los insights automáticos requieren validación humana antes de su uso en comunicaciones formales. <strong>Principio de auditabilidad narrativa</strong> (heredado del Módulo 5).</p></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Estructura del dashboard — 5 vistas</h2>
+    <div class="card-grid">
+      <div class="card c-teal"><div class="card-ico">📋</div><div class="card-ttl">Vista ejecutiva (Overview)</div><div class="card-body">KPIs principales, semáforo de estado (verde/amarillo/rojo), principales insights y alertas activas.</div></div>
+      <div class="card c-azul"><div class="card-ico">🏦</div><div class="card-ttl">Análisis de activos</div><div class="card-body">Composición corriente/no corriente, concentraciones relevantes, evolución temporal y señales de liquidez.</div></div>
+      <div class="card c-rojo"><div class="card-ico">💳</div><div class="card-ttl">Análisis de pasivos</div><div class="card-body">Estructura de deuda, perfil de vencimientos, riesgos de corto y largo plazo.</div></div>
+      <div class="card c-dorado"><div class="card-ico">🏛️</div><div class="card-ttl">Análisis de patrimonio</div><div class="card-body">Evolución del capital, capacidad de absorción de pérdidas, solidez de la base financiera propia.</div></div>
+      <div class="card c-rosa"><div class="card-ico">🚨</div><div class="card-ttl">Módulo de alertas</div><div class="card-body">Alertas activas por severidad (salida de 6.4), recomendaciones sugeridas y escalamiento a decisores.</div></div>
+    </div>
+  </div>
+
+  <div class="callout cl-verde"><span class="cl-ico">🎓</span><div class="cl-body"><div class="cl-ttl">Cierre del programa — el ESF como sistema de inteligencia accionable</div><p class="cl-txt">El dashboard interpretativo consolida en una sola interfaz la visualización, el análisis y la explicación financiera del ESF. Integra la clasificación (6.1), el análisis estructural (6.2), los KPIs (6.3) y las alertas (6.4) en un sistema de inteligencia accionable capaz de <strong>reducir tiempos, mejorar la comprensión y fortalecer la toma de decisiones estratégicas</strong>. Las organizaciones que adopten este modelo estarán mejor posicionadas para operar con agilidad, anticipar riesgos y capturar oportunidades en entornos de alta complejidad.</p></div></div>
+
+  <div class="sess-nav"><button class="btn btn-g" onclick="goTo(4)">← Sesión 6.4</button><button class="btn btn-p" onclick="goTo(6)">Evaluación final →</button></div>
+</section>
+
+<!-- ══════ QUIZ ══════ -->
+<section class="session" id="s6">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Evaluación · Módulo 6</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Quiz de Verificación — Automatización del Estado de Situación Financiera</h1>
+    <div class="sh-meta"><span class="badge b-def">8 preguntas</span><span class="badge b-def">⏱ ~15 min</span><span class="badge b-verde">Criterio estratégico</span></div>
+  </div>
+  <div class="quiz-wrap">
+    <div class="qdots" id="qDots"></div>
+    <div id="qContainer"></div>
+    <div class="quiz-result" id="qResult">
+      <div class="res-icon">🎓</div><div class="res-score" id="rScore"></div>
+      <div class="res-lbl">preguntas correctas de 8</div>
+      <div id="rBadge"></div>
+      <p class="res-note">Ha completado el Módulo 6 y el programa completo de Análisis Financiero con IA — ADVANCE · Universidad del Rosario.</p>
+      <button class="btn btn-g" onclick="resetQuiz()" style="margin-top:8px">Reiniciar quiz</button>
+    </div>
+  </div>
+  <div class="sess-nav"><button class="btn btn-g" onclick="goTo(5)">← Sesión 6.5</button><span style="font-size:12px;color:var(--ur-muted)">Fin del Módulo 6 · Fin del Programa</span></div>
+</section>
+
+</main>
+</div>
+
+<script>
+const SESS=[
+  {id:1,lbl:'6.1',title:'Clasificación Automática de Cuentas',time:'45 min'},
+  {id:2,lbl:'6.2',title:'Análisis Estructural Inteligente del ESF',time:'45 min'},
+  {id:3,lbl:'6.3',title:'Cálculo Automático de KPIs del ESF',time:'45 min'},
+  {id:4,lbl:'6.4',title:'Sistema de Alertas de Liquidez y Solvencia',time:'50 min'},
+  {id:5,lbl:'6.5',title:'Dashboard Interpretativo con IA',time:'50 min'},
+  {id:6,lbl:'✓',title:'Evaluación — Módulo 6',time:'~15 min'},
+];
+
+const QUIZ=[
+  {
+    q:'¿Cuál es la ventaja estratégica de los modelos híbridos de clasificación automática de cuentas sobre los enfoques puramente determinísticos?',
+    opts:['Son más económicos de implementar y no requieren mantenimiento.','Combinan reglas explícitas con modelos de IA, logrando equilibrio entre control auditable y flexibilidad adaptativa ante excepciones y fuentes heterogéneas.','Eliminan completamente la necesidad de validación humana en el proceso de clasificación.','Funcionan mejor con datos no estructurados que con datos del sistema ERP.'],
+    ok:1,
+    fb:'Correcto. Los modelos híbridos son la mejor práctica para entornos de producción porque combinan lo mejor de ambos mundos: las reglas determinísticas garantizan control explícito, auditable y alineado con el PUC; los modelos de IA manejan excepciones, fuentes heterogéneas y casos no previstos en las reglas. La flexibilidad adaptativa sin perder trazabilidad es el diferenciador clave.'
+  },
+  {
+    q:'En el análisis estructural inteligente del ESF, ¿qué información adicional aporta el análisis vertical frente al análisis de cifras absolutas?',
+    opts:['Permite calcular indicadores de rentabilidad que no están en el ESF.','Expresa cada cuenta como porcentaje del total de activos, permitiendo comparar la composición financiera entre periodos e identificar cambios estructurales que las cifras absolutas ocultan.','Sustituye la necesidad de calcular KPIs financieros en la sesión siguiente.','Solo es útil cuando la empresa tiene múltiples unidades de negocio o subsidiarias.'],
+    ok:1,
+    fb:'Correcto. El análisis vertical convierte cifras absolutas en proporciones estructurales. Esto permite ver que si los activos crecieron un 20% pero la deuda creció un 35%, la proporción de endeudamiento se deterioró — un cambio estructural que el análisis de cifras absolutas no revelaría directamente. Es la radiografía financiera de cómo está configurada la organización.'
+  },
+  {
+    q:'Un sistema automatizado calcula que la prueba ácida de una empresa es 0.75 mientras su razón corriente es 1.35. ¿Cuál es la interpretación estratégica correcta?',
+    opts:['La empresa tiene alta liquidez y no requiere monitoreo adicional.','Existe una brecha significativa entre ambos indicadores, señalando que una proporción elevada de los activos corrientes está concentrada en inventarios, lo que reduce la liquidez real disponible.','La razón corriente de 1.35 garantiza capacidad de pago; la prueba ácida es irrelevante.','El sistema tiene un error de cálculo ya que la prueba ácida no puede ser inferior a la razón corriente.'],
+    ok:1,
+    fb:'Correcto. La brecha entre razón corriente (1.35) y prueba ácida (0.75) revela que una parte importante del activo corriente está en inventarios, que son el activo menos líquido. La empresa no puede convertirlos en efectivo tan rápido como sus obligaciones corrientes vencen. Esto activa una alerta de seguimiento sobre concentración en inventarios y riesgo de liquidez real.'
+  },
+  {
+    q:'¿Cuál es la diferencia conceptual entre las alertas de liquidez y las de solvencia en el sistema del ESF automatizado?',
+    opts:['Las alertas de liquidez son automáticas y las de solvencia requieren activación manual.','Las alertas de liquidez monitorean la capacidad de cumplir obligaciones de corto plazo (operativas), mientras las de solvencia monitorean la sostenibilidad estructural de largo plazo (viabilidad futura).','No existe diferencia conceptual; ambas miden el riesgo de impago de la empresa.','Las alertas de solvencia son más importantes que las de liquidez en todos los contextos.'],
+    ok:1,
+    fb:'Correcto. Esta distinción temporal es fundamental para priorizar la gestión del riesgo. Una crisis de liquidez puede ocurrir incluso en empresas solventes (activos suficientes pero no líquidos). Una crisis de solvencia implica que los activos son insuficientes para cubrir las obligaciones totales. Las alertas deben diseñarse con umbrales diferentes porque responden a horizontes temporales y naturalezas de riesgo distintas.'
+  },
+  {
+    q:'En el diseño de un sistema de alertas financieras, ¿qué implica la "clasificación por severidad" (verde/amarillo/rojo)?',
+    opts:['Que las alertas rojas son enviadas automáticamente a reguladores externos.','Que las alertas deben categorizarse para priorizar la respuesta: informativo (verde), seguimiento activo (amarillo) y acción inmediata con escalamiento directivo (rojo).','Que el sistema solo genera alertas cuando se detectan errores en la clasificación de cuentas.','Que los colores corresponden a los estados financieros auditado, no auditado y provisional.'],
+    ok:1,
+    fb:'Correcto. La clasificación por severidad es un mecanismo de priorización que evita el ruido operativo. Sin jerarquía de alertas, todos los eventos reciben igual atención, generando fatiga y reduciendo la respuesta ante eventos verdaderamente críticos. El semáforo verde/amarillo/rojo canaliza los recursos de gestión hacia los riesgos que requieren acción inmediata.'
+  },
+  {
+    q:'¿Cuál es el diferenciador central del dashboard interpretativo generado por IA frente a los dashboards tradicionales?',
+    opts:['Utiliza mejores visualizaciones gráficas y colores más atractivos.','Integra datos, análisis y narrativa en lenguaje natural en una misma interfaz, analizando y explicando los resultados en lugar de solo exhibirlos, con personalización según el perfil del usuario.','Se actualiza automáticamente sin necesidad de conexión a sistemas ERP.','Genera los estados financieros directamente sin necesidad de las etapas previas del pipeline.'],
+    ok:1,
+    fb:'Correcto. La diferencia no es estética sino epistemológica. Un dashboard tradicional obliga al usuario a interpretar; un dashboard interpretativo lo hace por él y le explica qué significa. La integración de NLG (generación de lenguaje natural) que convierte métricas en narrativa ejecutiva es el componente que transforma el ESF de un reporte estático en un sistema de inteligencia accionable.'
+  },
+  {
+    q:'¿Qué implica que el pipeline del ESF automatizado (Módulo 6) sea "sistémicamente interdependiente"?',
+    opts:['Que todas las sesiones pueden ejecutarse en cualquier orden sin afectar la calidad del resultado.','Que la calidad de cada etapa (clasificación → análisis → KPIs → alertas → dashboard) depende de la solidez de las etapas anteriores, y un error en origen se propaga y amplifica a lo largo de todo el sistema.','Que el sistema requiere supervisión humana permanente en cada una de las cinco etapas del pipeline.','Que es imposible automatizar el ESF sin primero automatizar completamente el Estado de Resultados.'],
+    ok:1,
+    fb:'Correcto. La interdependencia sistémica del pipeline es el principio arquitectónico central. Una clasificación de cuentas deficiente produce un análisis estructural distorsionado; KPIs calculados sobre bases incorrectas generan alertas incorrectas; y un dashboard alimentado con datos incorrectos produce narrativa ejecutiva incorrecta. El control de calidad en cada etapa es indispensable porque los errores no solo permanecen — se magnifican.'
+  },
+  {
+    q:'Completado el Módulo 6, ¿cuál es la transformación fundamental que el programa ADVANCE logra en el área financiera de las organizaciones?',
+    opts:['Reemplaza al analista financiero con sistemas de IA que operan de forma completamente autónoma.','Transforma el área financiera de una función transaccional y reactiva a un sistema cognitivo organizacional: integra datos, análisis, validación y narrativa en flujos continuos que amplifican el juicio humano con rigor algorítmico.','Elimina la necesidad de contadores y auditores en las organizaciones modernas.','Automatiza todos los procesos financieros sin necesidad de supervisión o criterio humano.'],
+    ok:1,
+    fb:'Correcto. Esta es la transformación central del programa completo. La IA no reemplaza al profesional financiero — lo amplifica. La automatización de tareas operativas libera capacidad cognitiva para interpretación estratégica, diseño de arquitecturas analíticas y toma de decisiones responsable. El área financiera evoluciona de procesadora de datos a sistema de inteligencia organizacional que combina la potencia computacional de la IA con el juicio irreemplazable del profesional humano.'
+  },
+];
+
+let cur=1,done=new Set();
+let qs={idx:0,ans:Array(8).fill(null),sub:Array(8).fill(false)};
+
+function buildSB(){document.getElementById('sbNav').innerHTML=SESS.map(s=>`<div class="nav-item ${s.id===cur?'active':''} ${done.has(s.id)?'done':''}" onclick="goTo(${s.id})"><div class="nd">${done.has(s.id)?'✓':s.id===6?'📝':s.id}</div><div class="nav-b"><div class="nav-id">Sesión ${s.lbl}</div><div class="nav-ttl">${s.title}</div><div class="nav-time">${s.time}</div></div></div>`).join('')}
+
+function goTo(n){if(n>cur&&cur<6)done.add(cur);document.querySelectorAll('.session').forEach(s=>s.classList.remove('active'));document.getElementById('s'+n).classList.add('active');cur=n;buildSB();updateProg();window.scrollTo({top:0,behavior:'smooth'});if(n===6)initQuiz()}
+
+function updateProg(){const p=Math.round((done.size/6)*100);document.getElementById('pgBar').style.width=p+'%';document.getElementById('pgPct').textContent=p+'%'}
+
+function initQuiz(){renderQ(qs.idx);renderDots()}
+
+function renderDots(){document.getElementById('qDots').innerHTML=QUIZ.map((_,i)=>{let c='qdot';if(i===qs.idx)c+=' cur';else if(qs.sub[i])c+=qs.ans[i]===QUIZ[i].ok?' ok':' err';else if(qs.ans[i]!==null)c+=' ans';return`<div class="${c}" onclick="jumpQ(${i})"></div>`}).join('')}
+
+function jumpQ(i){qs.idx=i;renderQ(i);renderDots()}
+
+function renderQ(i){const d=QUIZ[i],sub=qs.sub[i],sel=qs.ans[i];document.getElementById('qContainer').innerHTML=`<div class="q-head"><div class="q-ctr">Pregunta ${i+1} de ${QUIZ.length}</div><div class="q-txt">${d.q}</div><div class="q-hint">Seleccione la respuesta más adecuada.</div></div><div class="q-opts">${d.opts.map((o,j)=>{let c='qopt'+(sub?' locked':'');if(sub){if(j===d.ok)c+=' ok';else if(j===sel&&j!==d.ok)c+=' err';}else if(j===sel)c+=' sel';return`<div class="${c}" onclick="${sub?'':'selectOpt('+j+')'}"><div class="qletter">${['A','B','C','D'][j]}</div><span>${o}</span></div>`}).join('')}</div><div class="q-fb ${sub?'show '+(sel===d.ok?'ok':'err'):''}">${sub?(sel===d.ok?'✅ ':'❌ ')+d.fb:''}</div><div class="q-ctrl">${!sub?`<button class="btn btn-p" onclick="submitQ()" ${sel===null?'disabled':''}>Confirmar respuesta</button>`:''}${sub&&i<QUIZ.length-1?`<button class="btn btn-p" onclick="nextQ()">Siguiente →</button>`:''}${sub&&i===QUIZ.length-1?`<button class="btn btn-v" onclick="showResult()">Ver resultado →</button>`:''}${i>0?`<button class="btn btn-g" onclick="jumpQ(${i-1})">← Anterior</button>`:''}</div>`}
+
+function selectOpt(j){qs.ans[qs.idx]=j;renderQ(qs.idx);renderDots()}
+function submitQ(){qs.sub[qs.idx]=true;renderQ(qs.idx);renderDots()}
+function nextQ(){qs.idx++;renderQ(qs.idx);renderDots()}
+
+function showResult(){
+  document.getElementById('qContainer').style.display='none';
+  document.getElementById('qDots').style.display='none';
+  const n=qs.ans.filter((a,i)=>a===QUIZ[i].ok).length;
+  document.getElementById('rScore').textContent=n+'/8';
+  const b=n===8?'<div class="res-badge rb-gold">🏆 Excelente — Dominio pleno del programa</div>':n>=6?'<div class="res-badge rb-verde">✅ Aprobado — Comprensión sólida del módulo</div>':'<div class="res-badge rb-azul">📖 Refuerzo recomendado — Revise las sesiones con error</div>';
+  document.getElementById('rBadge').innerHTML=b;
+  document.getElementById('qResult').classList.add('show');
+  done.add(6);updateProg();buildSB();
+}
+
+function resetQuiz(){qs={idx:0,ans:Array(8).fill(null),sub:Array(8).fill(false)};document.getElementById('qContainer').style.display='';document.getElementById('qDots').style.display='';document.getElementById('qResult').classList.remove('show');initQuiz()}
+
+buildSB();document.getElementById('s1').classList.add('active');
+</script>
+</body>
+</html>

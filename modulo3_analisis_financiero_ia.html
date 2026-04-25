@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Módulo 3 · IA y Análisis de Datos · ADVANCE UR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
+<style>
+/* ─── DESIGN TOKENS — ADVANCE · UNIVERSIDAD DEL ROSARIO ─────────────────── */
+:root {
+  --ur-rojo:       #C8102E;
+  --ur-rojo-dark:  #A00D25;
+  --ur-rojo-light: #FBEAED;
+  --ur-rojo-mid:   #F2AABA;
+  --ur-navy:       #1A1F36;
+  --ur-navy-mid:   #2D3454;
+  --ur-slate:      #4A5178;
+  --ur-muted:      #6B7280;
+  --ur-border:     #E2E5ED;
+  --ur-surface:    #F8F9FC;
+  --ur-white:      #FFFFFF;
+  --c-azul:  #1B5EBF; --c-azul-bg:   #EBF2FF;
+  --c-dorado:#B45309; --c-dorado-bg: #FEF3C7;
+  --c-verde: #166534; --c-verde-bg:  #DCFCE7;
+  --c-rosa:  #9D174D; --c-rosa-bg:   #FCE7F3;
+  --c-gris:  #374151; --c-gris-bg:   #F3F4F6;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans:  'DM Sans', -apple-system, sans-serif;
+  --sw: 270px; --th: 54px; --r: 8px; --rl: 12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);font-size:15px;line-height:1.65;color:var(--ur-navy);background:var(--ur-surface);min-height:100vh;}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;height:var(--th);background:var(--ur-navy);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:3px solid var(--ur-rojo);}
+.tb-l{display:flex;align-items:center;}
+.tb-brand{font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5);}
+.tb-sep{width:1px;height:18px;background:rgba(255,255,255,.15);margin:0 14px;}
+.tb-title{font-family:var(--serif);font-size:15px;color:#fff;}
+.tb-r{display:flex;align-items:center;gap:12px;}
+.tb-prog-lbl{font-size:11px;color:rgba(255,255,255,.5);font-weight:500;}
+.tb-track{width:140px;height:5px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden;}
+.tb-fill{height:100%;background:var(--ur-rojo);border-radius:3px;transition:width .5s ease;}
+.tb-pct{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);min-width:32px;text-align:right;}
+
+/* LAYOUT */
+.layout{display:flex;margin-top:var(--th);min-height:calc(100vh - var(--th));}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);background:var(--ur-white);border-right:1px solid var(--ur-border);position:fixed;top:var(--th);bottom:0;overflow-y:auto;display:flex;flex-direction:column;}
+.sb-head{padding:20px 18px 16px;border-bottom:1px solid var(--ur-border);}
+.sb-pill{display:inline-flex;align-items:center;background:var(--ur-rojo-light);color:var(--ur-rojo);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
+.sb-mod-title{font-family:var(--serif);font-size:13px;color:var(--ur-navy);line-height:1.4;}
+.sb-nav{flex:1;padding:6px 0 16px;}
+.nav-item{display:flex;align-items:flex-start;gap:11px;padding:10px 18px;cursor:pointer;border-left:3px solid transparent;transition:background .15s,border-color .15s;}
+.nav-item:hover{background:var(--ur-surface);}
+.nav-item.active{background:var(--ur-rojo-light);border-left-color:var(--ur-rojo);}
+.nav-item.done .nd{background:var(--c-verde);}
+.nav-item.active .nd{background:var(--ur-rojo);}
+.nd{width:22px;height:22px;border-radius:50%;flex-shrink:0;background:var(--ur-border);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;margin-top:2px;}
+.nav-b{flex:1;}
+.nav-id{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--ur-rojo);text-transform:uppercase;}
+.nav-ttl{font-size:12px;color:var(--ur-navy);line-height:1.35;margin-top:1px;}
+.nav-item.active .nav-ttl{font-weight:600;}
+.nav-time{font-size:10px;color:var(--ur-muted);margin-top:2px;}
+.sidebar::-webkit-scrollbar{width:4px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--ur-border);border-radius:2px;}
+
+/* MAIN */
+.main{margin-left:var(--sw);flex:1;padding:36px 44px 64px;max-width:calc(var(--sw) + 820px);}
+
+/* SESSIONS */
+.session{display:none;}
+.session.active{display:block;animation:up .28s ease;}
+@keyframes up{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* SESSION HEADER */
+.sh{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--ur-border);}
+.sh-ey{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.sh-id{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ur-rojo);}
+.sh-rule{flex:1;height:1px;background:var(--ur-rojo-mid);}
+.sh-title{font-family:var(--serif);font-size:1.7rem;color:var(--ur-navy);line-height:1.25;margin-bottom:14px;}
+.sh-meta{display:flex;gap:8px;flex-wrap:wrap;}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+.b-def   {background:var(--c-gris-bg);  color:var(--c-gris);}
+.b-rojo  {background:var(--ur-rojo-light);color:var(--ur-rojo);}
+.b-azul  {background:var(--c-azul-bg);  color:var(--c-azul);}
+.b-verde {background:var(--c-verde-bg); color:var(--c-verde);}
+.b-dorado{background:var(--c-dorado-bg);color:var(--c-dorado);}
+.b-rosa  {background:var(--c-rosa-bg);  color:var(--c-rosa);}
+
+/* PROSE */
+.section{margin-bottom:36px;}
+.sec-title{font-family:var(--serif);font-size:1.12rem;color:var(--ur-navy);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--ur-rojo-mid);}
+.prose{font-size:14.5px;line-height:1.8;color:var(--ur-navy-mid);margin-bottom:14px;}
+.prose strong{color:var(--ur-navy);font-weight:600;}
+.prose em{color:var(--ur-rojo-dark);font-style:normal;font-weight:600;}
+
+/* CARD GRID */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px;margin:18px 0;}
+.card-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0;}
+.card{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);padding:18px 16px;border-top:3px solid var(--ur-border);transition:box-shadow .2s;}
+.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07);}
+.c-rojo  {border-top-color:var(--ur-rojo);}
+.c-azul  {border-top-color:var(--c-azul);}
+.c-verde {border-top-color:var(--c-verde);}
+.c-dorado{border-top-color:var(--c-dorado);}
+.c-rosa  {border-top-color:var(--c-rosa);}
+.card-ico{font-size:1.4rem;margin-bottom:8px;}
+.card-ttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:6px;}
+.card-body{font-size:12.5px;color:var(--ur-slate);line-height:1.6;}
+.card-tag{display:inline-block;margin-top:10px;font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 8px;border-radius:20px;background:var(--ur-rojo-light);color:var(--ur-rojo);}
+
+/* NIVELES ANALÍTICOS — bloque especial */
+.niveles-wrap{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+.nivel{display:flex;gap:0;border-radius:var(--r);overflow:hidden;border:1px solid var(--ur-border);margin-bottom:12px;}
+.nivel-num{width:54px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.4rem;color:#fff;}
+.nivel-num.n1{background:var(--c-azul);}
+.nivel-num.n2{background:var(--c-dorado);}
+.nivel-num.n3{background:var(--ur-rojo);}
+.nivel-num.n4{background:var(--c-verde);}
+.nivel-body{flex:1;padding:14px 18px;background:var(--ur-white);}
+.nivel-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;}
+.n1 + .nivel-body .nivel-label{color:var(--c-azul);}
+.n2 + .nivel-body .nivel-label{color:var(--c-dorado);}
+.n3 + .nivel-body .nivel-label{color:var(--ur-rojo);}
+.n4 + .nivel-body .nivel-label{color:var(--c-verde);}
+.nivel-ttl{font-family:var(--serif);font-size:1rem;color:var(--ur-navy);margin-bottom:6px;}
+.nivel-txt{font-size:12.5px;color:var(--ur-slate);line-height:1.65;}
+.nivel-txt strong{color:var(--ur-navy);}
+.nivel-q{font-size:11.5px;font-weight:600;color:var(--ur-muted);margin-top:8px;font-style:italic;}
+.nivel-apps{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.nivel-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--ur-surface);color:var(--ur-slate);border:1px solid var(--ur-border);}
+
+/* AMPLIFICADORES */
+.amp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.amp-card{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);padding:16px 18px;display:flex;gap:14px;}
+.amp-icon{font-size:1.6rem;flex-shrink:0;}
+.amp-body{flex:1;}
+.amp-ttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:5px;}
+.amp-txt{font-size:12.5px;color:var(--ur-slate);line-height:1.6;}
+.amp-txt strong{color:var(--ur-navy);}
+.amp-tag{display:inline-block;margin-top:8px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--ur-rojo-light);color:var(--ur-rojo);}
+
+/* KPI TABLE */
+.kpi-table-wrap{overflow-x:auto;margin:16px 0;border-radius:var(--rl);border:1px solid var(--ur-border);}
+.kpi-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.kpi-table thead tr{background:var(--ur-navy);}
+.kpi-table thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:11.5px;color:#fff;}
+.kpi-table tbody tr{border-bottom:1px solid var(--ur-border);}
+.kpi-table tbody tr:last-child{border-bottom:none;}
+.kpi-table tbody tr:nth-child(even){background:var(--ur-surface);}
+.kpi-table tbody td{padding:9px 14px;vertical-align:top;}
+.kpi-table tbody td:first-child{font-weight:700;color:var(--ur-navy);}
+.dim-pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.dp-azul  {background:var(--c-azul-bg);  color:var(--c-azul);}
+.dp-rojo  {background:var(--ur-rojo-light);color:var(--ur-rojo);}
+.dp-verde {background:var(--c-verde-bg); color:var(--c-verde);}
+.dp-dorado{background:var(--c-dorado-bg);color:var(--c-dorado);}
+.dp-rosa  {background:var(--c-rosa-bg);  color:var(--c-rosa);}
+
+/* FORMULA CHAIN */
+.formula-chain{display:flex;align-items:center;gap:0;margin:20px 0;flex-wrap:wrap;}
+.fc-node{background:var(--ur-white);border:2px solid var(--ur-border);border-radius:var(--r);padding:10px 16px;text-align:center;min-width:130px;}
+.fc-node.active{border-color:var(--ur-rojo);background:var(--ur-rojo-light);}
+.fc-node-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ur-muted);margin-bottom:3px;}
+.fc-node.active .fc-node-label{color:var(--ur-rojo);}
+.fc-node-val{font-family:var(--serif);font-size:1rem;color:var(--ur-navy);}
+.fc-arr{font-size:1.2rem;color:var(--ur-rojo);padding:0 8px;font-weight:700;}
+
+/* CALLOUT */
+.callout{display:flex;gap:14px;padding:16px 18px;border-radius:var(--r);margin:22px 0;border-left:4px solid;}
+.cl-rojo  {background:var(--ur-rojo-light); border-color:var(--ur-rojo);}
+.cl-azul  {background:var(--c-azul-bg);     border-color:var(--c-azul);}
+.cl-verde {background:var(--c-verde-bg);    border-color:var(--c-verde);}
+.cl-dorado{background:var(--c-dorado-bg);   border-color:var(--c-dorado);}
+.cl-rosa  {background:var(--c-rosa-bg);     border-color:var(--c-rosa);}
+.cl-ico{font-size:1.1rem;flex-shrink:0;line-height:1.6;}
+.cl-body{flex:1;}
+.cl-ttl{font-size:13px;font-weight:700;margin-bottom:4px;}
+.cl-rojo   .cl-ttl{color:var(--ur-rojo);}
+.cl-azul   .cl-ttl{color:var(--c-azul);}
+.cl-verde  .cl-ttl{color:var(--c-verde);}
+.cl-dorado .cl-ttl{color:var(--c-dorado);}
+.cl-rosa   .cl-ttl{color:var(--c-rosa);}
+.cl-txt{font-size:13px;color:var(--ur-slate);line-height:1.7;}
+.cl-txt strong{color:var(--ur-navy);}
+
+/* TIMELINE */
+.timeline{margin:18px 0;}
+.tl-item{display:flex;gap:16px;position:relative;}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:17px;top:36px;bottom:0;width:2px;background:var(--ur-border);}
+.tl-num{width:36px;height:36px;flex-shrink:0;border-radius:50%;background:var(--ur-rojo);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;font-family:var(--serif);}
+.tl-body{padding:4px 0 24px;flex:1;}
+.tl-ttl{font-size:14px;font-weight:700;color:var(--ur-navy);margin-bottom:6px;}
+.tl-txt{font-size:13px;color:var(--ur-slate);line-height:1.65;margin-bottom:8px;}
+.tl-txt strong{color:var(--ur-navy);}
+.tl-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.tl-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--ur-rojo-light);color:var(--ur-rojo);}
+
+/* PLIST */
+.plist{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.pitem{display:flex;gap:14px;background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--r);padding:14px 16px;}
+.pnum{width:30px;height:30px;flex-shrink:0;border-radius:6px;background:var(--ur-navy);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:var(--serif);}
+.pb{flex:1;}
+.pttl{font-size:13px;font-weight:700;color:var(--ur-navy);margin-bottom:4px;}
+.ptxt{font-size:12.5px;color:var(--ur-slate);line-height:1.65;}
+.ptxt strong{color:var(--ur-navy);}
+
+/* COMPARE 2-col */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.cmp{background:var(--ur-white);border:1px solid var(--ur-border);border-radius:var(--rl);overflow:hidden;}
+.cmp-h{padding:11px 16px;font-size:13px;font-weight:700;color:#fff;}
+.cmp-h.navy{background:var(--ur-navy);}
+.cmp-h.rojo{background:var(--ur-rojo);}
+.cmp-h.azul{background:var(--c-azul);}
+.cmp-h.verde{background:var(--c-verde);}
+.cmp-b{padding:12px 16px;}
+.cmp-row{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--ur-slate);padding:5px 0;border-bottom:1px solid var(--ur-border);line-height:1.5;}
+.cmp-row:last-child{border-bottom:none;}
+.cmp-row::before{content:'›';color:var(--ur-rojo);font-weight:700;flex-shrink:0;}
+
+/* SLIST */
+.slist{list-style:none;margin:10px 0;}
+.slist li{display:flex;gap:10px;font-size:13.5px;color:var(--ur-navy-mid);line-height:1.65;padding:6px 0;border-bottom:1px solid var(--ur-border);}
+.slist li:last-child{border-bottom:none;}
+.slist li::before{content:'›';color:var(--ur-rojo);font-weight:700;flex-shrink:0;}
+
+/* SESSION NAV */
+.sess-nav{display:flex;justify-content:space-between;align-items:center;margin-top:44px;padding-top:24px;border-top:1px solid var(--ur-border);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:var(--sans);letter-spacing:.01em;}
+.btn-p{background:var(--ur-rojo);color:#fff;}
+.btn-p:hover{background:var(--ur-rojo-dark);}
+.btn-g{background:var(--ur-white);color:var(--ur-navy);border:1px solid var(--ur-border);}
+.btn-g:hover{background:var(--ur-surface);}
+.btn-v{background:var(--c-verde);color:#fff;}
+.btn-v:hover{background:#14532d;}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+
+/* QUIZ */
+.quiz-wrap{max-width:660px;}
+.qdots{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px;}
+.qdot{width:10px;height:10px;border-radius:50%;background:var(--ur-border);cursor:pointer;transition:all .18s;}
+.qdot.cur{background:var(--ur-rojo);transform:scale(1.4);}
+.qdot.ans{background:var(--ur-slate);}
+.qdot.ok{background:var(--c-verde);}
+.qdot.err{background:var(--ur-rojo);}
+.q-head{margin-bottom:20px;}
+.q-ctr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ur-rojo);margin-bottom:8px;}
+.q-txt{font-family:var(--serif);font-size:1.05rem;color:var(--ur-navy);line-height:1.45;margin-bottom:6px;}
+.q-hint{font-size:12px;color:var(--ur-muted);}
+.q-opts{display:flex;flex-direction:column;gap:9px;margin:18px 0;}
+.qopt{display:flex;align-items:flex-start;gap:12px;padding:13px 15px;background:var(--ur-white);border:2px solid var(--ur-border);border-radius:var(--r);cursor:pointer;transition:all .18s;font-size:13.5px;color:var(--ur-navy);line-height:1.5;}
+.qopt:hover:not(.locked){border-color:var(--ur-rojo);background:var(--ur-rojo-light);}
+.qopt.sel{border-color:var(--ur-navy);background:var(--c-gris-bg);}
+.qopt.ok{border-color:var(--c-verde);background:var(--c-verde-bg);color:var(--c-verde);}
+.qopt.err{border-color:var(--ur-rojo);background:var(--ur-rojo-light);color:var(--ur-rojo-dark);}
+.qopt.locked{cursor:default;}
+.qletter{width:26px;height:26px;flex-shrink:0;border-radius:50%;border:2px solid var(--ur-border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--ur-muted);}
+.qopt.sel .qletter{border-color:var(--ur-navy);color:var(--ur-navy);}
+.qopt.ok  .qletter{border-color:var(--c-verde);color:var(--c-verde);background:var(--c-verde-bg);}
+.qopt.err .qletter{border-color:var(--ur-rojo);color:var(--ur-rojo);background:var(--ur-rojo-light);}
+.q-fb{display:none;font-size:13px;line-height:1.7;padding:13px 16px;border-radius:var(--r);border-left:4px solid;margin-top:4px;}
+.q-fb.show{display:block;}
+.q-fb.ok{background:var(--c-verde-bg);border-color:var(--c-verde);color:var(--c-verde);}
+.q-fb.err{background:var(--ur-rojo-light);border-color:var(--ur-rojo);color:var(--ur-rojo-dark);}
+.q-ctrl{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap;}
+.quiz-result{display:none;text-align:center;padding:48px 20px;}
+.quiz-result.show{display:block;animation:up .35s ease;}
+.res-icon{font-size:3rem;margin-bottom:12px;}
+.res-score{font-family:var(--serif);font-size:3.2rem;color:var(--ur-rojo);margin-bottom:6px;}
+.res-lbl{font-size:14px;color:var(--ur-muted);margin-bottom:20px;}
+.res-badge{display:inline-block;font-size:13px;font-weight:700;padding:8px 22px;border-radius:20px;margin-bottom:28px;}
+.rb-gold{background:var(--c-dorado-bg);color:var(--c-dorado);}
+.rb-verde{background:var(--c-verde-bg);color:var(--c-verde);}
+.rb-azul{background:var(--c-azul-bg);color:var(--c-azul);}
+.res-note{font-size:13px;color:var(--ur-slate);max-width:400px;margin:0 auto 24px;line-height:1.65;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .main{margin-left:0;padding:20px 16px 48px;}
+  .amp-grid,.compare,.card-grid-3{grid-template-columns:1fr;}
+  .card-grid{grid-template-columns:1fr;}
+  .formula-chain{justify-content:center;}
+  .tb-r .tb-track{width:90px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="tb-l">
+    <span class="tb-brand">ADVANCE · Universidad del Rosario</span>
+    <div class="tb-sep"></div>
+    <span class="tb-title">Análisis Financiero con IA</span>
+  </div>
+  <div class="tb-r">
+    <span class="tb-prog-lbl">Progreso</span>
+    <div class="tb-track"><div class="tb-fill" id="pgBar" style="width:0%"></div></div>
+    <span class="tb-pct" id="pgPct">0%</span>
+  </div>
+</header>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-pill">Módulo 3</div>
+    <div class="sb-mod-title">IA y Análisis de Datos para la Toma de Decisiones Financieras</div>
+  </div>
+  <nav class="sb-nav" id="sbNav"></nav>
+</aside>
+
+<main class="main">
+
+<!-- ══════ S3.1 ══════ -->
+<section class="session" id="s1" data-title="El Dato Financiero como Infraestructura Estratégica">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 3.1</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">El Dato Financiero como Infraestructura Estratégica, Activo Analítico y Fundamento de los Sistemas de IA en Finanzas</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 50 min</span>
+      <span class="badge b-azul">Fundamentos</span>
+      <span class="badge b-rojo">Gobernanza del dato</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">En la tradición contable clásica, el dato financiero se ha entendido como un <strong>registro histórico</strong> orientado principalmente al cumplimiento normativo y de reporte. En el contexto de la IA aplicada a finanzas, esta visión resulta conceptualmente restrictiva. El dato financiero debe concebirse como un <em>activo estratégico de alta criticidad</em>: la materia prima que alimenta modelos inferenciales, sistemas predictivos, arquitecturas de gestión del riesgo y procesos de simulación estratégica.</p>
+    <p class="prose">La calidad del razonamiento financiero contemporáneo no depende únicamente de la sofisticación tecnológica empleada, sino —de manera directa y proporcional— de la <strong>calidad estructural del dato subyacente</strong>. La IA no corrige deficiencias estructurales del dato; las magnifica.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Tipologías de datos financieros</h2>
+    <div class="compare">
+      <div class="cmp">
+        <div class="cmp-h navy">Datos estructurados</div>
+        <div class="cmp-b">
+          <div class="cmp-row">Libros contables generales y auxiliares</div>
+          <div class="cmp-row">Estados financieros consolidados</div>
+          <div class="cmp-row">Bases de datos de cartera y cuentas por pagar</div>
+          <div class="cmp-row">Reportes de ventas segmentados</div>
+          <div class="cmp-row">Matrices de costos y presupuestos operativos</div>
+        </div>
+      </div>
+      <div class="cmp">
+        <div class="cmp-h rojo">Datos no estructurados</div>
+        <div class="cmp-b">
+          <div class="cmp-row">Contratos y acuerdos comerciales</div>
+          <div class="cmp-row">Notas explicativas a los EEFF</div>
+          <div class="cmp-row">Informes de auditoría y dictámenes</div>
+          <div class="cmp-row">Actas de junta directiva</div>
+          <div class="cmp-row">Comunicaciones estratégicas y narrativas</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout cl-azul">
+      <span class="cl-ico">🔗</span>
+      <div class="cl-body">
+        <div class="cl-ttl">Integración multimodal como ventaja competitiva</div>
+        <p class="cl-txt">La IA generativa permite transformar insumos cualitativos no estructurados en variables analíticamente relevantes. La integración de <strong>datos estructurados + no estructurados</strong> posibilita un análisis financiero integral que combina cuantificación con contextualización estratégica.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Las 6 dimensiones de calidad del dato financiero</h2>
+    <div class="kpi-table-wrap">
+      <table class="kpi-table">
+        <thead><tr><th>#</th><th>Dimensión</th><th>Definición operacional</th><th>Riesgo si falla</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><span class="dim-pill dp-azul">Integridad</span></td><td>Ausencia de omisiones significativas en los registros</td><td>Análisis incompletos, decisiones sobre base parcial</td></tr>
+          <tr><td>2</td><td><span class="dim-pill dp-rojo">Consistencia</span></td><td>Coherencia intertemporal y transversal entre cuentas</td><td>Comparabilidad comprometida, tendencias distorsionadas</td></tr>
+          <tr><td>3</td><td><span class="dim-pill dp-verde">Exactitud</span></td><td>Correspondencia verificable con la realidad económica</td><td>KPIs incorrectos, inferencias estratégicas erróneas</td></tr>
+          <tr><td>4</td><td><span class="dim-pill dp-dorado">Oportunidad</span></td><td>Disponibilidad en sincronía con la necesidad decisional</td><td>Respuestas tardías, pérdida de valor de la información</td></tr>
+          <tr><td>5</td><td><span class="dim-pill dp-rosa">Trazabilidad</span></td><td>Capacidad de reconstruir origen, transformación y responsables</td><td>Falta de auditorabilidad, riesgo regulatorio</td></tr>
+          <tr><td>6</td><td><span class="dim-pill dp-azul">Estandarización</span></td><td>Uniformidad en criterios de clasificación y codificación</td><td>Inconsistencias entre fuentes, errores de integración</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">La cadena de causalidad — calidad del dato y racionalidad estratégica</h2>
+    <div class="formula-chain">
+      <div class="fc-node active"><div class="fc-node-label">Fundamento</div><div class="fc-node-val">Calidad del dato</div></div>
+      <div class="fc-arr">→</div>
+      <div class="fc-node"><div class="fc-node-label">Proceso</div><div class="fc-node-val">Robustez del modelo</div></div>
+      <div class="fc-arr">→</div>
+      <div class="fc-node"><div class="fc-node-label">Output</div><div class="fc-node-val">Solidez de la inferencia</div></div>
+      <div class="fc-arr">→</div>
+      <div class="fc-node"><div class="fc-node-label">Resultado</div><div class="fc-node-val">Racionalidad estratégica</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Gobernanza del dato como condición habilitante</h2>
+    <p class="prose">La implementación efectiva de IA en finanzas exige una <strong>arquitectura institucional de gobernanza del dato</strong>. Sin ella, la IA se convierte en acelerador de error en lugar de multiplicador de valor.</p>
+    <div class="card-grid">
+      <div class="card c-azul"><div class="card-ico">✅</div><div class="card-ttl">Protocolos de validación</div><div class="card-body">Procesos formales de verificación previa antes de que los datos alimenten cualquier modelo de análisis o sistema de IA.</div></div>
+      <div class="card c-rojo"><div class="card-ico">📋</div><div class="card-ttl">Control de versiones</div><div class="card-body">Gestión de versiones y control de cambios en bases de datos financieras. Registro de modificaciones con responsable y justificación.</div></div>
+      <div class="card c-dorado"><div class="card-ico">🔍</div><div class="card-ttl">Auditorías de consistencia</div><div class="card-body">Revisiones periódicas de integridad y calidad. Verificación de coherencia intertemporal y transversal entre fuentes.</div></div>
+      <div class="card c-verde"><div class="card-ico">🔗</div><div class="card-ttl">Integración ERP-BI</div><div class="card-body">Arquitecturas de integración entre sistemas ERP (SAP, Oracle, Siigo) y plataformas de inteligencia de negocios con flujos validados.</div></div>
+    </div>
+  </div>
+
+  <div class="callout cl-rojo">
+    <span class="cl-ico">⚠️</span>
+    <div class="cl-body">
+      <div class="cl-ttl">Principio irrevocable — la IA magnifica, no corrige</div>
+      <p class="cl-txt">La inteligencia artificial amplifica tanto fortalezas como debilidades del sistema analítico. <strong>Un error de origen puede convertirse en fundamento de análisis sofisticados pero conceptualmente incorrectos.</strong> En términos estrictos, la calidad de la salida analítica nunca podrá superar la calidad del input estructural.</p>
+    </div>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" disabled>← Anterior</button>
+    <button class="btn btn-p" onclick="goTo(2)">Sesión 3.2 →</button>
+  </div>
+</section>
+
+<!-- ══════ S3.2 ══════ -->
+<section class="session" id="s2" data-title="Niveles de Análisis: Descriptivo → Prescriptivo">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 3.2</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Niveles de Análisis de Datos en Finanzas: De lo Descriptivo a lo Prescriptivo</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 50 min</span>
+      <span class="badge b-rojo">Arquitectura metodológica</span>
+      <span class="badge b-def">4 niveles</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">El análisis financiero ha evolucionado más allá de la interpretación retrospectiva. En el entorno contemporáneo, el profesional no solo debe responder <em>qué ocurrió</em>, sino también <em>por qué ocurrió</em>, <em>qué podría ocurrir</em> bajo determinados supuestos y <em>qué decisiones deberían adoptarse</em> a partir de escenarios modelados.</p>
+    <p class="prose">Esta progresión se articula en <strong>cuatro niveles analíticos interdependientes</strong> que constituyen una arquitectura metodológica escalonada. Los niveles no son categorías aisladas; cada uno presupone la validez del anterior. La IA actúa como acelerador de esta arquitectura, pero no la simplifica en términos epistemológicos.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">La arquitectura de los 4 niveles</h2>
+    <div class="niveles-wrap">
+      <div class="nivel">
+        <div class="nivel-num n1">I</div>
+        <div class="nivel-body">
+          <div class="nivel-label">Nivel I — Descriptivo</div>
+          <div class="nivel-ttl">Formalización rigurosa de la realidad financiera pasada</div>
+          <div class="nivel-txt">Organiza, depura y sintetiza información financiera histórica mediante métricas comparables. Variaciones absolutas y relativas, análisis vertical/horizontal, KPIs como margen bruto, EBITDA, ROE, ROA. <strong>Altamente automatizable con IA.</strong> Su función es estructurar y clarificar la información histórica — no establece causalidad ni formula proyecciones.</div>
+          <div class="nivel-q">Pregunta clave: ¿Qué ocurrió?</div>
+          <div class="nivel-apps"><span class="nivel-tag">Análisis H/V</span><span class="nivel-tag">KPIs históricos</span><span class="nivel-tag">Narrativas ejecutivas</span></div>
+        </div>
+      </div>
+      <div class="nivel">
+        <div class="nivel-num n2">II</div>
+        <div class="nivel-body">
+          <div class="nivel-label">Nivel II — Diagnóstico</div>
+          <div class="nivel-ttl">Identificación de relaciones causales y dinámicas estructurales</div>
+          <div class="nivel-txt">Introduce dimensión explicativa. Examina vínculos entre variables: incidencia de costos variables en el margen bruto, relación entre crecimiento de ventas y capital de trabajo, efecto del apalancamiento sobre el ROE. <strong>La IA apoya mediante correlación multivariable y detección de anomalías.</strong> Distinguir correlación de causalidad es responsabilidad del profesional.</div>
+          <div class="nivel-q">Pregunta clave: ¿Por qué ocurrió?</div>
+          <div class="nivel-apps"><span class="nivel-tag">Correlación multivariable</span><span class="nivel-tag">Detección de anomalías</span><span class="nivel-tag">Análisis causal</span></div>
+        </div>
+      </div>
+      <div class="nivel">
+        <div class="nivel-num n3">III</div>
+        <div class="nivel-body">
+          <div class="nivel-label">Nivel III — Predictivo</div>
+          <div class="nivel-ttl">Modelación prospectiva bajo supuestos explícitos y controlados</div>
+          <div class="nivel-txt">A partir de datos históricos y supuestos claramente definidos, construye escenarios futuros plausibles. Proyecciones de ingresos, estimación de flujos de caja, modelos de sensibilidad ante tasas de interés o tipo de cambio. <strong>La IA potencia al procesar grandes volúmenes y ejecutar simulaciones múltiples.</strong> Todo modelo predictivo descansa sobre supuestos explícitos — su claridad es condición de legitimidad.</div>
+          <div class="nivel-q">Pregunta clave: ¿Qué podría ocurrir?</div>
+          <div class="nivel-apps"><span class="nivel-tag">Proyecciones financieras</span><span class="nivel-tag">Análisis de sensibilidad</span><span class="nivel-tag">Simulación de escenarios</span></div>
+        </div>
+      </div>
+      <div class="nivel">
+        <div class="nivel-num n4">IV</div>
+        <div class="nivel-body">
+          <div class="nivel-label">Nivel IV — Prescriptivo</div>
+          <div class="nivel-ttl">Optimización estratégica y evaluación comparativa de decisiones</div>
+          <div class="nivel-txt">El nivel más avanzado. No anticipa resultados: <strong>orienta la selección de acciones óptimas</strong> bajo criterios financieros definidos. Rediseñar estructura de costos, refinanciar pasivos, ajustar políticas de crédito, reasignar capital. La IA compara alternativas y estima impactos. La prescripción no implica automatización decisional plena: las dimensiones regulatorias, éticas y organizacionales exceden el cálculo algorítmico.</div>
+          <div class="nivel-q">Pregunta clave: ¿Qué deberíamos hacer?</div>
+          <div class="nivel-apps"><span class="nivel-tag">Optimización multicriterio</span><span class="nivel-tag">Trade-offs explícitos</span><span class="nivel-tag">Decisiones estratégicas</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Interdependencia estructural — por qué no se pueden saltar niveles</h2>
+    <div class="callout cl-dorado">
+      <span class="cl-ico">⚠️</span>
+      <div class="cl-body">
+        <div class="cl-ttl">La integridad metodológica no es negociable</div>
+        <p class="cl-txt">La presión por generar recomendaciones inmediatas puede llevar a omitir etapas intermedias. Las consecuencias son directas: <strong>proyecciones basadas en datos no depurados; recomendaciones sustentadas en asociaciones estadísticas sin validación económica; decisiones con impacto financiero adverso por falta de análisis sistémico.</strong> Una descripción defectuosa compromete el diagnóstico. Un diagnóstico incompleto distorsiona la predicción. Una predicción mal estructurada invalida la prescripción.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Rol del profesional financiero en entornos de analítica aumentada</h2>
+    <ul class="slist">
+      <li>Validar la integridad y consistencia del conjunto de datos antes de cada nivel.</li>
+      <li>Evaluar la plausibilidad económica de los patrones identificados por los modelos.</li>
+      <li>Definir supuestos explícitos y metodológicamente defendibles en modelos prospectivos.</li>
+      <li>Interpretar resultados en coherencia con la estrategia organizacional y el contexto sectorial.</li>
+      <li>Asumir responsabilidad fiduciaria plena por las decisiones adoptadas con apoyo de IA.</li>
+    </ul>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(1)">← Sesión 3.1</button>
+    <button class="btn btn-p" onclick="goTo(3)">Sesión 3.3 →</button>
+  </div>
+</section>
+
+<!-- ══════ S3.3 ══════ -->
+<section class="session" id="s3" data-title="La IA como Amplificador Analítico">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 3.3</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">La Inteligencia Artificial como Amplificador Analítico: Velocidad, Profundidad, Alcance y Límites</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 45 min</span>
+      <span class="badge b-azul">IA como infraestructura</span>
+      <span class="badge b-def">5 dimensiones</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">La incorporación de IA en finanzas debe comprenderse como una <strong>transformación estructural del proceso analítico</strong>, no como una sustitución funcional del profesional. La IA actúa como un sistema de <em>amplificación cognitiva</em>: incrementa la capacidad de procesamiento, intensifica la profundidad inferencial y amplía el espectro informacional disponible para la toma de decisiones, sin desplazar la responsabilidad epistemológica del analista.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Las 5 dimensiones de amplificación analítica</h2>
+    <div class="amp-grid">
+      <div class="amp-card">
+        <div class="amp-icon">⚡</div>
+        <div class="amp-body">
+          <div class="amp-ttl">Amplificación de velocidad</div>
+          <div class="amp-txt">Reducción significativa del tiempo requerido para ejecutar procesos analíticos. Consolidación, cálculo de indicadores y comparativos interperiodos en tiempo real. Permite evolucionar de cortes periódicos rígidos hacia <strong>monitoreo continuo y ajuste dinámico</strong> de estrategias.<br><br><em>Riesgo asociado:</em> la rapidez sin validación metodológica produce decisiones conceptualmente débiles.</div>
+          <span class="amp-tag">Compresión temporal</span>
+        </div>
+      </div>
+      <div class="amp-card">
+        <div class="amp-icon">🔬</div>
+        <div class="amp-body">
+          <div class="amp-ttl">Amplificación de profundidad</div>
+          <div class="amp-txt">Tratamiento simultáneo de múltiples variables interdependientes. Modelación de relaciones no lineales e identificación de patrones emergentes: evaluaciones multivariables de rentabilidad ajustada por riesgo, análisis integrado de estructura de capital, rotación y eficiencia operativa.<br><br><em>Advertencia crítica:</em> la sofisticación algorítmica no sustituye la interpretación económica — la hace más exigente.</div>
+          <span class="amp-tag">Análisis multivariable</span>
+        </div>
+      </div>
+      <div class="amp-card">
+        <div class="amp-icon">🌐</div>
+        <div class="amp-body">
+          <div class="amp-ttl">Amplificación del alcance</div>
+          <div class="amp-txt">Integración de fuentes externas y no estructuradas: variables macroeconómicas, indicadores de mercado, comportamiento competitivo, documentación contractual y comunicaciones estratégicas. El análisis trasciende la información interna y opera en un ecosistema informacional más amplio.<br><br><em>Exigencia derivada:</em> la amplitud informacional requiere jerarquización rigurosa de variables relevantes.</div>
+          <span class="amp-tag">Ecosistema informacional</span>
+        </div>
+      </div>
+      <div class="amp-card">
+        <div class="amp-icon">💡</div>
+        <div class="amp-body">
+          <div class="amp-ttl">Amplificación heurística</div>
+          <div class="amp-txt">Ante resultados inesperados o desviaciones significativas, el sistema propone múltiples líneas de análisis y escenarios alternativos. Reduce el riesgo de anclaje cognitivo y fomenta exploración más amplia del problema financiero. El espacio decisional se amplía, promoviendo análisis menos condicionado por intuiciones preliminares.</div>
+          <span class="amp-tag">Reducción de sesgos</span>
+        </div>
+      </div>
+      <div class="amp-card">
+        <div class="amp-icon">⚖️</div>
+        <div class="amp-body">
+          <div class="amp-ttl">Amplificación evaluativa</div>
+          <div class="amp-txt">Modelación comparativa de alternativas estratégicas bajo múltiples criterios simultáneos: impacto en rentabilidad, efecto sobre liquidez, variación en exposición al riesgo, sostenibilidad de largo plazo. Explicita los <strong>trade-offs</strong> implícitos en la toma de decisiones, haciendo visibles las tensiones entre objetivos financieros.<br><br><em>Límite fundamental:</em> La IA modela escenarios; la dirección define prioridades.</div>
+          <span class="amp-tag">Trade-offs explícitos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Transformación del rol profesional</h2>
+    <div class="compare">
+      <div class="cmp">
+        <div class="cmp-h navy">Rol tradicional — ejecutor técnico</div>
+        <div class="cmp-b">
+          <div class="cmp-row">Ejecutar cálculos y construir tablas</div>
+          <div class="cmp-row">Consolidar manualmente múltiples fuentes</div>
+          <div class="cmp-row">Análisis limitado por capacidad computacional</div>
+          <div class="cmp-row">Reportería periódica predefinida</div>
+          <div class="cmp-row">Trabajo predominantemente operativo</div>
+        </div>
+      </div>
+      <div class="cmp">
+        <div class="cmp-h rojo">Rol emergente — arquitecto analítico</div>
+        <div class="cmp-b">
+          <div class="cmp-row">Formular interrogantes estratégicos bien definidos</div>
+          <div class="cmp-row">Supervisar calidad y consistencia del dato</div>
+          <div class="cmp-row">Evaluar críticamente modelos y algoritmos</div>
+          <div class="cmp-row">Definir supuestos explícitos y defendibles</div>
+          <div class="cmp-row">Integrar resultados con estrategia organizacional</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout cl-rojo">
+    <span class="cl-ico">🔑</span>
+    <div class="cl-body">
+      <div class="cl-ttl">La amplificación eleva el estándar intelectual — no lo reduce</div>
+      <p class="cl-txt">La IA amplifica velocidad, profundidad, alcance y capacidad exploratoria, pero simultáneamente exige <strong>mayor rigor metodológico, claridad conceptual y responsabilidad ética</strong>. El verdadero desafío no es adoptar tecnología, sino elevar el estándar intelectual del análisis financiero. La capacidad computacional puede delegarse parcialmente; la responsabilidad interpretativa y fiduciaria permanece indelegable.</p>
+    </div>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(2)">← Sesión 3.2</button>
+    <button class="btn btn-p" onclick="goTo(4)">Sesión 3.4 →</button>
+  </div>
+</section>
+
+<!-- ══════ S3.4 ══════ -->
+<section class="session" id="s4" data-title="Análisis de KPIs Financieros Asistido por IA">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 3.4</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Análisis de KPIs Financieros Asistido por IA: Arquitectura Sistémica, Rigor Analítico y Gobernanza del Desempeño</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 50 min</span>
+      <span class="badge b-verde">Gobierno financiero</span>
+      <span class="badge b-def">Sistema dinámico</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">Los KPIs financieros han evolucionado de métricas descriptivas retrospectivas a <strong>nodos dinámicos dentro de arquitecturas analíticas interconectadas</strong>. Con la incorporación de IA, el KPI se transforma en un instrumento operativo de gobierno financiero: habilita análisis multivariable simultáneo, detección de patrones no evidentes, proyección prospectiva y explicitación rigurosa de compensaciones estratégicas.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Marco de KPIs financieros — arquitectura por dimensión</h2>
+    <div class="kpi-table-wrap">
+      <table class="kpi-table">
+        <thead><tr><th>Dimensión</th><th>KPI</th><th>Fórmula / Base</th><th>Señal estratégica</th></tr></thead>
+        <tbody>
+          <tr><td><span class="dim-pill dp-rojo">Rentabilidad</span></td><td>Margen Bruto</td><td>(Ingresos − COGS) / Ingresos</td><td>Eficiencia productiva y posición en precio</td></tr>
+          <tr><td><span class="dim-pill dp-rojo">Rentabilidad</span></td><td>Margen EBITDA</td><td>EBITDA / Ingresos</td><td>Capacidad operativa antes de estructura financiera</td></tr>
+          <tr><td><span class="dim-pill dp-rojo">Rentabilidad</span></td><td>ROE / ROA</td><td>Utilidad neta / Patrimonio · Activos</td><td>Creación de valor para el accionista y eficiencia de activos</td></tr>
+          <tr><td><span class="dim-pill dp-azul">Liquidez</span></td><td>Razón corriente</td><td>Activo corriente / Pasivo corriente</td><td>Capacidad de cobertura de obligaciones de corto plazo</td></tr>
+          <tr><td><span class="dim-pill dp-azul">Liquidez</span></td><td>Ciclo de caja (CCC)</td><td>DIO + DSO − DPO</td><td>Eficiencia en gestión del capital de trabajo</td></tr>
+          <tr><td><span class="dim-pill dp-dorado">Solvencia</span></td><td>Endeudamiento total</td><td>Pasivo total / Activo total</td><td>Exposición al riesgo financiero estructural</td></tr>
+          <tr><td><span class="dim-pill dp-dorado">Solvencia</span></td><td>Cobertura de intereses</td><td>EBIT / Gastos financieros</td><td>Capacidad de servicio de la deuda</td></tr>
+          <tr><td><span class="dim-pill dp-verde">Eficiencia</span></td><td>Rotación de activos</td><td>Ingresos / Activo total promedio</td><td>Productividad del activo en generación de ingresos</td></tr>
+          <tr><td><span class="dim-pill dp-verde">Eficiencia</span></td><td>DSO / DPO</td><td>Cuentas por cobrar · 365 / Ventas</td><td>Gestión de ciclos de cobro y pago</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Interdependencias sistémicas — los KPIs no operan en aislamiento</h2>
+    <p class="prose">Los KPIs deben analizarse como componentes interdependientes de una estructura financiera integrada. La mejora en un indicador puede generar efectos colaterales adversos en otros, configurando dinámicas de equilibrio o tensión que la IA permite modelar de forma simultánea:</p>
+    <div class="plist">
+      <div class="pitem">
+        <div class="pnum" style="background:var(--c-dorado)">⚖</div>
+        <div class="pb">
+          <div class="pttl">ROE vs. Riesgo financiero</div>
+          <p class="ptxt">El incremento del ROE mediante mayor apalancamiento puede elevar simultáneamente la exposición al riesgo financiero. La optimización parcial del ROE sin considerar la estructura de capital puede generar fragilidad sistémica en escenarios de contracción económica.</p>
+        </div>
+      </div>
+      <div class="pitem">
+        <div class="pnum" style="background:var(--c-dorado)">⚖</div>
+        <div class="pb">
+          <div class="pttl">DIO vs. Capacidad operativa</div>
+          <p class="ptxt">La reducción de inventarios puede optimizar el DIO y el ciclo de caja, pero afectar la capacidad de respuesta operativa ante picos de demanda. La eficiencia del capital de trabajo tiene un límite estructural determinado por el modelo de negocio.</p>
+        </div>
+      </div>
+      <div class="pitem">
+        <div class="pnum" style="background:var(--c-dorado)">⚖</div>
+        <div class="pb">
+          <div class="pttl">Crecimiento de ventas vs. Liquidez</div>
+          <p class="ptxt">El crecimiento acelerado de ventas puede presionar la liquidez si el DSO se expande desproporcionadamente. El crecimiento sin gestión adecuada del ciclo de cobro puede generar una trampa de liquidez: mayor volumen, menor disponibilidad de caja.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Monitoreo continuo y gobierno dinámico del desempeño</h2>
+    <div class="card-grid">
+      <div class="card c-rojo">
+        <div class="card-ico">🚨</div>
+        <div class="card-ttl">Alertas tempranas</div>
+        <div class="card-body">Sistemas de detección de desviaciones incipientes con umbrales adaptativos. Detectan deterioros antes de su consolidación estructural, habilitando respuesta anticipatoria.</div>
+      </div>
+      <div class="card c-azul">
+        <div class="card-ico">📊</div>
+        <div class="card-ttl">Monitoreo en tiempo real</div>
+        <div class="card-body">Actualización continua de KPIs críticos frente a presupuestos y benchmarks sectoriales. Integración de datos operativos y financieros en flujos analíticos continuos.</div>
+      </div>
+      <div class="card c-verde">
+        <div class="card-ico">🔭</div>
+        <div class="card-ttl">Proyección prospectiva</div>
+        <div class="card-body">Los KPIs se transforman en variables prospectivas mediante simulación de escenarios. Cambios en tasas, políticas o mercado modelados para anticipar su impacto en rentabilidad, liquidez y riesgo.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout cl-rosa">
+    <span class="cl-ico">🏛️</span>
+    <div class="cl-body">
+      <div class="cl-ttl">Riesgos epistemológicos del uso intensivo de KPIs con IA</div>
+      <p class="cl-txt">La dependencia excesiva de métricas cuantitativas puede generar <strong>sesgo tecnocrático</strong>, invisibilizando dimensiones cualitativas relevantes: reputación, cultura organizacional, posicionamiento estratégico. La sofisticación visual de dashboards puede inducir una ilusión de control. El análisis de KPIs debe integrarse en un marco de gobernanza analítica que incorpore <strong>validación metodológica, transparencia en supuestos y revisión crítica permanente</strong>.</p>
+    </div>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(3)">← Sesión 3.3</button>
+    <button class="btn btn-p" onclick="goTo(5)">Sesión 3.5 →</button>
+  </div>
+</section>
+
+<!-- ══════ S3.5 ══════ -->
+<section class="session" id="s5" data-title="Análisis Comparativo Multianual">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Sesión 3.5</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Análisis Comparativo Multianual: Arquitectura Temporal, Rigor Metodológico y Gobernanza Estratégica del Desempeño</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">⏱ 50 min</span>
+      <span class="badge b-azul">Inteligencia temporal</span>
+      <span class="badge b-rojo">Alta complejidad</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="prose">El análisis comparativo multianual constituye una de las dimensiones más exigentes del análisis financiero. A diferencia del análisis interperiodo —centrado en variaciones puntuales entre dos ejercicios— el enfoque multianual permite comprender <strong>trayectorias extendidas, ciclos de expansión y contracción, y deterioros graduales</strong> cuya magnitud solo se revela en horizontes prolongados.</p>
+    <p class="prose">La IA amplifica esta capacidad interpretativa al procesar series históricas extensas, identificar patrones no lineales, detectar rupturas estructurales y modelar trayectorias evolutivas. El análisis multianual se transforma en un instrumento de <em>comprensión profunda y proyección estratégica</em>.</p>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Objetivos del análisis multianual</h2>
+    <ul class="slist">
+      <li>Identificar tendencias estructurales en ingresos, costos y resultados — no solo variaciones puntuales.</li>
+      <li>Evaluar la estabilidad de márgenes operativos en distintos ciclos económicos.</li>
+      <li>Analizar la evolución de la estructura de capital y del nivel de apalancamiento a lo largo del tiempo.</li>
+      <li>Detectar deterioros progresivos en liquidez y solvencia antes de que se consoliden.</li>
+      <li>Examinar la consistencia entre crecimiento contable y generación real de flujo de caja.</li>
+      <li>Evaluar la dinámica acumulativa del capital de trabajo y su relación con el crecimiento.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Análisis horizontal avanzado — más allá de variaciones simples</h2>
+    <p class="prose">En series históricas extensas, las dinámicas financieras rara vez siguen patrones estrictamente lineales. La IA permite análisis avanzado de series temporales:</p>
+    <div class="card-grid">
+      <div class="card c-azul">
+        <div class="card-ico">📈</div>
+        <div class="card-ttl">Tendencias y no linealidades</div>
+        <div class="card-body">Identificación de tendencias lineales y no lineales. Separación del crecimiento orgánico de efectos extraordinarios o estructurales.</div>
+      </div>
+      <div class="card c-rojo">
+        <div class="card-ico">🔀</div>
+        <div class="card-ttl">Puntos de inflexión estructural</div>
+        <div class="card-body">Detección de cambios de régimen en el desempeño financiero. Una variación aislada puede ser coyuntural; una tendencia sostenida revela transformación estructural.</div>
+      </div>
+      <div class="card c-dorado">
+        <div class="card-ico">🔄</div>
+        <div class="card-ttl">Patrones cíclicos</div>
+        <div class="card-body">Reconocimiento de comportamientos recurrentes ligados a estacionalidad, ciclos sectoriales o dinámicas macroeconómicas. Descomposición de series en tendencia, ciclo y residual.</div>
+      </div>
+      <div class="card c-verde">
+        <div class="card-ico">🧹</div>
+        <div class="card-ttl">Normalización y ajustes</div>
+        <div class="card-body">Ajuste por inflación, tipo de cambio y efectos no recurrentes. Reexpresión bajo criterios homogéneos para garantizar comparabilidad histórica real.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Análisis vertical multianual — evolución de la arquitectura financiera</h2>
+    <p class="prose">El análisis vertical examina la composición relativa de los estados financieros. Extendido a múltiples periodos, permite observar <strong>transformaciones en la estructura financiera</strong> que pueden responder a decisiones estratégicas deliberadas o a tensiones emergentes en el modelo de negocio:</p>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-num">1</div>
+        <div class="tl-body">
+          <div class="tl-ttl">Cambios en estructura de costos</div>
+          <div class="tl-txt">Variaciones sostenidas en la proporción de costos fijos vs. variables. Señal de cambios en el modelo operativo, la mezcla de productos o la estrategia de abastecimiento.</div>
+          <div class="tl-tags"><span class="tl-tag">Análisis vertical</span><span class="tl-tag">Estructura de costos</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-num">2</div>
+        <div class="tl-body">
+          <div class="tl-ttl">Evolución de la estructura de capital</div>
+          <div class="tl-txt">Modificaciones graduales en la relación deuda–patrimonio a lo largo del tiempo. Señal de estrategia de financiamiento, capacidad de generación interna o restricciones de acceso al crédito.</div>
+          <div class="tl-tags"><span class="tl-tag">Leverage</span><span class="tl-tag">Estructura de capital</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-num">3</div>
+        <div class="tl-body">
+          <div class="tl-ttl">Concentración de fuentes de ingresos</div>
+          <div class="tl-txt">Concentraciones crecientes en determinadas líneas, canales o clientes. Señal de riesgo de concentración o de transformación del mix de negocios.</div>
+          <div class="tl-tags"><span class="tl-tag">Diversificación</span><span class="tl-tag">Riesgo de concentración</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-num">4</div>
+        <div class="tl-body">
+          <div class="tl-ttl">Capital de trabajo como % de ventas</div>
+          <div class="tl-txt">Variaciones persistentes en la necesidad de capital de trabajo relativa a los ingresos. Señal de cambios en el ciclo de negocio, la política de crédito o la eficiencia en gestión de inventarios.</div>
+          <div class="tl-tags"><span class="tl-tag">Working capital</span><span class="tl-tag">Eficiencia operativa</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="sec-title">Proyección prospectiva y modelación de escenarios</h2>
+    <p class="prose">El análisis multianual asistido por IA no se limita a la reconstrucción histórica. A partir de los patrones identificados, pueden modelarse <strong>trayectorias futuras bajo distintos supuestos estratégicos</strong>:</p>
+    <div class="card-grid">
+      <div class="card c-azul"><div class="card-ico">📊</div><div class="card-ttl">Proyección de ingresos</div><div class="card-body">Escenarios de crecimiento bajo distintos supuestos de penetración de mercado, precios y dinámicas competitivas.</div></div>
+      <div class="card c-rojo"><div class="card-ico">🏦</div><div class="card-ttl">Estructura de capital futura</div><div class="card-body">Simulación del perfil de deuda bajo distintas políticas de financiamiento y capacidades de generación de caja.</div></div>
+      <div class="card c-dorado"><div class="card-ico">📉</div><div class="card-ttl">Sostenibilidad de márgenes</div><div class="card-body">Evaluación de la resistencia de los márgenes operativos bajo presiones inflacionarias, costos de materias primas o pérdida de poder de precio.</div></div>
+    </div>
+  </div>
+
+  <div class="callout cl-dorado">
+    <span class="cl-ico">⚠️</span>
+    <div class="cl-body">
+      <div class="cl-ttl">Riesgos críticos del análisis multianual</div>
+      <p class="cl-txt">El análisis multianual puede inducir errores si se extrapolan tendencias sin considerar cambios estructurales en el entorno. Los riesgos principales son: <strong>asumir continuidad automática de patrones históricos; subestimar disrupciones externas; y confundir estabilidad pasada con resiliencia futura</strong>. La IA amplifica la capacidad de reconocimiento de patrones, pero no sustituye la necesidad de juicio crítico ni de contextualización estratégica.</p>
+    </div>
+  </div>
+
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(4)">← Sesión 3.4</button>
+    <button class="btn btn-p" onclick="goTo(6)">Evaluación final →</button>
+  </div>
+</section>
+
+<!-- ══════ QUIZ ══════ -->
+<section class="session" id="s6" data-title="Evaluación — Módulo 3">
+  <div class="sh">
+    <div class="sh-ey"><span class="sh-id">Evaluación · Módulo 3</span><div class="sh-rule"></div></div>
+    <h1 class="sh-title">Quiz de Verificación — IA y Análisis de Datos para la Toma de Decisiones Financieras</h1>
+    <div class="sh-meta">
+      <span class="badge b-def">8 preguntas</span>
+      <span class="badge b-def">⏱ ~15 min</span>
+      <span class="badge b-verde">Criterio estratégico</span>
+    </div>
+  </div>
+  <div class="quiz-wrap">
+    <div class="qdots" id="qDots"></div>
+    <div id="qContainer"></div>
+    <div class="quiz-result" id="qResult">
+      <div class="res-icon">🎓</div>
+      <div class="res-score" id="rScore"></div>
+      <div class="res-lbl">preguntas correctas de 8</div>
+      <div id="rBadge"></div>
+      <p class="res-note">Revise las sesiones correspondientes a las respuestas incorrectas antes de avanzar al Módulo 4.</p>
+      <button class="btn btn-g" onclick="resetQuiz()" style="margin-top:8px">Reiniciar quiz</button>
+    </div>
+  </div>
+  <div class="sess-nav">
+    <button class="btn btn-g" onclick="goTo(5)">← Sesión 3.5</button>
+    <span style="font-size:12px;color:var(--ur-muted)">Fin del Módulo 3</span>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+const SESS=[
+  {id:1,lbl:'3.1',title:'El Dato Financiero como Infraestructura Estratégica',time:'50 min'},
+  {id:2,lbl:'3.2',title:'Niveles de Análisis: Descriptivo → Prescriptivo',time:'50 min'},
+  {id:3,lbl:'3.3',title:'La IA como Amplificador Analítico',time:'45 min'},
+  {id:4,lbl:'3.4',title:'KPIs Financieros Asistidos por IA',time:'50 min'},
+  {id:5,lbl:'3.5',title:'Análisis Comparativo Multianual',time:'50 min'},
+  {id:6,lbl:'✓', title:'Evaluación — Módulo 3',time:'~15 min'},
+];
+
+const QUIZ=[
+  {
+    q:'¿Cuál es la consecuencia más crítica de que la IA "magnifique" los errores estructurales del dato financiero en lugar de corregirlos?',
+    opts:[
+      'El modelo de IA genera respuestas más lentas cuando los datos tienen errores.',
+      'Un error de origen puede convertirse en fundamento de análisis sofisticados pero conceptualmente incorrectos, comprometiendo la racionalidad estratégica de las decisiones.',
+      'Los errores en datos estructurados solo afectan el Nivel I (descriptivo) del análisis.',
+      'La IA detecta automáticamente los errores y solicita corrección al usuario.'
+    ],
+    ok:1,
+    fb:'Correcto. La IA amplifica tanto fortalezas como debilidades del sistema analítico. Un dato con error estructural alimenta modelos crecientemente sofisticados que producen análisis formalmente complejos pero sustantivamente incorrectos. La cadena de causalidad es directa: Calidad del dato → Robustez del modelo → Solidez de la inferencia → Racionalidad estratégica.'
+  },
+  {
+    q:'¿Cuál es la diferencia fundamental entre el Nivel II (Diagnóstico) y el Nivel III (Predictivo) del análisis de datos financieros?',
+    opts:[
+      'El diagnóstico usa IA y el predictivo no.',
+      'El diagnóstico responde "¿por qué ocurrió?" identificando relaciones causales en el pasado; el predictivo responde "¿qué podría ocurrir?" construyendo escenarios futuros bajo supuestos explícitos.',
+      'El predictivo es más importante que el diagnóstico en la práctica financiera.',
+      'No existe diferencia conceptual relevante entre estos dos niveles.'
+    ],
+    ok:1,
+    fb:'Correcto. El análisis diagnóstico introduce la dimensión explicativa: identifica las causas subyacentes de los resultados observados (relaciones causales). El análisis predictivo incorpora la dimensión prospectiva: construye escenarios futuros plausibles bajo supuestos claramente definidos. Son preguntas epistemológicamente diferentes que requieren metodologías distintas.'
+  },
+  {
+    q:'¿Por qué la "amplificación de velocidad" que provee la IA puede ser simultáneamente un riesgo metodológico?',
+    opts:[
+      'Porque los sistemas de IA más rápidos cometen más errores de cálculo.',
+      'Porque la rapidez analítica sin validación metodológica puede derivar en decisiones conceptualmente débiles sustentadas en cálculos no verificados.',
+      'Porque la velocidad hace que los analistas no puedan entender los resultados generados.',
+      'La velocidad no representa ningún riesgo metodológico; siempre es una ventaja.'
+    ],
+    ok:1,
+    fb:'Correcto. La compresión temporal que provee la IA es un beneficio estructural, pero la aceleración sin validación metodológica puede derivar en decisiones conceptualmente débiles. La rapidez analítica debe ir acompañada de controles de consistencia, trazabilidad del dato y revisión crítica de resultados. La velocidad amplifica tanto la calidad como los errores del proceso analítico.'
+  },
+  {
+    q:'En el análisis de KPIs financieros, ¿qué ilustra la relación entre incremento del ROE vía apalancamiento y exposición al riesgo financiero?',
+    opts:[
+      'Que los KPIs son independientes entre sí y pueden optimizarse de forma aislada.',
+      'Que los KPIs constituyen componentes interdependientes de una estructura financiera integrada, donde la optimización de uno puede generar efectos adversos en otros.',
+      'Que el ROE siempre debe priorizarse sobre los indicadores de riesgo.',
+      'Que la IA puede optimizar todos los KPIs simultáneamente sin compensaciones.'
+    ],
+    ok:1,
+    fb:'Correcto. Los KPIs son nodos interdependientes dentro de un sistema financiero integrado. El incremento del ROE mediante mayor apalancamiento puede elevar simultáneamente la exposición al riesgo financiero. La IA permite modelar estas interdependencias de forma simultánea, visualizando efectos sistémicos y evitando optimizaciones parciales que comprometan la estabilidad estructural.'
+  },
+  {
+    q:'¿Qué diferencia conceptual distingue al análisis comparativo multianual del análisis interperiodo estándar?',
+    opts:[
+      'El análisis multianual usa modelos de IA y el interperiodo no.',
+      'El análisis multianual evalúa trayectorias extendidas, tendencias estructurales y ciclos de largo plazo; el interperiodo se centra en variaciones puntuales entre dos ejercicios consecutivos.',
+      'El análisis multianual solo aplica para empresas con más de 10 años de operación.',
+      'El interperiodo es más preciso que el multianual porque usa menos datos.'
+    ],
+    ok:1,
+    fb:'Correcto. El análisis multianual permite comprender trayectorias extendidas, procesos de acumulación, ciclos de expansión y contracción, y deterioros graduales cuya magnitud solo se revela en horizontes prolongados. El análisis interperiodo es útil para variaciones puntuales, pero insuficiente para identificar tendencias estructurales y cambios de régimen en el desempeño financiero.'
+  },
+  {
+    q:'¿Cuál es la distinción crítica entre correlación estadística y causalidad en el análisis financiero asistido por IA?',
+    opts:[
+      'No existe diferencia práctica; toda correlación estadística implica causalidad.',
+      'Los modelos algorítmicos identifican asociaciones estadísticas; la interpretación causal requiere criterio profesional, comprensión sectorial y conocimiento del modelo de negocio.',
+      'La IA puede determinar causalidad automáticamente con suficiente volumen de datos.',
+      'La correlación es más útil que la causalidad en el análisis financiero estratégico.'
+    ],
+    ok:1,
+    fb:'Correcto. Este es uno de los principios epistemológicos más críticos del análisis financiero con IA. Los algoritmos pueden identificar asociaciones estadísticas significativas entre variables; corresponde al profesional financiero evaluar si dichas asociaciones responden a fundamentos económicos consistentes. La sofisticación técnica no reemplaza la teoría financiera como filtro interpretativo.'
+  },
+  {
+    q:'¿Cuál es el principal riesgo del análisis multianual cuando se extrapolan tendencias históricas sin contextualización estratégica?',
+    opts:[
+      'Los cálculos históricos se vuelven matemáticamente incorrectos.',
+      'Se puede asumir continuidad automática de patrones históricos, subestimar disrupciones externas y confundir estabilidad pasada con resiliencia futura.',
+      'El análisis multianual pierde validez si se extiende más de 3 años.',
+      'Los modelos de IA no pueden procesar series temporales largas con precisión.'
+    ],
+    ok:1,
+    fb:'Correcto. Los tres riesgos principales del análisis multianual son: asumir continuidad automática de patrones históricos; subestimar disrupciones del entorno competitivo, regulatorio o tecnológico; y confundir estabilidad pasada con resiliencia futura. La IA amplifica la capacidad de reconocimiento de patrones, pero no sustituye el juicio crítico ni la contextualización estratégica.'
+  },
+  {
+    q:'¿Qué transformación de rol describe correctamente al profesional financiero en entornos de analítica aumentada con IA?',
+    opts:[
+      'El profesional se convierte en operador de sistemas que reemplaza al analista tradicional.',
+      'El profesional evoluciona de ejecutor técnico a arquitecto analítico: diseña preguntas pertinentes, estructura modelos, valida resultados y asume responsabilidad fiduciaria por las decisiones adoptadas.',
+      'El profesional solo necesita supervisar que los dashboards funcionen correctamente.',
+      'La IA asume la responsabilidad interpretativa y fiduciaria para permitir mayor eficiencia.'
+    ],
+    ok:1,
+    fb:'Correcto. En entornos potenciados por IA, el profesional financiero asume un rol arquitectónico. Su función ya no es ejecutar cálculos, sino formular interrogantes estratégicos bien definidos, supervisar la calidad del dato, evaluar críticamente modelos y algoritmos, definir supuestos explícitos y defender las decisiones adoptadas. La capacidad computacional puede delegarse; la responsabilidad interpretativa y fiduciaria permanece indelegable.'
+  },
+];
+
+let cur=1, done=new Set();
+let qs={idx:0,ans:Array(8).fill(null),sub:Array(8).fill(false)};
+
+function buildSB(){
+  document.getElementById('sbNav').innerHTML=SESS.map(s=>`
+    <div class="nav-item ${s.id===cur?'active':''} ${done.has(s.id)?'done':''}" onclick="goTo(${s.id})">
+      <div class="nd">${done.has(s.id)?'✓':s.id===6?'📝':s.id}</div>
+      <div class="nav-b">
+        <div class="nav-id">Sesión ${s.lbl}</div>
+        <div class="nav-ttl">${s.title}</div>
+        <div class="nav-time">${s.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+function goTo(n){
+  if(n>cur&&cur<6)done.add(cur);
+  document.querySelectorAll('.session').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  cur=n; buildSB(); updateProg();
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===6)initQuiz();
+}
+
+function updateProg(){
+  const p=Math.round((done.size/6)*100);
+  document.getElementById('pgBar').style.width=p+'%';
+  document.getElementById('pgPct').textContent=p+'%';
+}
+
+function initQuiz(){renderQ(qs.idx);renderDots();}
+
+function renderDots(){
+  document.getElementById('qDots').innerHTML=QUIZ.map((_,i)=>{
+    let c='qdot';
+    if(i===qs.idx)c+=' cur';
+    else if(qs.sub[i])c+=qs.ans[i]===QUIZ[i].ok?' ok':' err';
+    else if(qs.ans[i]!==null)c+=' ans';
+    return `<div class="${c}" onclick="jumpQ(${i})"></div>`;
+  }).join('');
+}
+
+function jumpQ(i){qs.idx=i;renderQ(i);renderDots();}
+
+function renderQ(i){
+  const d=QUIZ[i],sub=qs.sub[i],sel=qs.ans[i];
+  document.getElementById('qContainer').innerHTML=`
+    <div class="q-head">
+      <div class="q-ctr">Pregunta ${i+1} de ${QUIZ.length}</div>
+      <div class="q-txt">${d.q}</div>
+      <div class="q-hint">Seleccione la respuesta más adecuada.</div>
+    </div>
+    <div class="q-opts">
+      ${d.opts.map((o,j)=>{
+        let c='qopt'+(sub?' locked':'');
+        if(sub){if(j===d.ok)c+=' ok';else if(j===sel&&j!==d.ok)c+=' err';}
+        else if(j===sel)c+=' sel';
+        return `<div class="${c}" onclick="${sub?'':'selectOpt('+j+')'}">
+          <div class="qletter">${['A','B','C','D'][j]}</div><span>${o}</span></div>`;
+      }).join('')}
+    </div>
+    <div class="q-fb ${sub?'show '+(sel===d.ok?'ok':'err'):''}">
+      ${sub?(sel===d.ok?'✅ ':'❌ ')+d.fb:''}
+    </div>
+    <div class="q-ctrl">
+      ${!sub?`<button class="btn btn-p" onclick="submitQ()" ${sel===null?'disabled':''}>Confirmar respuesta</button>`:''}
+      ${sub&&i<QUIZ.length-1?`<button class="btn btn-p" onclick="nextQ()">Siguiente →</button>`:''}
+      ${sub&&i===QUIZ.length-1?`<button class="btn btn-v" onclick="showResult()">Ver resultado →</button>`:''}
+      ${i>0?`<button class="btn btn-g" onclick="jumpQ(${i-1})">← Anterior</button>`:''}
+    </div>`;
+}
+
+function selectOpt(j){qs.ans[qs.idx]=j;renderQ(qs.idx);renderDots();}
+function submitQ(){qs.sub[qs.idx]=true;renderQ(qs.idx);renderDots();}
+function nextQ(){qs.idx++;renderQ(qs.idx);renderDots();}
+
+function showResult(){
+  document.getElementById('qContainer').style.display='none';
+  document.getElementById('qDots').style.display='none';
+  const n=qs.ans.filter((a,i)=>a===QUIZ[i].ok).length;
+  document.getElementById('rScore').textContent=n+'/8';
+  const b=n===8?'<div class="res-badge rb-gold">🏆 Excelente — Dominio pleno del módulo</div>':
+           n>=6?'<div class="res-badge rb-verde">✅ Aprobado — Comprensión sólida del módulo</div>':
+                '<div class="res-badge rb-azul">📖 Refuerzo recomendado — Revise las sesiones con error</div>';
+  document.getElementById('rBadge').innerHTML=b;
+  document.getElementById('qResult').classList.add('show');
+  done.add(6);updateProg();buildSB();
+}
+
+function resetQuiz(){
+  qs={idx:0,ans:Array(8).fill(null),sub:Array(8).fill(false)};
+  document.getElementById('qContainer').style.display='';
+  document.getElementById('qDots').style.display='';
+  document.getElementById('qResult').classList.remove('show');
+  initQuiz();
+}
+
+buildSB();
+document.getElementById('s1').classList.add('active');
+</script>
+</body>
+</html>
